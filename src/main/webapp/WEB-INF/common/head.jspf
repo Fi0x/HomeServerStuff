@@ -1,0 +1,6 @@
+<head>
+    <link href="webjars/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/design.css" rel="stylesheet">
+    <title>Language Generator</title>
+    <link rel="icon" href="../../images/logo.ico">
+</head>

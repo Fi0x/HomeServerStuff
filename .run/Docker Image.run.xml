@@ -8,7 +8,7 @@
           <list>
             <DockerEnvVarImpl>
               <option name="name" value="MYSQL_DATABASE" />
-              <option name="value" value="languages" />
+              <option name="value" value="recipes" />
             </DockerEnvVarImpl>
             <DockerEnvVarImpl>
               <option name="name" value="MYSQL_PASSWORD" />
@@ -24,7 +24,7 @@
             </DockerEnvVarImpl>
           </list>
         </option>
-        <option name="commandLineOptions" value="--publish 3306:3306 -v languages-volume:/var/lib/mysql" />
+        <option name="commandLineOptions" value="--publish 3306:3306 -v recipes-volume:/var/lib/mysql" />
       </settings>
     </deployment>
     <method v="2" />
