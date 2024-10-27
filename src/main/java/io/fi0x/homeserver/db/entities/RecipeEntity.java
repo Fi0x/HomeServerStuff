@@ -12,4 +12,9 @@ public class RecipeEntity
 {
 	@Id
 	private Long id;
+
+	private String name;
+	private String tags;
+	private String ingredients;
+	private Integer time;
 }

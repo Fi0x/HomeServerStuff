@@ -9,6 +9,9 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import java.util.Collections;
+import java.util.List;
+
 @Slf4j
 @Controller
 @AllArgsConstructor
@@ -20,8 +23,12 @@ public class RecipeController
 	@GetMapping("/random-recipe")
 	public String getRandomRecipe(ModelMap model)
 	{
+		//TODO: Add actual filter options
+		List<RecipeDto> possibleRecipes = recipeService.getAllowedRecipes(Collections.emptyList(),
+																		  Collections.emptyList());
+		RecipeDto recipe = recipeService.getRandomRecipe(possibleRecipes);
 
-		RecipeDto recipe = recipeService.getRandomRecipe();
-		return null;
+		model.put("recipeName", recipe.getName());
+		return "recipe";
 	}
 }
