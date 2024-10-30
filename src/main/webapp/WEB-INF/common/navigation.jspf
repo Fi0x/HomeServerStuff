@@ -1,13 +1,13 @@
 <nav class="navbar navbar-expand-md navbar-light mb-4 p-1">
     <a class="navbar-brand m-2" href="${pageContext.request.contextPath}/">
-        <img src="../../images/logo.png" alt="Language Generator" class="home-image">
+        <img src="../../images/logo.png" alt="Home Server" class="home-image">
     </a>
     <div class="collapse navbar-collapse">
         <ul class="navbar-nav">
-            <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/language">Create new Language</a></li>
-            <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/upload">Upload language-file</a></li>
+            <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/language">Add a recipe</a></li>
+            <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/upload">Upload recipes-file</a></li>
             <li class="nav-item">
-                <a href="https://github.com/Fi0x/LanguageGenerator">
+                <a href="https://github.com/Fi0x/HomeServerStuff">
                     <img src="../../images/github.png" alt="Project on Github" class="github-image">
                 </a>
             </li>
