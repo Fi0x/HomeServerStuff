@@ -1,7 +1,7 @@
-package io.fi0x.homeserver.service;
+package io.fi0x.homeserver.general.service;
 
 
-import io.fi0x.homeserver.logic.dto.UserDto;
+import io.fi0x.homeserver.general.logic.dto.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;

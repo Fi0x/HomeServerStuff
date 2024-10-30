@@ -1,8 +1,8 @@
-package io.fi0x.homeserver.rest;
+package io.fi0x.homeserver.general.rest;
 
-import io.fi0x.homeserver.logic.dto.LoginDto;
-import io.fi0x.homeserver.logic.dto.UserDto;
-import io.fi0x.homeserver.service.AuthenticationService;
+import io.fi0x.homeserver.general.logic.dto.LoginDto;
+import io.fi0x.homeserver.general.logic.dto.UserDto;
+import io.fi0x.homeserver.general.service.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;

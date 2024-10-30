@@ -1,4 +1,4 @@
-package io.fi0x.homeserver.rest;
+package io.fi0x.homeserver.general.rest;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;

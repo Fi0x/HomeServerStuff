@@ -1,7 +1,7 @@
-package io.fi0x.homeserver.rest.validation;
+package io.fi0x.homeserver.general.rest.validation;
 
 
-import io.fi0x.homeserver.logic.dto.UserDto;
+import io.fi0x.homeserver.general.logic.dto.UserDto;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

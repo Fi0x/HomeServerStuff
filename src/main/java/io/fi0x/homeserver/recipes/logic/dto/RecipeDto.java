@@ -1,4 +1,4 @@
-package io.fi0x.homeserver.logic.dto;
+package io.fi0x.homeserver.recipes.logic.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,4 +17,5 @@ public class RecipeDto
 	private List<String> tags;
 	private List<String> ingredients;
 	private Integer time;
+	private Float rating;
 }

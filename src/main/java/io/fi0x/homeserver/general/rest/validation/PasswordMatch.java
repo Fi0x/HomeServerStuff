@@ -1,4 +1,4 @@
-package io.fi0x.homeserver.rest.validation;
+package io.fi0x.homeserver.general.rest.validation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

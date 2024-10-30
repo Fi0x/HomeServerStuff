@@ -1,4 +1,4 @@
-package io.fi0x.homeserver.logic.dto;
+package io.fi0x.homeserver.general.logic.dto;
 
 import lombok.Data;
 

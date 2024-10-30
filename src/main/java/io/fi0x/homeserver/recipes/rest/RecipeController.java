@@ -1,7 +1,7 @@
-package io.fi0x.homeserver.rest;
+package io.fi0x.homeserver.recipes.rest;
 
-import io.fi0x.homeserver.logic.dto.RecipeDto;
-import io.fi0x.homeserver.service.RecipeService;
+import io.fi0x.homeserver.recipes.logic.dto.RecipeDto;
+import io.fi0x.homeserver.recipes.service.RecipeService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -20,7 +20,7 @@ public class RecipeController
 {
 	private RecipeService recipeService;
 
-	@GetMapping("/random-recipe")
+	@GetMapping("/recipe/random")
 	public String getRandomRecipe(ModelMap model)
 	{
 		//TODO: Add actual filter options
@@ -30,5 +30,14 @@ public class RecipeController
 
 		model.put("recipeName", recipe.getName());
 		return "recipe";
+	}
+
+	@GetMapping("/recipes")
+	public String getRecipeList(ModelMap model)
+	{
+		List<RecipeDto> possibleRecipes = recipeService.getAllRecipes();
+
+		model.put("recipeList", possibleRecipes);
+		return "recipes";
 	}
 }

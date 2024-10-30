@@ -1,4 +1,4 @@
-package io.fi0x.homeserver.config;
+package io.fi0x.homeserver.general.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,6 +41,8 @@ public class SpringSecurityConfig
 
     private static final String[] PUBLIC_URLS = new String[]{
             "/", "/*", "/WEB-INF/jsp/list-languages.jsp",
+            "/recipe/random", "/WEB-INF/jsp/recipe.jsp",
+            "/recipes", "/WEB-INF/jsp/recipes.jsp",
             "/error", "/WEB-INF/jsp/error.jsp",
             "/download",
             "/generate", "/WEB-INF/jsp/list-words.jsp",

@@ -1,6 +1,6 @@
-package io.fi0x.homeserver.logic.dto;
+package io.fi0x.homeserver.general.logic.dto;
 
-import io.fi0x.homeserver.rest.validation.PasswordMatch;
+import io.fi0x.homeserver.general.rest.validation.PasswordMatch;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;

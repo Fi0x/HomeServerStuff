@@ -1,4 +1,4 @@
-package io.fi0x.homeserver.db.entities;
+package io.fi0x.homeserver.recipes.db.entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -17,4 +17,5 @@ public class RecipeEntity
 	private String tags;
 	private String ingredients;
 	private Integer time;
+	private Float rating;
 }
