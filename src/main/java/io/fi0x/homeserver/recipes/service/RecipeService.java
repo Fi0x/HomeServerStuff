@@ -16,13 +16,12 @@ public class RecipeService
 {
     private RecipeRepo recipeRepo;
 
-
     public List<RecipeDto> getAllowedRecipes(List<String> requiredIngredients, List<String> forbiddenIngredients,
                                              Float minRating, Float maxRating, Float minTime, Float maxTime)
     {
-        return getAllRecipes().stream().filter(recipeDto ->
-                        isAllowed(recipeDto, requiredIngredients, forbiddenIngredients, minRating, maxRating, minTime, maxTime))
-                .toList();
+        return getAllRecipes().stream()
+                              .filter(recipeDto -> isAllowed(recipeDto, requiredIngredients, forbiddenIngredients,
+                                                             minRating, maxRating, minTime, maxTime)).toList();
     }
 
     public List<RecipeDto> getAllowedRecipes(List<String> requiredTags, List<String> forbiddenTags)

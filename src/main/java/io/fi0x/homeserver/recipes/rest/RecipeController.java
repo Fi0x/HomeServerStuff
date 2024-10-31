@@ -28,8 +28,8 @@ public class RecipeController
 																		  Collections.emptyList());
 		RecipeDto recipe = recipeService.getRandomRecipe(possibleRecipes);
 
-		model.put("recipeName", recipe.getName());
-		return "recipe";
+		model.put("recipe", recipe);
+		return "show-recipe";
 	}
 
 	@GetMapping("/recipes")
