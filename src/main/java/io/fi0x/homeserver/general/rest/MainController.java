@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 @Slf4j
 @Controller
 @AllArgsConstructor
-@SessionAttributes({})
+@SessionAttributes({"username"})
 public class MainController
 {
     @GetMapping("/")

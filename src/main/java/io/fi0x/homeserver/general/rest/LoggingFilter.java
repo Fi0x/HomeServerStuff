@@ -14,13 +14,12 @@ import java.io.IOException;
 @Component
 public class LoggingFilter implements Filter
 {
-    @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
-            throws IOException, ServletException
-    {
-        HttpServletRequest request = (HttpServletRequest) servletRequest;
-        log.trace("Uri called: '{}'", request.getRequestURI());
+	@Override
+	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException
+	{
+		HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
+		log.trace("Uri called: '{}'", httpRequest.getRequestURI());
 
-        filterChain.doFilter(servletRequest, servletResponse);
-    }
+		filterChain.doFilter(servletRequest, servletResponse);
+	}
 }

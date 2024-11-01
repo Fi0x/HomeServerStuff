@@ -35,8 +35,6 @@
         </tr>
         </tbody>
     </table>
-    <a href="${pageContext.request.contextPath}/recipe/${recipe.id}/edit" class="btn">Edit Recipe</a>
-    <a href="${pageContext.request.contextPath}/recipe/${recipe.id}/delete" class="btn">Delete Recipe</a>
 </div>
 <%@include file="../common/scripts.jspf" %>
 <script src="${pageContext.request.contextPath}/js/functions.js"></script>

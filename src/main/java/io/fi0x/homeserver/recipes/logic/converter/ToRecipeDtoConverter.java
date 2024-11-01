@@ -9,14 +9,16 @@ import java.util.List;
 
 public class ToRecipeDtoConverter
 {
-    public static RecipeDto convert(RecipeEntity entity)
-    {
-        return RecipeDto.builder().id(entity.getId()).name(entity.getName()).tags(convertToList(entity.getTags()))
-                .ingredients(convertToList(entity.getIngredients())).time(entity.getTime()).rating(entity.getRating()).build();
-    }
+	public static RecipeDto convert(RecipeEntity entity)
+	{
+		return RecipeDto.builder().id(entity.getId()).username(entity.getUsername()).visible(entity.getVisible())
+						.name(entity.getName()).tags(convertToList(entity.getTags()))
+						.ingredients(convertToList(entity.getIngredients())).time(entity.getTime())
+						.rating(entity.getRating()).build();
+	}
 
-    private static List<String> convertToList(String stringList)
-    {
-        return Arrays.stream(stringList.replace(" ", "").split(",")).toList();
-    }
+	private static List<String> convertToList(String stringList)
+	{
+		return Arrays.stream(stringList.replace(" ", "").split(",")).toList();
+	}
 }

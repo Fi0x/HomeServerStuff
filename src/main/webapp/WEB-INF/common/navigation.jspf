@@ -4,7 +4,8 @@
     </a>
     <div class="collapse navbar-collapse">
         <ul class="navbar-nav">
-            <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/language">Add a recipe</a></li>
+            <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/recipe">Add a recipe</a>
+            </li>
             <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/upload">Upload recipes-file</a></li>
             <li class="nav-item">
                 <a href="https://github.com/Fi0x/HomeServerStuff">

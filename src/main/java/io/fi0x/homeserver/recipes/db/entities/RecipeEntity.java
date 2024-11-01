@@ -12,6 +12,8 @@ public class RecipeEntity
 {
 	@Id
 	private Long id;
+	private String username;
+	private Boolean visible;
 
 	private String name;
 	private String tags;
