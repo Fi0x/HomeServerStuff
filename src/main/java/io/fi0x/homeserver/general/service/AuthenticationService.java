@@ -5,7 +5,6 @@ import io.fi0x.homeserver.general.logic.dto.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
@@ -18,12 +17,6 @@ public class AuthenticationService
 {
     private final UserDetailsManager userDetailsManager;
     private final PasswordEncoder passwordEncoder;
-
-    public String getAuthenticatedUsername()
-    {
-        log.trace("getAuthenticatedUsername() called");
-        return SecurityContextHolder.getContext().getAuthentication().getName();
-    }
 
     public void registerUser(UserDto userDto) throws DuplicateKeyException
     {

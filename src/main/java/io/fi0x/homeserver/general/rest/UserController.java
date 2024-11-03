@@ -1,5 +1,6 @@
 package io.fi0x.homeserver.general.rest;
 
+import io.fi0x.homeserver.general.components.Authenticator;
 import io.fi0x.homeserver.general.logic.dto.LoginDto;
 import io.fi0x.homeserver.general.logic.dto.UserDto;
 import io.fi0x.homeserver.general.service.AuthenticationService;
@@ -23,12 +24,14 @@ public class UserController
 {
     private AuthenticationService authenticationService;
 
+	private Authenticator authenticator;
+
     @GetMapping("/custom-login")
     public String showLogin(ModelMap model)
     {
         log.info("showLogin() called");
 
-        model.put("username", authenticationService.getAuthenticatedUsername());
+		model.put("username", authenticator.getAuthenticatedUsername());
         model.put("loginDto", new LoginDto());
 
         return "login";

@@ -1,7 +1,6 @@
 package io.fi0x.homeserver.recipes.rest;
 
 
-import io.fi0x.homeserver.general.service.AuthenticationService;
 import io.fi0x.homeserver.recipes.logic.dto.RecipeDto;
 import io.fi0x.homeserver.recipes.service.RecipeService;
 import lombok.AllArgsConstructor;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.InvalidObjectException;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,7 +23,6 @@ import java.util.List;
 @SessionAttributes({"username"})
 public class RecipeController
 {
-	private AuthenticationService authenticationService;
 	private RecipeService recipeService;
 
 	@GetMapping("/recipe/random")
@@ -32,9 +31,14 @@ public class RecipeController
 		log.info("getRandomRecipe() called");
 
 		//TODO: Add actual filter options
-		List<RecipeDto> possibleRecipes = recipeService.getAllowedRecipes(
-				authenticationService.getAuthenticatedUsername(), Collections.emptyList(), Collections.emptyList());
-		RecipeDto recipe = recipeService.getRandomRecipe(possibleRecipes);
+		List<RecipeDto> possibleRecipes = recipeService.getAllowedRecipes(Collections.emptyList(),
+																		  Collections.emptyList(),
+																		  Collections.emptyList(),
+																		  Collections.emptyList(), 0f, 0f, 0f, 0f);
+		if(possibleRecipes.isEmpty())
+			throw new ResponseStatusException(HttpStatusCode.valueOf(404), "Could not find any available recipes");
+
+		RecipeDto recipe = possibleRecipes.get((int) (Math.random() * possibleRecipes.size()));
 
 		model.put("recipe", recipe);
 		return "redirect:/recipe/" + recipe.getId();
@@ -45,7 +49,7 @@ public class RecipeController
 	{
 		log.info("getRecipeList() called");
 
-		model.put("recipeList", recipeService.getAllRecipes(authenticationService.getAuthenticatedUsername()));
+		model.put("recipeList", recipeService.getAllRecipes());
 
 		return "recipes";
 	}
@@ -55,12 +59,16 @@ public class RecipeController
 	{
 		log.info("showRecipe() called");
 
-		RecipeDto recipe = recipeService.getRecipe(recipeId);
-		if(!recipe.getVisible() && !recipe.getUsername().equals(authenticationService.getAuthenticatedUsername()))
-			throw new ResponseStatusException(HttpStatusCode.valueOf(404),
-											  "Could not find a recipe with id " + recipeId);
+		try
+		{
+			model.put("recipe", recipeService.getRecipe(recipeId));
+		} catch(InvalidObjectException e)
+		{
+			log.warn("Could not convert a recipe-entity to a dto.", e);
+			throw new ResponseStatusException(HttpStatusCode.valueOf(500),
+											  "Could not convert a recipe-entity to a dto.", e);
+		}
 
-		model.put("recipe", recipe);
 		return "show-recipe";
 	}
 
@@ -69,7 +77,15 @@ public class RecipeController
 	{
 		log.info("editRecipe() called");
 
-		model.put("recipe", recipeService.getRecipe(recipeId));
+		try
+		{
+			model.put("recipe", recipeService.getRecipe(recipeId));
+		} catch(InvalidObjectException e)
+		{
+			log.warn("Could not convert a recipe-entity to a dto.", e);
+			throw new ResponseStatusException(HttpStatusCode.valueOf(500),
+											  "Could not convert a recipe-entity to a dto.", e);
+		}
 
 		return "edit-recipe";
 	}
@@ -79,9 +95,9 @@ public class RecipeController
 	{
 		log.info("deleteRecipe() called");
 
-		//TODO: Delete recipe
+		recipeService.deleteRecipe(recipeId);
 
-		model.put("recipeList", recipeService.getAllRecipes(authenticationService.getAuthenticatedUsername()));
+		model.put("recipeList", recipeService.getAllRecipes());
 
 		return "recipes";
 	}

@@ -34,9 +34,9 @@ public class SpringSecurityConfig
     private String dbPassword;
     @Value("${spring.datasource.driver-class-name}")
     private String dbDriver;
-    @Value("${languagegenerator.username}")
+    @Value("${homeserver.username}")
     private String webUser;
-    @Value("${languagegenerator.password}")
+    @Value("${homeserver.password}")
     private String webPassword;
 
     private static final String[] PUBLIC_URLS = new String[]{
