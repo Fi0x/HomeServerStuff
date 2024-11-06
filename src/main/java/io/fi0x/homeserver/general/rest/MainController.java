@@ -1,6 +1,7 @@
 package io.fi0x.homeserver.general.rest;
 
 import io.fi0x.homeserver.general.components.Authenticator;
+import io.fi0x.homeserver.general.service.ConnectionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,8 +18,9 @@ public class MainController
 {
     @Value("${homeserver.languagegenerator.ip}")
     private String languageGeneratorIp;
+    private final ConnectionService connectionService;
     @Value("${homeserver.languagegenerator.port}")
-    private String languageGeneratorPort;
+    private Integer languageGeneratorPort;
 
     private final Authenticator authenticator;
 
@@ -26,13 +28,16 @@ public class MainController
     public String showHomePage(ModelMap model)
     {
         model.put("username", authenticator.getAuthenticatedUsername());
-        //TODO: Check if the language generator is online and can be reached (use provided ip and port)
-        //TODO: If language generator is reachable, add a button to the main-page to open the language-generator
+
+        boolean languageGeneratorReachable = connectionService.isReachable(languageGeneratorIp, languageGeneratorPort);
+        if (languageGeneratorReachable)
+            model.put("languageGeneratorAddress", languageGeneratorIp + ":" + languageGeneratorPort);
+
         return "main-page";
     }
 
     @GetMapping("/*")
-    public String redirectHomePage(ModelMap model)
+    public String redirectHomePage()
     {
         return "redirect:/";
     }
