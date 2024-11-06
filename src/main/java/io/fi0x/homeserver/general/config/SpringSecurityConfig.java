@@ -39,12 +39,9 @@ public class SpringSecurityConfig
     @Value("${homeserver.password}")
     private String webPassword;
 
-    private static final String[] PUBLIC_URLS = new String[]{
-            "/", "/*", "/WEB-INF/jsp/list-languages.jsp", "/recipe/random", "/WEB-INF/jsp/show-recipe.jsp",
+    private static final String[] PUBLIC_URLS = new String[]{"/", "/*", "/WEB-INF/jsp/main-page.jsp", "/recipe/*", "/WEB-INF/jsp/show-recipe.jsp", "/recipe/*/*", "WEB-INF/jsp/edit-recipe",
             "/recipes", "/WEB-INF/jsp/recipes.jsp",
             "/error", "/WEB-INF/jsp/error.jsp",
-            "/download",
-            "/generate", "/WEB-INF/jsp/list-words.jsp",
             "/webjars/bootstrap/*/css/*",
             "/webjars/bootstrap/*/js/*",
             "/webjars/jquery/*/*",
