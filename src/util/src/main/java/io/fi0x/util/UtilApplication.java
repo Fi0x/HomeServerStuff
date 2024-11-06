@@ -1,4 +1,4 @@
-package io.fi0x.recipes;
+package io.fi0x.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
@@ -9,12 +9,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Slf4j
 @EnableScheduling
 @SpringBootApplication
-public class MainApplication extends SpringBootServletInitializer
+public class UtilApplication extends SpringBootServletInitializer
 {
     public static void main(String[] args)
     {
         log.info("Initial loading complete, starting spring");
 
-        SpringApplication.run(MainApplication.class, args);
+		SpringApplication.run(UtilApplication.class, args);
     }
 }

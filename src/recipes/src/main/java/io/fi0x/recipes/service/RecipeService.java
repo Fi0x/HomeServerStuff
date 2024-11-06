@@ -1,11 +1,10 @@
 package io.fi0x.recipes.service;
 
-
-import io.fi0x.homeserver.general.components.Authenticator;
-import io.fi0x.homeserver.recipes.db.RecipeRepo;
-import io.fi0x.homeserver.recipes.db.entities.RecipeEntity;
-import io.fi0x.homeserver.recipes.logic.converter.ToRecipeDtoConverter;
-import io.fi0x.homeserver.recipes.logic.dto.RecipeDto;
+import io.fi0x.recipes.db.RecipeRepo;
+import io.fi0x.recipes.db.entities.RecipeEntity;
+import io.fi0x.recipes.logic.converter.ToRecipeDtoConverter;
+import io.fi0x.recipes.logic.dto.RecipeDto;
+import io.fi0x.util.components.Authenticator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatusCode;

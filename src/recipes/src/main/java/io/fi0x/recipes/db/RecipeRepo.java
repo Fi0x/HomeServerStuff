@@ -1,6 +1,6 @@
 package io.fi0x.recipes.db;
 
-import io.fi0x.homeserver.recipes.db.entities.RecipeEntity;
+import io.fi0x.recipes.db.entities.RecipeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

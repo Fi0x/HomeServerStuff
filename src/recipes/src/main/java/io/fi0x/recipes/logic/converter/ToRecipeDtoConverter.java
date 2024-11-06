@@ -1,8 +1,8 @@
 package io.fi0x.recipes.logic.converter;
 
 
-import io.fi0x.homeserver.recipes.db.entities.RecipeEntity;
-import io.fi0x.homeserver.recipes.logic.dto.RecipeDto;
+import io.fi0x.recipes.db.entities.RecipeEntity;
+import io.fi0x.recipes.logic.dto.RecipeDto;
 
 import java.io.InvalidObjectException;
 import java.util.ArrayList;

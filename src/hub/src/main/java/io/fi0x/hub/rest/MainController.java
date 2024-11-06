@@ -1,7 +1,8 @@
 package io.fi0x.hub.rest;
 
-import io.fi0x.homeserver.general.components.Authenticator;
-import io.fi0x.homeserver.general.service.ConnectionService;
+
+import io.fi0x.hub.service.ConnectionService;
+import io.fi0x.util.components.Authenticator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

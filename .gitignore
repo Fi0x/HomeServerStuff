@@ -2,3 +2,5 @@
 /target/
 /HomeServerStuff.iml
 /src/util/target/
+/src/recipes/target/
+/src/hub/target/

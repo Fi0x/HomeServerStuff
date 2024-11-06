@@ -1,8 +1,7 @@
 package io.fi0x.recipes.rest;
 
-
-import io.fi0x.homeserver.recipes.logic.dto.RecipeDto;
-import io.fi0x.homeserver.recipes.service.RecipeService;
+import io.fi0x.recipes.logic.dto.RecipeDto;
+import io.fi0x.recipes.service.RecipeService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatusCode;
