@@ -19,9 +19,10 @@ public class MainController
 {
     @Value("${homeserver.languagegenerator.ip}")
     private String languageGeneratorIp;
-    private final ConnectionService connectionService;
     @Value("${homeserver.languagegenerator.port}")
     private Integer languageGeneratorPort;
+
+    private final ConnectionService connectionService;
 
     private final Authenticator authenticator;
 
