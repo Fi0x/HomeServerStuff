@@ -27,100 +27,97 @@ import javax.sql.DataSource;
 @EnableWebSecurity
 public class HomeServerUtilConfig
 {
-    //TODO: Select correct urls that are actually required
-    private static final String[] PUBLIC_URLS = new String[]{"/error", "/WEB-INF/jsp/error.jsp",
-            "/webjars/bootstrap" + "/*/css/*", "/webjars/bootstrap/*/js/*", "/webjars/jquery/*/*", "/css/design.css",
-            "/images/*"};
-    private static final String[] ANONYMOUS_URLS = new String[]{"/register", "/WEB-INF/jsp/signup.jsp", "/custom" +
-            "-login", "/WEB-INF/jsp/login.jsp"};
-    @Value("${spring.datasource.url}")
-    private String database;
-    @Value("${spring.datasource.username}")
-    private String dbUsername;
-    @Value("${spring.datasource.password}")
-    private String dbPassword;
-    @Value("${spring.datasource.driver-class-name}")
-    private String dbDriver;
-    @Value("${homeserver.username}")
-    private String webUser;
-    @Value("${homeserver.password}")
-    private String webPassword;
+	//TODO: Select correct urls that are actually required
+	private static final String[] PUBLIC_URLS = new String[]{"/error", "/WEB-INF/jsp/error.jsp", "/webjars/bootstrap" + "/*/css/*", "/webjars/bootstrap/*/js/*", "/webjars/jquery/*/*", "/css/design.css", "/images/*"};
+	private static final String[] ANONYMOUS_URLS = new String[]{"/register", "/WEB-INF/jsp/signup.jsp", "/custom" + "-login", "/WEB-INF/jsp/login.jsp"};
+	@Value("${spring.datasource.url}")
+	private String database;
+	@Value("${spring.datasource.username}")
+	private String dbUsername;
+	@Value("${spring.datasource.password}")
+	private String dbPassword;
+	@Value("${spring.datasource.driver-class-name}")
+	private String dbDriver;
+	@Value("${homeserver.username}")
+	private String webUser;
+	@Value("${homeserver.password}")
+	private String webPassword;
 
-    //TODO: Ensure this is working correctly and not blocking other modules
-    @Bean
-    @Order(SecurityProperties.BASIC_AUTH_ORDER)
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception
-    {
-        log.debug("securityFilterChain() bean called");
+	//TODO: Ensure this is working correctly and not blocking other modules
+	@Bean
+	@Order(SecurityProperties.BASIC_AUTH_ORDER)
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception
+	{
+		log.debug("securityFilterChain() bean called");
 
-        http.authorizeHttpRequests(auth -> {
-            auth.requestMatchers(PUBLIC_URLS).permitAll();
-            auth.requestMatchers(ANONYMOUS_URLS).anonymous();
-            auth.anyRequest().authenticated();
-        });
+		http.authorizeHttpRequests(auth -> {
+			auth.requestMatchers(PUBLIC_URLS).permitAll();
+			auth.requestMatchers(ANONYMOUS_URLS).anonymous();
+			auth.anyRequest().authenticated();
+		});
 
-        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS));
+		http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS));
 
-        http.formLogin(form -> {
-            form.loginPage("/custom-login");
-            form.loginProcessingUrl("/login");
-            form.defaultSuccessUrl("/", true);
-            form.permitAll();
-        });
+		http.formLogin(form -> {
+			form.loginPage("/custom-login");
+			form.loginProcessingUrl("/login");
+			form.defaultSuccessUrl("/", true);
+			form.permitAll();
+		});
 
-        http.csrf(AbstractHttpConfigurer::disable);
-        http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
+		http.csrf(AbstractHttpConfigurer::disable);
+		http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
 
-        return http.build();
-    }
+		return http.build();
+	}
 
-    @Bean
-    public Authenticator authenticator()
-    {
-        return new Authenticator();
-    }
+	@Bean
+	public Authenticator authenticator()
+	{
+		return new Authenticator();
+	}
 
-    @Bean
-    public DataSource dataSource()
-    {
-        log.debug("dataSource() bean called");
+	@Bean
+	public DataSource dataSource()
+	{
+		log.debug("dataSource() bean called");
 
-        DataSourceBuilder<?> builder = DataSourceBuilder.create();
+		DataSourceBuilder<?> builder = DataSourceBuilder.create();
 
-        builder.driverClassName(dbDriver);
-        builder.url(database);
-        builder.username(dbUsername);
-        builder.password(dbPassword);
+		builder.driverClassName(dbDriver);
+		builder.url(database);
+		builder.username(dbUsername);
+		builder.password(dbPassword);
 
-        return builder.build();
-    }
+		return builder.build();
+	}
 
-    @Bean
-    public UserDetailsManager userDetailsManager(DataSource dataSource)
-    {
-        log.debug("userDetailsManager() bean called");
+	@Bean
+	public UserDetailsManager userDetailsManager(DataSource dataSource)
+	{
+		log.debug("userDetailsManager() bean called");
 
-        JdbcUserDetailsManager manager = new JdbcUserDetailsManager(dataSource);
+		JdbcUserDetailsManager manager = new JdbcUserDetailsManager(dataSource);
 
-        if (!manager.userExists(webUser))
-        {
-            createUser(manager, webUser, webPassword, "USER", "ADMIN");
-            log.info("User '{}' created as default admin", webUser);
-        }
+		if (!manager.userExists(webUser))
+		{
+			createUser(manager, webUser, webPassword, "USER", "ADMIN");
+			log.info("User '{}' created as default admin", webUser);
+		}
 
-        return manager;
-    }
+		return manager;
+	}
 
-    @Bean
-    public PasswordEncoder passwordEncoder()
-    {
-        return new BCryptPasswordEncoder();
-    }
+	@Bean
+	public PasswordEncoder passwordEncoder()
+	{
+		return new BCryptPasswordEncoder();
+	}
 
-    private void createUser(JdbcUserDetailsManager userManager, String username, String password, String... roles)
-    {
-        userManager.createUser(
-                User.builder().passwordEncoder(input -> passwordEncoder().encode(input)).username(username)
-                    .password(password).roles(roles).build());
-    }
+	private void createUser(JdbcUserDetailsManager userManager, String username, String password, String... roles)
+	{
+		userManager.createUser(
+				User.builder().passwordEncoder(input -> passwordEncoder().encode(input)).username(username)
+					.password(password).roles(roles).build());
+	}
 }

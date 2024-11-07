@@ -12,5 +12,6 @@ import lombok.NoArgsConstructor;
 public class ServiceDataDto
 {
     private String name;
+    private String ip;
     private Integer port;
 }
