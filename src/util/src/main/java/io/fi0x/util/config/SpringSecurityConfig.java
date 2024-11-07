@@ -26,8 +26,12 @@ import javax.sql.DataSource;
 @EnableWebSecurity
 public class SpringSecurityConfig
 {
-    private static final String[] PUBLIC_URLS = new String[]{"/", "/*", "/WEB-INF/jsp/main-page.jsp", "/recipe/*", "/WEB-INF/jsp/show-recipe.jsp", "/recipe/*/*", "WEB-INF/jsp/edit-recipe", "/recipes", "/WEB-INF/jsp/recipes.jsp", "/error", "/WEB-INF/jsp/error.jsp", "/webjars/bootstrap/*/css/*", "/webjars/bootstrap/*/js/*", "/webjars/jquery/*/*", "/css/design.css", "/images/*"};
-    private static final String[] ANONYMOUS_URLS = new String[]{"/register", "/WEB-INF/jsp/signup.jsp", "/custom-login", "/WEB-INF/jsp/login.jsp"};
+    private static final String[] PUBLIC_URLS = new String[]{"/", "/*", "/WEB-INF/jsp/main-page.jsp", "/recipe/*",
+            "/WEB-INF/jsp/show-recipe.jsp", "/recipe/*/*", "WEB-INF/jsp/edit-recipe", "/recipes", "/WEB-INF/jsp" +
+            "/recipes.jsp", "/error", "/WEB-INF/jsp/error.jsp", "/webjars/bootstrap/*/css/*", "/webjars/bootstrap" +
+            "/*/js/*", "/webjars/jquery/*/*", "/css/design.css", "/images/*"};
+    private static final String[] ANONYMOUS_URLS = new String[]{"/register", "/WEB-INF/jsp/signup.jsp", "/custom" +
+            "-login", "/WEB-INF/jsp/login.jsp"};
     @Value("${spring.datasource.url}")
     private String database;
     @Value("${spring.datasource.username}")
