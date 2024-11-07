@@ -1,5 +1,6 @@
 package io.fi0x.util.config;
 
+import io.fi0x.util.components.Authenticator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
@@ -26,10 +27,10 @@ import javax.sql.DataSource;
 @EnableWebSecurity
 public class SpringSecurityConfig
 {
-    private static final String[] PUBLIC_URLS = new String[]{"/", "/*", "/WEB-INF/jsp/main-page.jsp", "/recipe/*",
-            "/WEB-INF/jsp/show-recipe.jsp", "/recipe/*/*", "WEB-INF/jsp/edit-recipe", "/recipes", "/WEB-INF/jsp" +
-            "/recipes.jsp", "/error", "/WEB-INF/jsp/error.jsp", "/webjars/bootstrap/*/css/*", "/webjars/bootstrap" +
-            "/*/js/*", "/webjars/jquery/*/*", "/css/design.css", "/images/*"};
+    //TODO: Select correct urls that are actually required
+    private static final String[] PUBLIC_URLS = new String[]{"/error", "/WEB-INF/jsp/error.jsp",
+            "/webjars/bootstrap" + "/*/css/*", "/webjars/bootstrap/*/js/*", "/webjars/jquery/*/*", "/css/design.css",
+            "/images/*"};
     private static final String[] ANONYMOUS_URLS = new String[]{"/register", "/WEB-INF/jsp/signup.jsp", "/custom" +
             "-login", "/WEB-INF/jsp/login.jsp"};
     @Value("${spring.datasource.url}")
@@ -45,6 +46,7 @@ public class SpringSecurityConfig
     @Value("${homeserver.password}")
     private String webPassword;
 
+    //TODO: Ensure this is working correctly and not blocking other modules
     @Bean
     @Order(SecurityProperties.BASIC_AUTH_ORDER)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception
@@ -73,9 +75,15 @@ public class SpringSecurityConfig
     }
 
     @Bean
+    public Authenticator authenticator()
+    {
+        return new Authenticator();
+    }
+
+    @Bean
     public DataSource dataSource()
     {
-        log.debug("dataSources() bean called");
+        log.debug("dataSource() bean called");
 
         DataSourceBuilder<?> builder = DataSourceBuilder.create();
 
@@ -95,7 +103,10 @@ public class SpringSecurityConfig
         JdbcUserDetailsManager manager = new JdbcUserDetailsManager(dataSource);
 
         if (!manager.userExists(webUser))
+        {
             createUser(manager, webUser, webPassword, "USER", "ADMIN");
+            log.info("User '{}' created as default admin", webUser);
+        }
 
         return manager;
     }
