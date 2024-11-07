@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class Authenticator
 {
-	//TODO: Maybe this needs to be created as a bean in a config to work in other modules
 	public String getAuthenticatedUsername()
 	{
 		log.trace("getAuthenticatedUsername() called");

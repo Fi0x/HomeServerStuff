@@ -28,7 +28,8 @@ public class ErrorController implements org.springframework.boot.web.servlet.err
 	}
 
 	//TODO: Find out, if these controllers and filters work in other modules as well. Otherwise might need to build
-	// this as a war again
+	// this as a war again or import them manually (Might also work to define them as beans in the imported
+	// configuration-class)
 	@PostMapping("/error")
 	public String showPostError(ModelMap model, HttpServletRequest request)
 	{

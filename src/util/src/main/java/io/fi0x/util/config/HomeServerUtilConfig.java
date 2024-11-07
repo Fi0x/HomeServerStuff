@@ -25,7 +25,7 @@ import javax.sql.DataSource;
 @Slf4j
 @Configuration
 @EnableWebSecurity
-public class SpringSecurityConfig
+public class HomeServerUtilConfig
 {
     //TODO: Select correct urls that are actually required
     private static final String[] PUBLIC_URLS = new String[]{"/error", "/WEB-INF/jsp/error.jsp",

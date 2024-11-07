@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 @SessionAttributes({"username"})
 public class ConnectionController
 {
-    @PostMapping("/api/service/register")
-    public void registerService(@RequestBody ServiceDataDto requestDto)
-    {
-        log.info("registerService() called");
-        //TODO: Register new service in a list to show on main-page
-    }
+	@PostMapping("/api/service/register")
+	public void registerService(@RequestBody ServiceDataDto requestDto)
+	{
+		log.info("registerService() called");
+		//TODO: Register new service in a list to show on main-page
+	}
 }
