@@ -2,8 +2,8 @@ package io.fi0x.util.rest;
 
 
 import io.fi0x.util.components.Authenticator;
-import io.fi0x.util.logic.dto.LoginDto;
-import io.fi0x.util.logic.dto.UserDto;
+import io.fi0x.util.dto.LoginDto;
+import io.fi0x.util.dto.UserDto;
 import io.fi0x.util.service.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;

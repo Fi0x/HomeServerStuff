@@ -1,47 +1,52 @@
 package io.fi0x.hub.service;
 
+import io.fi0x.util.dto.ServiceDataDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.net.InetSocketAddress;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class ConnectionService
 {
-    private final Map<InetSocketAddress, Boolean> reachableUrls = new HashMap<>();
-    @Value("${homeserver.network.delay}")
-    private Integer networkDelay;
+	private static final List<ServiceDataDto> SERVICES = new ArrayList<>();
 
-    public boolean isReachable(String url, Integer port)
-    {
-        InetSocketAddress address = new InetSocketAddress(url, port);
-        if (!reachableUrls.containsKey(address))
-            reachableUrls.put(address, false);
+	public void registerService(String address, ServiceDataDto service)
+	{
+		log.trace("registerService() called");
 
-        return reachableUrls.get(address);
-    }
+		if (ObjectUtils.isEmpty(service.getIp()))
+			service.setIp(address);
+		if (ObjectUtils.isEmpty(service.getIp()))
+		{
+			log.warn("Cannot register service with an unknown address. Dto was: {}", service);
+			throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Unknown service-address");
+		}
+		if (ObjectUtils.isEmpty(service.getName()))
+		{
+			log.warn("Cannot register service without a service-name. Address: {}", service.getIp());
+			throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Unknown service-name");
+		}
+		if (service.getPort() == null)
+		{
+			log.warn("Cannot register service without a port. Address: {}", service.getIp());
+			throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Unknown service-port");
+		}
 
-    //    @Scheduled(fixedRate = 10000)
-    //    public void checkUrlReachability()
-    //    {
-    //        log.info("Scheduled task running");
-    //        for (InetSocketAddress address : reachableUrls.keySet())
-    //        {
-    //            try (Socket socket = new Socket())
-    //            {
-    //                socket.connect(address, networkDelay);
-    //                reachableUrls.put(address, true);
-    //            } catch (IOException e)
-    //            {
-    //                reachableUrls.put(address, false);
-    //            }
-    //        }
-    //        log.info("Scheduled task finished");
-    //    }
+		SERVICES.add(service);
+	}
+
+	public List<ServiceDataDto> getConnectedServices()
+	{
+		log.trace("getConnectedServices() called");
+
+		return SERVICES;
+	}
 }

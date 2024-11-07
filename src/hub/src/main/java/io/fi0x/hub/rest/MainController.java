@@ -5,7 +5,6 @@ import io.fi0x.hub.service.ConnectionService;
 import io.fi0x.util.components.Authenticator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,30 +16,26 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 @SessionAttributes({"username"})
 public class MainController
 {
-    @Value("${homeserver.languagegenerator.ip}")
-    private String languageGeneratorIp;
-    @Value("${homeserver.languagegenerator.port}")
-    private Integer languageGeneratorPort;
+	private final ConnectionService connectionService;
 
-    private final ConnectionService connectionService;
+	private final Authenticator authenticator;
 
-    private final Authenticator authenticator;
+	@GetMapping("/")
+	public String showHomePage(ModelMap model)
+	{
+		log.info("showHomePage() called");
 
-    @GetMapping("/")
-    public String showHomePage(ModelMap model)
-    {
-        model.put("username", authenticator.getAuthenticatedUsername());
+		model.put("username", authenticator.getAuthenticatedUsername());
+		model.put("services", connectionService.getConnectedServices());
 
-        boolean languageGeneratorReachable = connectionService.isReachable(languageGeneratorIp, languageGeneratorPort);
-        if (languageGeneratorReachable)
-            model.put("languageGeneratorAddress", languageGeneratorIp + ":" + languageGeneratorPort);
+		return "main-page";
+	}
 
-        return "main-page";
-    }
+	@GetMapping("/*")
+	public String redirectHomePage()
+	{
+		log.info("redirectHomePage() called");
 
-    @GetMapping("/*")
-    public String redirectHomePage()
-    {
-        return "redirect:/";
-    }
+		return "redirect:/";
+	}
 }

@@ -1,6 +1,6 @@
 package io.fi0x.util.rest.validation;
 
-import io.fi0x.util.logic.dto.UserDto;
+import io.fi0x.util.dto.UserDto;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

@@ -1,4 +1,4 @@
-package io.fi0x.util.logic.dto;
+package io.fi0x.util.dto;
 
 import io.fi0x.util.rest.validation.PasswordMatch;
 import jakarta.validation.constraints.NotBlank;

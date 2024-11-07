@@ -1,6 +1,7 @@
 package io.fi0x.util.config;
 
 import io.fi0x.util.components.Authenticator;
+import io.fi0x.util.rest.ErrorController;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
@@ -28,8 +29,11 @@ import javax.sql.DataSource;
 public class HomeServerUtilConfig
 {
 	//TODO: Select correct urls that are actually required
-	private static final String[] PUBLIC_URLS = new String[]{"/error", "/WEB-INF/jsp/error.jsp", "/webjars/bootstrap" + "/*/css/*", "/webjars/bootstrap/*/js/*", "/webjars/jquery/*/*", "/css/design.css", "/images/*"};
-	private static final String[] ANONYMOUS_URLS = new String[]{"/register", "/WEB-INF/jsp/signup.jsp", "/custom" + "-login", "/WEB-INF/jsp/login.jsp"};
+	private static final String[] PUBLIC_URLS = new String[]{"/error", "/WEB-INF/jsp/error.jsp",
+			"/webjars/bootstrap" + "/*/css/*", "/webjars/bootstrap/*/js/*", "/webjars/jquery/*/*", "/css/design.css",
+			"/images/*"};
+	private static final String[] ANONYMOUS_URLS = new String[]{"/register", "/WEB-INF/jsp/signup.jsp", "/custom" +
+			"-login", "/WEB-INF/jsp/login.jsp"};
 	@Value("${spring.datasource.url}")
 	private String database;
 	@Value("${spring.datasource.username}")
@@ -69,6 +73,12 @@ public class HomeServerUtilConfig
 		http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
 
 		return http.build();
+	}
+
+	@Bean
+	public ErrorController errorController()
+	{
+		return new ErrorController();
 	}
 
 	@Bean

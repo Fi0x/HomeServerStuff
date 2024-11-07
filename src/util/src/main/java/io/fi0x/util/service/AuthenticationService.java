@@ -1,6 +1,6 @@
 package io.fi0x.util.service;
 
-import io.fi0x.util.logic.dto.UserDto;
+import io.fi0x.util.dto.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
@@ -20,6 +20,7 @@ public class AuthenticationService
     public void registerUser(UserDto userDto) throws DuplicateKeyException
     {
         log.trace("registerUser() called with userDto={}", userDto);
+
         if(userDetailsManager.userExists(userDto.getUsername()))
             throw new DuplicateKeyException("A user with that username already exists");
 
