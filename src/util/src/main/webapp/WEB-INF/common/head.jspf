@@ -1,6 +1,0 @@
-<head>
-    <link href="${pageContext.request.contextPath}/webjars/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../../css/design.css" rel="stylesheet">
-    <title>Home Server</title>
-    <link rel="icon" href="../../images/logo.ico">
-</head>
