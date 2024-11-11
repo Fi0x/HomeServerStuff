@@ -48,7 +48,10 @@ public class ConnectionService
 																 .toList();
 
 		if (alreadySaved.isEmpty())
+		{
 			SERVICES.add(new Tuple<>(System.currentTimeMillis(), service));
+			return;
+		}
 
 		if (alreadySaved.size() > 1)
 		{
