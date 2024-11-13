@@ -9,6 +9,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * This component is used to notify the hub about the existence of a new service.
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -25,6 +28,13 @@ public class HubNotifier
 
 	private final RestTemplate restTemplate = new RestTemplate();
 
+	/**
+	 * This scheduled method runs every minute to let the hub know, that this service exists.
+	 * The hub is located through the {@code homeserver.hub.ip} and {@code homeserver.hub.port} properties.
+	 * The service, that runs this scheduled method, sends its name (set through the {@code homeserver.service.name}
+	 * property) to the hub. It also lets the hub know, on which port of the current machine, this service is
+	 * reachable.
+	 */
 	@Scheduled(fixedRate = 60000)
 	public void registerInHub()
 	{

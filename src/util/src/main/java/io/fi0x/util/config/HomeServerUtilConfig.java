@@ -23,6 +23,12 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import javax.sql.DataSource;
 
+/**
+ * This configuration creates a {@link SecurityFilterChain} to allow access to some endpoints. It also creates beans
+ * for the {@link ErrorController} and {@link Authenticator}. Additionally, it sets up everything for user management
+ * by spring.
+ */
+
 @Slf4j
 @Configuration
 @EnableWebSecurity
@@ -47,10 +53,17 @@ public class HomeServerUtilConfig
 	@Value("${homeserver.password}")
 	private String webPassword;
 
+	/**
+	 * This method creates a bean for the security-filter-chain to allow certain endpoints to be accessible.
+	 *
+	 * @param http {@link HttpSecurity}
+	 * @return The {@link SecurityFilterChain} created from the http parameter
+	 * @throws Exception If anything goes wrong in the creation process of the security settings.
+	 */
 	//TODO: Ensure this is working correctly and not blocking other modules
 	@Bean
 	@Order(SecurityProperties.BASIC_AUTH_ORDER)
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception
+	public SecurityFilterChain utilitySecurityFilterChain(HttpSecurity http) throws Exception
 	{
 		log.debug("securityFilterChain() bean called");
 
@@ -75,18 +88,35 @@ public class HomeServerUtilConfig
 		return http.build();
 	}
 
+	/**
+	 * This method allows the creation of a bean for the {@link ErrorController}, so that it can be accessed from
+	 * other modules.
+	 *
+	 * @return The {@link ErrorController}
+	 */
 	@Bean
 	public ErrorController errorController()
 	{
 		return new ErrorController();
 	}
 
+	/**
+	 * This method allows the creation of a bean for the {@link Authenticator}, so that it can be accessed from
+	 * other modules.
+	 *
+	 * @return The {@link Authenticator}
+	 */
 	@Bean
 	public Authenticator authenticator()
 	{
 		return new Authenticator();
 	}
 
+	/**
+	 * This method creates a dataSource-bean, to enable database-access.
+	 *
+	 * @return The {@link DataSource}
+	 */
 	@Bean
 	public DataSource dataSource()
 	{
@@ -102,6 +132,12 @@ public class HomeServerUtilConfig
 		return builder.build();
 	}
 
+	/**
+	 * This method creates a userDetailsManager-bean, so that users can be handled by spring.
+	 *
+	 * @param dataSource The {@link DataSource}, where users are stored.
+	 * @return The {@link UserDetailsManager}
+	 */
 	@Bean
 	public UserDetailsManager userDetailsManager(DataSource dataSource)
 	{
@@ -118,6 +154,11 @@ public class HomeServerUtilConfig
 		return manager;
 	}
 
+	/**
+	 * This method creates a passwordEncoder-bean to encrypt user-passwords.
+	 *
+	 * @return The {@link PasswordEncoder}
+	 */
 	@Bean
 	public PasswordEncoder passwordEncoder()
 	{

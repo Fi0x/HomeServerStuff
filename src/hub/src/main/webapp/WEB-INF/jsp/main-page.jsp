@@ -9,7 +9,7 @@
     <h1>Home-Server</h1>
     <p>Here you can find a variety of useful tools</p>
     <c:forEach items="${services}" var="service">
-        <a href="http://${service.ip}:${service.port}" class="btn">${service.name}</a>
+        <a href="${service.protocol}://${service.ip}:${service.port}" class="btn">${service.name}</a>
     </c:forEach>
 </div>
 <%@include file="../common/scripts.jspf" %>

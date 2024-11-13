@@ -5,13 +5,33 @@ import jakarta.validation.Payload;
 
 import java.lang.annotation.*;
 
+/**
+ * This annotation requires a {@link io.fi0x.util.dto.UserDto} to have matching passwords.
+ */
 @Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = PasswordMatchValidator.class)
 @Documented
 public @interface PasswordMatch
 {
-    String message() default "Passwords don't match";
-    Class<?>[] groups() default {};
-    Class<? extends Payload>[] payload() default {};
+	/**
+	 * This method provides the error message, that is shown, when the validation fails.
+	 *
+	 * @return The message.
+	 */
+	String message() default "Passwords don't match";
+
+	/**
+	 * This is a required method for this validation class
+	 *
+	 * @return An array of classes.
+	 */
+	Class<?>[] groups() default {};
+
+	/**
+	 * This method is required for this class
+	 *
+	 * @return Returns a payload array
+	 */
+	Class<? extends Payload>[] payload() default {};
 }

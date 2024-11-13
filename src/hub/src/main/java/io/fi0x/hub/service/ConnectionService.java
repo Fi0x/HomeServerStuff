@@ -47,6 +47,8 @@ public class ConnectionService
 																										 .equals(service.getName()))
 																 .toList();
 
+		if (ObjectUtils.isEmpty(service.getProtocol()))
+			service.setProtocol("http");
 		if (alreadySaved.isEmpty())
 		{
 			SERVICES.add(new Tuple<>(System.currentTimeMillis(), service));

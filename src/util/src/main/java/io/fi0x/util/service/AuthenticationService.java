@@ -9,25 +9,32 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 
+/**
+ * This service allows a module to register new users
+ */
 @Slf4j
 @Service
 @AllArgsConstructor
 public class AuthenticationService
 {
-    private final UserDetailsManager userDetailsManager;
-    private final PasswordEncoder passwordEncoder;
+	private final UserDetailsManager userDetailsManager;
+	private final PasswordEncoder passwordEncoder;
 
-    public void registerUser(UserDto userDto) throws DuplicateKeyException
-    {
-        log.trace("registerUser() called with userDto={}", userDto);
+	/**
+	 * This method registers a new user in the database. The user can be accessed by spring-security.
+	 *
+	 * @param userDto The dto of the new user.
+	 * @throws DuplicateKeyException If the user already exists.
+	 */
+	public void registerUser(UserDto userDto) throws DuplicateKeyException
+	{
+		log.trace("registerUser() called with userDto={}", userDto);
 
-        if(userDetailsManager.userExists(userDto.getUsername()))
-            throw new DuplicateKeyException("A user with that username already exists");
+		if (userDetailsManager.userExists(userDto.getUsername()))
+			throw new DuplicateKeyException("A user with that username already exists");
 
-        userDetailsManager.createUser(User.builder()
-                .passwordEncoder(passwordEncoder::encode)
-                .username(userDto.getUsername())
-                .password(userDto.getPassword())
-                .roles("USER").build());
-    }
+		userDetailsManager.createUser(
+				User.builder().passwordEncoder(passwordEncoder::encode).username(userDto.getUsername())
+					.password(userDto.getPassword()).roles("USER").build());
+	}
 }
