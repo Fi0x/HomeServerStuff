@@ -4,6 +4,7 @@
         <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources"/>
         <module name="HomeServerHub"/>
         <option name="SPRING_BOOT_MAIN_CLASS" value="io.fi0x.hub.HubApplication"/>
+        <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/src/hub"/>
         <method v="2">
             <option name="Make" enabled="true"/>
         </method>

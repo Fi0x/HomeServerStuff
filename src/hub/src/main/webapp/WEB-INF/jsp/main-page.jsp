@@ -8,9 +8,8 @@
 <div class="container">
     <h1>Home-Server</h1>
     <p>Here you can find a variety of useful tools</p>
-    <a href="recipes" class="btn">Show recipes</a>
     <c:forEach items="${services}" var="service">
-        <a href="${service.ip}:${service.port}" class="btn">${service.name}</a>
+        <a href="http://${service.ip}:${service.port}" class="btn">${service.name}</a>
     </c:forEach>
 </div>
 <%@include file="../common/scripts.jspf" %>
