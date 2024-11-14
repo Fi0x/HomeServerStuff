@@ -145,6 +145,12 @@
             </plugin>
         </plugins>
         <finalName>${project.artifactId}-${project.version}</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <targetPath>META-INF/resources/util</targetPath>
+            </resource>
+        </resources>
     </build>
 
     <dependencies>
