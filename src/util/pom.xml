@@ -148,7 +148,9 @@
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
-                <targetPath>META-INF/resources/util</targetPath>
+            </resource>
+            <resource>
+                <directory>src/main/webapp</directory>
             </resource>
         </resources>
     </build>
