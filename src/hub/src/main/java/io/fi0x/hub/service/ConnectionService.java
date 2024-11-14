@@ -6,6 +6,7 @@ import io.fi0x.util.dto.ServiceDataDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.server.ResponseStatusException;
@@ -87,5 +88,19 @@ public class ConnectionService
 		return SERVICES.stream().map(Tuple::getObject2).toList();
 	}
 
-	//TODO: Add a scheduled task that clears the services-list from outdated services that didn't update recently
+	@Scheduled(fixedRate = 60000)
+	public void cleanup()
+	{
+		log.debug("Scheduled cleanup running");
+
+		TupleList<Long, ServiceDataDto> removalList = new TupleList<>();
+		SERVICES.forEach(tuple -> {
+			if (System.currentTimeMillis() - tuple.getObject1() > 120000)
+				removalList.add(tuple);
+		});
+
+		SERVICES.removeAll(removalList);
+
+		log.trace("Updated services-list: {}", SERVICES);
+	}
 }
