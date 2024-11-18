@@ -1,5 +1,6 @@
 package io.fi0x.util.components;
 
+import io.github.fi0x.util.components.HubNotifier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
