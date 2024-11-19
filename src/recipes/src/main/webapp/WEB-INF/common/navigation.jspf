@@ -1,13 +1,9 @@
 <nav class="navbar navbar-expand-md navbar-light mb-4 p-1">
-    <a class="navbar-brand m-2" href="${pageContext.request.contextPath}/">
+    <a class="navbar-brand m-2" href="http://localhost:2345/">
         <img src="../../images/logo.png" alt="Home Server" class="home-image">
     </a>
     <div class="collapse navbar-collapse">
-        <ul class="navbar-nav">
-            <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/recipe">Add a recipe</a>
-            </li>
-            <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/upload">Upload
-                recipes-file</a></li>
+        <ul class="navbar-nav" id="menuBarList">
             <li class="nav-item">
                 <a href="https://github.com/Fi0x/HomeServerStuff">
                     <img src="../../images/github.png" alt="Project on Github" class="github-image">
@@ -17,6 +13,7 @@
     </div>
     <ul class="navbar-nav">
         <c:choose>
+            <%--@elvariable id="username" type="java.lang.String"--%>
             <c:when test="${username == 'anonymousUser'}">
                 <li class="nav-item"><a class="nav-link"
                                         href="${pageContext.request.contextPath}/custom-login">Login</a></li>
@@ -29,3 +26,28 @@
         </c:choose>
     </ul>
 </nav>
+<script>
+    onload = function () {
+        $.ajax({
+            url: "http://localhost:2345/api/service/list",
+            type: 'GET',
+            dataType: 'json',
+            success: function (res) {
+                const list = document.getElementById("menuBarList");
+                console.log(res);
+                res.forEach(s => {
+                    console.log("looping with " + s);
+                    const {protocol, ip, port, name} = s;
+                    const li = document.createElement('li');
+                    li.classList.add('nav-item');
+                    const a = document.createElement('a');
+                    a.classList.add('nav-link');
+                    a.setAttribute('href', protocol + '://' + ip + ':' + port);
+                    a.innerText = name;
+                    li.append(a);
+                    list.prepend(li);
+                })
+            }
+        })
+    }
+</script>
