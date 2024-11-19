@@ -1,5 +1,6 @@
 package io.github.fi0x.hub;
 
+import io.github.fi0x.util.config.ApiConfig;
 import io.github.fi0x.util.config.HomeServerUtilConfig;
 import io.github.fi0x.util.config.LoginConfig;
 import io.github.fi0x.util.config.UtilLoggingConfig;
@@ -13,7 +14,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Slf4j
 @EnableScheduling
 @SpringBootApplication
-@Import({HomeServerUtilConfig.class, UtilLoggingConfig.class, LoginConfig.class})
+@Import({HomeServerUtilConfig.class, UtilLoggingConfig.class, LoginConfig.class, ApiConfig.class})
 public class HubApplication extends SpringBootServletInitializer
 {
 	public static void main(String[] args)
