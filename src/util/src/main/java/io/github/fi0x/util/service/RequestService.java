@@ -20,10 +20,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RequestService
 {
-	@Value("${homeserver.hub.ip}")
-	private String hubIp = "localhost";
-	@Value("${homeserver.hub.port}")
-	private String hubPort = "2345";
+	@Value("${homeserver.hub.ip:localhost}")
+	private String hubIp;
+	@Value("${homeserver.hub.port:2345}")
+	private String hubPort;
 
 	private final RestTemplate restTemplate = new RestTemplate();
 

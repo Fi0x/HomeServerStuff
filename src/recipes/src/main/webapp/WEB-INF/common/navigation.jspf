@@ -5,7 +5,7 @@
     <div class="collapse navbar-collapse">
         <ul class="navbar-nav" id="menuBarList">
             <li class="nav-item">
-                <a href="https://github.com/Fi0x/HomeServerStuff">
+                <a href="${pageContext.request.contextPath}/api/v1/github">
                     <img src="${pageContext.request.contextPath}/images/github.png" alt="Project on Github"
                          class="github-image">
                 </a>
@@ -35,9 +35,7 @@
             dataType: 'json',
             success: function (res) {
                 const list = document.getElementById("menuBarList");
-                console.log(res);
                 res.forEach(s => {
-                    console.log("looping with " + s);
                     const {protocol, ip, port, name} = s;
                     const li = document.createElement('li');
                     li.classList.add('nav-item');

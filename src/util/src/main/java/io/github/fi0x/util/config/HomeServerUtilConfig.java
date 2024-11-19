@@ -48,9 +48,9 @@ public class HomeServerUtilConfig
 	private String dbPassword;
 	@Value("${spring.datasource.driver-class-name}")
 	private String dbDriver;
-	@Value("${homeserver.username}")
+	@Value("${homeserver.username:fi0x}")
 	private String webUser;
-	@Value("${homeserver.password}")
+	@Value("${homeserver.password:123}")
 	private String webPassword;
 
 	/**
