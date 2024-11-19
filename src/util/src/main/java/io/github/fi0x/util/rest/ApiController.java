@@ -5,6 +5,7 @@ import io.github.fi0x.util.service.RequestService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -13,7 +14,8 @@ import java.util.List;
  * This controller provides commonly used REST-endpoints
  */
 @Slf4j
-@RestController("/api/v1")
+@RestController
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class ApiController
 {

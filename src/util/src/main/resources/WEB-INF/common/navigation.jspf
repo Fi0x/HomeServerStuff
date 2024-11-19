@@ -1,12 +1,13 @@
 <nav class="navbar navbar-expand-md navbar-light mb-4 p-1">
     <a class="navbar-brand m-2" href="http://localhost:2345/">
-        <img src="../../images/logo.png" alt="Home Server" class="home-image">
+        <img src="${pageContext.request.contextPath}/images/logo.png" alt="Home Server" class="home-image">
     </a>
     <div class="collapse navbar-collapse">
         <ul class="navbar-nav" id="menuBarList">
             <li class="nav-item">
                 <a href="https://github.com/Fi0x/HomeServerStuff">
-                    <img src="../../images/github.png" alt="Project on Github" class="github-image">
+                    <img src="${pageContext.request.contextPath}/images/github.png" alt="Project on Github"
+                         class="github-image">
                 </a>
             </li>
         </ul>
@@ -15,11 +16,13 @@
         <c:choose>
             <%--@elvariable id="username" type="java.lang.String"--%>
             <c:when test="${username == 'anonymousUser'}">
-                <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/custom-login">Login</a></li>
+                <li class="nav-item"><a class="nav-link"
+                                        href="${pageContext.request.contextPath}/custom-login">Login</a></li>
             </c:when>
             <c:otherwise>
                 <li>Logged in as ${username}</li>
-                <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/logout">Logout</a></li>
+                <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/logout">Logout</a>
+                </li>
             </c:otherwise>
         </c:choose>
     </ul>

@@ -13,12 +13,13 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/service")
 @SessionAttributes({"username"})
 public class ConnectionController
 {
 	private final ConnectionService connectionService;
 
-	@PostMapping("/api/service/register")
+	@PostMapping("/register")
 	public void registerService(HttpServletRequest request, @RequestBody ServiceDataDto requestDto)
 	{
 		log.debug("registerService() called");
@@ -26,7 +27,7 @@ public class ConnectionController
 		connectionService.registerService(request.getRemoteAddr(), requestDto);
 	}
 
-	@GetMapping("/api/service/list")
+	@GetMapping("/list")
 	public List<ServiceDataDto> getRegisteredServices()
 	{
 		log.debug("getRegisteredServices() called");
