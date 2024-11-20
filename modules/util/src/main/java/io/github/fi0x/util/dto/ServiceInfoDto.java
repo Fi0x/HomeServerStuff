@@ -1,0 +1,18 @@
+package io.github.fi0x.util.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+/**
+ * This dto is used to provide detailed information about a service.
+ */
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class ServiceInfoDto
+{
+	private Boolean loginDisabled;
+}

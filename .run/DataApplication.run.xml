@@ -4,7 +4,7 @@
         <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources"/>
         <module name="HomeServerData"/>
         <option name="SPRING_BOOT_MAIN_CLASS" value="io.github.fi0x.data.DataApplication"/>
-        <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/src/data"/>
+        <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/modules/data"/>
         <method v="2">
             <option name="Make" enabled="true"/>
         </method>

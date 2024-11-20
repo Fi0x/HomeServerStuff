@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * This dto is used to send information about the current service to the hub.
+ * This dto is used to send information about a service between services and the hub.
  */
 @Data
 @Builder

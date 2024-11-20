@@ -24,6 +24,8 @@ public class RequestService
 	private String hubIp;
 	@Value("${homeserver.hub.port:2345}")
 	private String hubPort;
+	@Value("${homeserver.github.url:https://github.com/Fi0x/HomeServerStuff}")
+	private String githubUrl;
 
 	private final RestTemplate restTemplate = new RestTemplate();
 
@@ -51,5 +53,29 @@ public class RequestService
 			log.warn("Could not reach hub because of exception: {}", e.getLocalizedMessage());
 		}
 		return Collections.emptyList();
+	}
+
+	/**
+	 * This method provides the url to the github-page of this project.
+	 *
+	 * @return The url as a {@link String}.
+	 */
+	public String getGithubUrl()
+	{
+		log.trace("getGithubUrl() called");
+
+		return githubUrl;
+	}
+
+	/**
+	 * This method provides the url to the hub, where this service is registered.
+	 *
+	 * @return The url as a {@link String}.
+	 */
+	public String getHubUrl()
+	{
+		log.trace("getHubUrl() called");
+
+		return "http://" + hubIp + ":" + hubPort;
 	}
 }

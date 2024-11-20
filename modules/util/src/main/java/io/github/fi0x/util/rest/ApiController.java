@@ -1,10 +1,11 @@
 package io.github.fi0x.util.rest;
 
 import io.github.fi0x.util.dto.ServiceDataDto;
+import io.github.fi0x.util.dto.ServiceInfoDto;
+import io.github.fi0x.util.service.InformationService;
 import io.github.fi0x.util.service.RequestService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,9 +23,7 @@ import java.util.List;
 public class ApiController
 {
 	private final RequestService requestService;
-
-	@Value("${homeserver.github.url:https://github.com/Fi0x/HomeServerStuff}")
-	private String githubUrl;
+	private final InformationService infoService;
 
 	/**
 	 * This endpoint retrieves information about all the services, that are registered in the hub.
@@ -45,10 +44,36 @@ public class ApiController
 	 * @return The github-url of this project
 	 */
 	@GetMapping("/github")
-	public ModelAndView getGithubUrl()
+	public ModelAndView redirectToGithubUrl()
 	{
-		log.debug("getGithubUrl() called");
+		log.debug("redirectToGithubUrl() called");
 
-		return new ModelAndView("redirect:" + githubUrl);
+		return new ModelAndView("redirect:" + requestService.getGithubUrl());
+	}
+
+	/**
+	 * This endpoint provides the url for the hub, this service is connected to
+	 *
+	 * @return The url of the service's hub
+	 */
+	@GetMapping("/hub")
+	public ModelAndView redirectToHubUrl()
+	{
+		log.debug("redirectToHubUrl() called");
+
+		return new ModelAndView("redirect:" + requestService.getHubUrl());
+	}
+
+	/**
+	 * This endpoint provides information about the current service.
+	 *
+	 * @return A {@link ServiceInfoDto} with the information about this service.
+	 */
+	@GetMapping("/service/info")
+	public ServiceInfoDto getServiceInfo()
+	{
+		log.debug("getServiceInfo() called");
+
+		return infoService.getServiceInformation();
 	}
 }

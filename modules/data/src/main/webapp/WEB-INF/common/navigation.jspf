@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-md navbar-light mb-4 p-1">
-    <a class="navbar-brand m-2" href="http://localhost:2345/">
+    <a class="navbar-brand m-2" href="${pageContext.request.contextPath}/api/v1/hub">
         <img src="${pageContext.request.contextPath}/images/logo.png" alt="Home Server" class="home-image">
     </a>
     <div class="collapse navbar-collapse">
@@ -12,7 +12,7 @@
             </li>
         </ul>
     </div>
-    <ul class="navbar-nav">
+    <ul class="navbar-nav" id="loginNavBarElement">
         <c:choose>
             <%--@elvariable id="username" type="java.lang.String"--%>
             <c:when test="${username == 'anonymousUser'}">
@@ -47,6 +47,18 @@
                     list.prepend(li);
                 })
             }
-        })
+        });
+
+        $.ajax({
+            url: "${pageContext.request.contextPath}/api/v1/service/info",
+            type: 'GET',
+            dataType: 'json',
+            success: function (res) {
+                const loginElement = document.getElementById("loginNavBarElement");
+                const {loginDisabled} = res;
+                if (loginDisabled)
+                    loginElement.remove();
+            }
+        });
     }
 </script>
