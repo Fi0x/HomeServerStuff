@@ -17,13 +17,13 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class HubNotifier
 {
-	@Value("${homeserver.hub.ip:localhost}")
+	@Value("${homeserver.hub.ip}")
 	private String hubIp;
-	@Value("${homeserver.hub.port:2345}")
+	@Value("${homeserver.hub.port}")
 	private Integer hubPort;
-	@Value("${homeserver.service.name:Util}")
+	@Value("${homeserver.service.name}")
 	private String serviceName;
-	@Value("${server.port:2345}")
+	@Value("${server.port}")
 	private Integer currentPort;
 
 	private final RestTemplate restTemplate = new RestTemplate();

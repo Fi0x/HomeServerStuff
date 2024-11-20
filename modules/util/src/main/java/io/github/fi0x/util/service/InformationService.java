@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class InformationService
 {
-	@Value("${homeserver.service.login-enabled:true}")
+	@Value("${homeserver.service.login-enabled}")
 	private Boolean loginEnabled;
 
 	/**

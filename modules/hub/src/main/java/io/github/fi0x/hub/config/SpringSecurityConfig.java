@@ -17,22 +17,17 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SpringSecurityConfig
 {
-	private static final String[] PUBLIC_URLS = new String[]{"/", "/*", "/WEB-INF/jsp/main-page.jsp", "/recipe/*",
-			"/WEB-INF/jsp/show-recipe.jsp", "/recipe/*/*", "WEB-INF/jsp/edit-recipe", "/recipes", "/WEB-INF/jsp" +
-			"/recipes.jsp", "/error", "/WEB-INF/jsp/error.jsp", "/webjars/bootstrap/*/css/*", "/webjars/bootstrap/*/js" + "/*", "/webjars/jquery/*/*", "/css/design.css", "/images/*"};
-	private static final String[] ANONYMOUS_URLS = new String[]{"/register", "/WEB-INF/jsp/signup.jsp", "/custom-login"
-			, "/WEB-INF/jsp/login.jsp"};
+	private static final String[] PUBLIC_URLS = new String[]{"/", "/*", "/WEB-INF/jsp/main-page.jsp"};
 
 	@Bean
 	@Order(SecurityProperties.BASIC_AUTH_ORDER)
-	public SecurityFilterChain securityFilterChain2(HttpSecurity http) throws Exception
+	public SecurityFilterChain hubSecurityFilterChain(HttpSecurity http) throws Exception
 	{
-		log.debug("securityFilterChain() bean called");
+		log.info("hubSecurityFilterChain() bean called");
 
 		http.authorizeHttpRequests(auth -> {
 			auth.requestMatchers(PUBLIC_URLS).permitAll();
-			auth.requestMatchers(ANONYMOUS_URLS).anonymous();
-			auth.anyRequest().authenticated();
+			auth.anyRequest().permitAll();
 		});
 
 		http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS));

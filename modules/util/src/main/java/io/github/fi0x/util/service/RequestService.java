@@ -20,11 +20,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RequestService
 {
-	@Value("${homeserver.hub.ip:localhost}")
+	@Value("${homeserver.hub.ip}")
 	private String hubIp;
-	@Value("${homeserver.hub.port:2345}")
+	@Value("${homeserver.hub.port}")
 	private String hubPort;
-	@Value("${homeserver.github.url:https://github.com/Fi0x/HomeServerStuff}")
+	@Value("${homeserver.github.url}")
 	private String githubUrl;
 
 	private final RestTemplate restTemplate = new RestTemplate();

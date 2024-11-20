@@ -47,9 +47,9 @@ public class HomeServerUtilConfig
 	private String dbPassword;
 	@Value("${spring.datasource.driver-class-name}")
 	private String dbDriver;
-	@Value("${homeserver.username:fi0x}")
+	@Value("${homeserver.username}")
 	private String webUser;
-	@Value("${homeserver.password:123}")
+	@Value("${homeserver.password}")
 	private String webPassword;
 
 	/**
@@ -59,12 +59,11 @@ public class HomeServerUtilConfig
 	 * @return The {@link SecurityFilterChain} created from the http parameter
 	 * @throws Exception If anything goes wrong in the creation process of the security settings.
 	 */
-	//TODO: Ensure this is working correctly and not blocking other modules
 	@Bean
 	@Order(SecurityProperties.BASIC_AUTH_ORDER)
 	public SecurityFilterChain utilitySecurityFilterChain(HttpSecurity http) throws Exception
 	{
-		log.debug("securityFilterChain() bean called");
+		log.info("utilitySecurityFilterChain() bean called");
 
 		http.authorizeHttpRequests(auth -> {
 			auth.requestMatchers(PUBLIC_URLS).permitAll();
