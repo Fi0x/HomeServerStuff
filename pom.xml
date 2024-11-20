@@ -10,10 +10,10 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>src/data</module>
-        <module>src/hub</module>
-        <module>src/recipes</module>
-        <module>src/util</module>
+        <module>modules/data</module>
+        <module>modules/hub</module>
+        <module>modules/recipes</module>
+        <module>modules/util</module>
     </modules>
 
 </project>
