@@ -34,12 +34,11 @@ import javax.sql.DataSource;
 @EnableWebSecurity
 public class HomeServerUtilConfig
 {
-	//TODO: Select correct urls that are actually required
 	private static final String[] PUBLIC_URLS = new String[]{"/error", "/WEB-INF/jsp/error.jsp",
 			"/webjars/bootstrap" + "/*/css/*", "/webjars/bootstrap/*/js/*", "/webjars/jquery/*/*", "/css/design.css",
 			"/images/*"};
-	private static final String[] ANONYMOUS_URLS = new String[]{"/register", "/WEB-INF/jsp/signup.jsp", "/custom" +
-			"-login", "/WEB-INF/jsp/login.jsp"};
+	private static final String[] ANONYMOUS_URLS = new String[]{"/custom-login", "/WEB-INF/jsp/login.jsp", "/register"
+			, "/WEB-INF/jsp/signup.jsp"};
 	@Value("${spring.datasource.url}")
 	private String database;
 	@Value("${spring.datasource.username}")
