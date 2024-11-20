@@ -24,16 +24,23 @@ public class RecipeController
 {
 	private RecipeService recipeService;
 
+	@GetMapping({"/", "/*"})
+	public String getMainPage()
+	{
+		log.info("getMainPage() called");
+
+		return "redirect:/recipes";
+	}
+
 	@GetMapping("/recipe/random")
 	public String getRandomRecipe(ModelMap model)
 	{
 		log.info("getRandomRecipe() called");
 
 		//TODO: Add actual filter options
-		List<RecipeDto> possibleRecipes = recipeService.getAllowedRecipes(Collections.emptyList(),
-																		  Collections.emptyList(),
-																		  Collections.emptyList(),
-																		  Collections.emptyList(), 0f, 0f, 0f, 0f);
+		List<RecipeDto> possibleRecipes =
+				recipeService.getAllowedRecipes(Collections.emptyList(), Collections.emptyList(),
+												Collections.emptyList(), Collections.emptyList(), 0f, 0f, 0f, 0f);
 		if(possibleRecipes.isEmpty())
 			throw new ResponseStatusException(HttpStatusCode.valueOf(404), "Could not find any available recipes");
 
