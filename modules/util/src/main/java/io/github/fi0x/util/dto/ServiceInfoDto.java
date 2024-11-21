@@ -16,4 +16,5 @@ public class ServiceInfoDto
 {
 	private String name;
 	private Boolean loginDisabled;
+	private Boolean isHub;
 }

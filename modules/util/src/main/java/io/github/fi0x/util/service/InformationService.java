@@ -21,6 +21,8 @@ public class InformationService
 	private Boolean loginEnabled;
 	@Value("${homeserver.service.name}")
 	private String serviceName;
+	@Value("${homeserver.service.is-hub}")
+	private Boolean isHub;
 
 	/**
 	 * This method returns all the information, that can be gathered, about this service.
@@ -29,7 +31,7 @@ public class InformationService
 	 */
 	public ServiceInfoDto getServiceInformation()
 	{
-		return ServiceInfoDto.builder().name(serviceName).loginDisabled(!loginEnabled).build();
+		return ServiceInfoDto.builder().name(serviceName).loginDisabled(!loginEnabled).isHub(isHub).build();
 	}
 
 	/**

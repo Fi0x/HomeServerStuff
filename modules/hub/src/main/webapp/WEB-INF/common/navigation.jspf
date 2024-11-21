@@ -1,11 +1,11 @@
 <nav class="navbar navbar-expand-md navbar-light mb-4 p-1">
-    <a class="navbar-brand m-2" href="${pageContext.request.contextPath}/api/v1/hub">
+    <a class="navbar-brand m-2" href="${pageContext.request.contextPath}/api/v1/hub" title="Hub">
         <img src="${pageContext.request.contextPath}/images/hub.png" alt="Home Server" class="home-image">
     </a>
     <div class="collapse navbar-collapse">
         <ul class="navbar-nav" id="menuBarList">
-            <li class="nav-item">
-                <a href="${pageContext.request.contextPath}/api/v1/github">
+            <li class="nav-item" id="githubMenuBarItem">
+                <a href="${pageContext.request.contextPath}/api/v1/github" title="GitHub">
                     <img src="${pageContext.request.contextPath}/images/github.png" alt="Project on Github"
                          class="github-image">
                 </a>
@@ -35,6 +35,7 @@
             dataType: 'json',
             success: function (res) {
                 const list = document.getElementById("menuBarList");
+                const githubElement = document.getElementById("githubMenuBarItem");
                 res.forEach(s => {
                     const {protocol, ip, port, name} = s;
                     const li = document.createElement('li');
@@ -42,9 +43,11 @@
                     const a = document.createElement('a');
                     a.classList.add('nav-link');
                     a.setAttribute('href', protocol + '://' + ip + ':' + port);
+                    a.setAttribute('title', name);
+                    // TODO: Add an image of the service here, if it is available, otherwise use the text
                     a.innerText = name;
                     li.append(a);
-                    list.prepend(li);
+                    list.insertBefore(li, githubElement);
                 });
             }
         });

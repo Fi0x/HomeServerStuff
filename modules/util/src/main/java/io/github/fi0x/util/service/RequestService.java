@@ -26,6 +26,8 @@ public class RequestService
 	private String hubPort;
 	@Value("${homeserver.github.url}")
 	private String githubUrl;
+	@Value("${homeserver.service.name}")
+	private String serviceName;
 
 	private final RestTemplate restTemplate = new RestTemplate();
 
@@ -44,7 +46,13 @@ public class RequestService
 			ServiceDataDto[] result = restTemplate.getForObject(url, ServiceDataDto[].class);
 
 			if (result != null)
-				return Arrays.asList(result);
+			{
+				return Arrays.stream(result).sorted((o1, o2) -> {
+					if (serviceName.equals(o1.getName()))
+						return -1;
+					return o1.getName().compareTo(o2.getName());
+				}).toList();
+			}
 
 			log.warn("Could not fetch any service from hub.");
 			return Collections.emptyList();
