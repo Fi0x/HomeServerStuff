@@ -6,6 +6,7 @@ import io.github.fi0x.util.service.InformationService;
 import io.github.fi0x.util.service.RequestService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -75,5 +76,18 @@ public class ApiController
 		log.debug("getServiceInfo() called");
 
 		return infoService.getServiceInformation();
+	}
+
+	/**
+	 * This endpoint is used to provide an image, that represents this service's logo
+	 *
+	 * @return The logo.png of this service
+	 */
+	@GetMapping(path = "/service/logo", produces = MediaType.IMAGE_PNG_VALUE)
+	public byte[] getServiceLogo()
+	{
+		log.debug("getServiceLogo() called");
+
+		return infoService.getServiceLogo();
 	}
 }

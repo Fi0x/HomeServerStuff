@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-md navbar-light mb-4 p-1">
     <a class="navbar-brand m-2" href="${pageContext.request.contextPath}/api/v1/hub">
-        <img src="${pageContext.request.contextPath}/images/logo.png" alt="Home Server" class="home-image">
+        <img src="${pageContext.request.contextPath}/images/hub.png" alt="Home Server" class="home-image">
     </a>
     <div class="collapse navbar-collapse">
         <ul class="navbar-nav" id="menuBarList">
@@ -45,7 +45,7 @@
                     a.innerText = name;
                     li.append(a);
                     list.prepend(li);
-                })
+                });
             }
         });
 
