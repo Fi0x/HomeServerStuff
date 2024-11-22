@@ -5,9 +5,11 @@ import io.github.fi0x.util.dto.ServiceInfoDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,7 +68,7 @@ public class InformationService
 	 *
 	 * @return The {@link Byte}[] of the logo.
 	 */
-	public byte[] getServiceLogo()
+	public byte[] getServiceLogo() throws ResponseStatusException
 	{
 		try
 		{
@@ -74,7 +76,7 @@ public class InformationService
 			if(input == null)
 			{
 				log.warn("Could not return the logo of this service, because the InputStream is null");
-				return null;
+				throw new ResponseStatusException(HttpStatusCode.valueOf(404), "Could not find image");
 			}
 
 			return input.readAllBytes();
@@ -82,6 +84,6 @@ public class InformationService
 		{
 			log.warn("Could not return the logo of this service", e);
 		}
-		return null;
+		throw new ResponseStatusException(HttpStatusCode.valueOf(404), "Could not find image");
 	}
 }

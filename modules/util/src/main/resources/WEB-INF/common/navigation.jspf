@@ -43,7 +43,7 @@
                 });
                 res.forEach(s => {
                     const {protocol, ip, port, name} = s;
-                    const li = getMenuListElement(protocol, ip, port, name);
+                    const li = getMenuListElement(protocol, ip, port, name, false);
                     list.insertBefore(li, githubElement);
                 });
             }
@@ -59,21 +59,30 @@
                 if (loginDisabled)
                     loginElement.remove();
                 if (!isHub) {
-                    const li = getMenuListElement(protocol, ip, port, name);
+                    const li = getMenuListElement(protocol, ip, port, name, true);
                     list.prepend(li);
                 }
             }
         });
 
-        const getMenuListElement = function (protocol, ip, port, name) {
+        const getMenuListElement = function (protocol, ip, port, name, useIcon) {
             const li = document.createElement('li');
             li.classList.add('nav-item');
             const a = document.createElement('a');
             a.classList.add('nav-link');
             a.setAttribute('href', protocol + '://' + ip + ':' + port);
             a.setAttribute('title', name);
-            // TODO: Add an image of the service here, if it is available, otherwise use the text
-            a.innerText = name;
+
+            if (useIcon) {
+                const img = document.createElement('img');
+                img.setAttribute('src', "${pageContext.request.contextPath}/images/logo.png");
+                img.setAttribute('alt', name);
+                img.setAttribute('class', "menu-bar-image");
+                a.append(img);
+            } else {
+                a.innerText = name;
+            }
+
             li.append(a);
             return li;
         }
