@@ -28,25 +28,22 @@
     </ul>
 </nav>
 <script>
+    const list = document.getElementById("menuBarList");
+
     onload = function () {
+
         $.ajax({
             url: "${pageContext.request.contextPath}/api/v1/service/list",
             type: 'GET',
             dataType: 'json',
             success: function (res) {
-                const list = document.getElementById("menuBarList");
                 const githubElement = document.getElementById("githubMenuBarItem");
+                res.sort((a, b) => {
+                    b.name.localeCompare(a.name);
+                });
                 res.forEach(s => {
                     const {protocol, ip, port, name} = s;
-                    const li = document.createElement('li');
-                    li.classList.add('nav-item');
-                    const a = document.createElement('a');
-                    a.classList.add('nav-link');
-                    a.setAttribute('href', protocol + '://' + ip + ':' + port);
-                    a.setAttribute('title', name);
-                    // TODO: Add an image of the service here, if it is available, otherwise use the text
-                    a.innerText = name;
-                    li.append(a);
+                    const li = getMenuListElement(protocol, ip, port, name);
                     list.insertBefore(li, githubElement);
                 });
             }
@@ -58,10 +55,27 @@
             dataType: 'json',
             success: function (res) {
                 const loginElement = document.getElementById("loginNavBarElement");
-                const {loginDisabled} = res;
+                const {loginDisabled, isHub, protocol, ip, port, name} = res;
                 if (loginDisabled)
                     loginElement.remove();
+                if (!isHub) {
+                    const li = getMenuListElement(protocol, ip, port, name);
+                    list.prepend(li);
+                }
             }
         });
+
+        const getMenuListElement = function (protocol, ip, port, name) {
+            const li = document.createElement('li');
+            li.classList.add('nav-item');
+            const a = document.createElement('a');
+            a.classList.add('nav-link');
+            a.setAttribute('href', protocol + '://' + ip + ':' + port);
+            a.setAttribute('title', name);
+            // TODO: Add an image of the service here, if it is available, otherwise use the text
+            a.innerText = name;
+            li.append(a);
+            return li;
+        }
     }
 </script>

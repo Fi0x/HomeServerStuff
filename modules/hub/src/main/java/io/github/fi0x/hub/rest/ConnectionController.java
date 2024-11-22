@@ -5,7 +5,9 @@ import io.github.fi0x.util.dto.ServiceDataDto;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -33,5 +35,21 @@ public class ConnectionController
 		log.debug("getRegisteredServices() called");
 
 		return connectionService.getConnectedServices();
+	}
+
+	@GetMapping("/info")
+	public ServiceDataDto getRegisteredServiceInfo(@RequestParam String serviceName)
+	{
+		log.debug("getRegisteredServiceInfo() called");
+
+		List<ServiceDataDto> possibleServices =
+				connectionService.getConnectedServices().stream().filter(dto -> serviceName.equals(dto.getName()))
+								 .toList();
+
+		if(possibleServices.size() != 1)
+			throw new ResponseStatusException(HttpStatusCode.valueOf(404),
+											  "Found none or multiple services with name '" + serviceName + "'");
+
+		return possibleServices.get(0);
 	}
 }

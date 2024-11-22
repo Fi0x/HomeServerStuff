@@ -15,6 +15,10 @@ import lombok.NoArgsConstructor;
 public class ServiceInfoDto
 {
 	private String name;
+	private String protocol;
+	private String ip;
+	private Integer port;
+
 	private Boolean loginDisabled;
 	private Boolean isHub;
 }

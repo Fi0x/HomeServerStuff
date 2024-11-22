@@ -45,18 +45,12 @@ public class RequestService
 		{
 			ServiceDataDto[] result = restTemplate.getForObject(url, ServiceDataDto[].class);
 
-			if (result != null)
-			{
-				return Arrays.stream(result).sorted((o1, o2) -> {
-					if (serviceName.equals(o1.getName()))
-						return -1;
-					return o1.getName().compareTo(o2.getName());
-				}).toList();
-			}
+			if(result != null)
+				return Arrays.stream(result).filter(dto -> !serviceName.equals(dto.getName())).toList();
 
 			log.warn("Could not fetch any service from hub.");
 			return Collections.emptyList();
-		} catch (RestClientException e)
+		} catch(RestClientException e)
 		{
 			log.warn("Could not reach hub because of exception: {}", e.getLocalizedMessage());
 		}
