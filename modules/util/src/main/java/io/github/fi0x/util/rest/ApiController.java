@@ -1,5 +1,6 @@
 package io.github.fi0x.util.rest;
 
+import io.github.fi0x.util.components.Authenticator;
 import io.github.fi0x.util.dto.ServiceDataDto;
 import io.github.fi0x.util.dto.ServiceInfoDto;
 import io.github.fi0x.util.service.InformationService;
@@ -25,6 +26,7 @@ public class ApiController
 {
 	private final RequestService requestService;
 	private final InformationService infoService;
+	private final Authenticator authenticator;
 
 	/**
 	 * This endpoint retrieves information about all the services, that are registered in the hub.
@@ -89,5 +91,16 @@ public class ApiController
 		log.debug("getServiceLogo() called");
 
 		return infoService.getServiceLogo();
+	}
+
+	/**
+	 * This endpoint is used to provide the username of the currently logged in user.
+	 *
+	 * @return The username.
+	 */
+	@GetMapping(path = "/username")
+	public String getCurrentUsername()
+	{
+		return authenticator.getAuthenticatedUsername();
 	}
 }

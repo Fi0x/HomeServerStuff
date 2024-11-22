@@ -10,24 +10,20 @@
         </ul>
     </div>
     <ul class="navbar-nav" id="loginNavBarElement">
-        <c:choose>
-            <%--@elvariable id="username" type="java.lang.String"--%>
-            <c:when test="${username == 'anonymousUser'}">
-                <li class="nav-item"><a class="nav-link"
-                                        href="${pageContext.request.contextPath}/custom-login">Login</a></li>
-            </c:when>
-            <c:otherwise>
-                <li>Logged in as ${username}</li>
-                <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/logout">Logout</a>
-                </li>
-            </c:otherwise>
-        </c:choose>
+        <%--@elvariable id="username" type="java.lang.String"--%>
+        <li class="nav-item logged-in-user">
+            <a class="nav-link" href="${pageContext.request.contextPath}/custom-login">Login</a>
+        </li>
+        <li class="anonymous-user">Logged in as ${username}</li>
+        <li class="nav-item anonymous-user"><a class="nav-link"
+                                               href="${pageContext.request.contextPath}/logout">Logout</a>
+        </li>
     </ul>
 </nav>
 <script>
-    const list = document.getElementById("menuBarList");
-
     onload = function () {
+        const list = document.getElementById("menuBarList");
+        const loginElement = document.getElementById("loginNavBarElement");
 
         $.ajax({
             url: "${pageContext.request.contextPath}/api/v1/service/list",
@@ -57,7 +53,6 @@
                 const navBarElement = document.getElementById("mainNavBar");
 
                 if (loginDisabled) {
-                    const loginElement = document.getElementById("loginNavBarElement");
                     loginElement.remove();
                 }
 
@@ -77,6 +72,24 @@
                     const li = getMenuListElement(null, null, null, "Hub", "hub");
                     li.firstElementChild.setAttribute('href', "${pageContext.request.contextPath}/api/v1/hub");
                     list.prepend(li);
+                }
+            }
+        });
+
+        $.ajax({
+            url: "${pageContext.request.contextPath}/api/v1/username",
+            type: 'GET',
+            dataType: 'json',
+            success: function (res) {
+                // TODO: Get the removal working
+                if (loginElement) {
+                    if (!res || res === "" || res === "anonymousUser") {
+                        for (let element in document.getElementsByClassName('logged-in-user'))
+                            element.remove();
+                    }
+                } else {
+                    for (let element in document.getElementsByClassName('anonymous-user'))
+                        element.remove;
                 }
             }
         });

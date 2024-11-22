@@ -24,12 +24,14 @@ public class RecipeController
 {
 	private RecipeService recipeService;
 
-	@GetMapping({"/", "/*"})
-	public String getMainPage()
+	@GetMapping({"/", "/*", "/recipes"})
+	public String getRecipeList(ModelMap model)
 	{
-		log.info("getMainPage() called");
+		log.info("getRecipeList() called");
 
-		return "redirect:/recipes";
+		model.put("recipeList", recipeService.getAllRecipes());
+
+		return "recipes";
 	}
 
 	@GetMapping("/recipe/random")
@@ -48,16 +50,6 @@ public class RecipeController
 
 		model.put("recipe", recipe);
 		return "redirect:/recipe/" + recipe.getId();
-	}
-
-	@GetMapping("/recipes")
-	public String getRecipeList(ModelMap model)
-	{
-		log.info("getRecipeList() called");
-
-		model.put("recipeList", recipeService.getAllRecipes());
-
-		return "recipes";
 	}
 
 	@GetMapping("/recipe/{recipeId}")
