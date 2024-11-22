@@ -53,7 +53,7 @@
             type: 'GET',
             dataType: 'json',
             success: function (res) {
-                const {loginDisabled, isHub, protocol, ip, port, name} = res;
+                const {loginDisabled, isHub, name} = res;
                 const navBarElement = document.getElementById("mainNavBar");
 
                 if (loginDisabled) {
@@ -69,8 +69,9 @@
 
                     navBarElement.prepend(a);
                 } else {
-                    const a = getMenuElement(protocol, ip, port, name, "logo");
-                    a.classList.add('main-menu-element')
+                    const a = getMenuElement(null, null, null, name, "logo");
+                    a.classList.add('main-menu-element');
+                    a.setAttribute('href', "${pageContext.request.contextPath}/");
                     navBarElement.prepend(a);
 
                     const li = getMenuListElement(null, null, null, "Hub", "hub");

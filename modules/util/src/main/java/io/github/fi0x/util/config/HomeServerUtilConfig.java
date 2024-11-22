@@ -1,6 +1,7 @@
 package io.github.fi0x.util.config;
 
 import io.github.fi0x.util.components.Authenticator;
+import io.github.fi0x.util.components.ServiceInformation;
 import io.github.fi0x.util.rest.ErrorController;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -128,6 +129,17 @@ public class HomeServerUtilConfig
 	public Authenticator authenticator()
 	{
 		return new Authenticator();
+	}
+
+	/**
+	 * This method creates a bean for the {@link ServiceInformation} component.
+	 *
+	 * @return The {@link ServiceInformation} bean.
+	 */
+	@Bean
+	public ServiceInformation serviceInformation()
+	{
+		return new ServiceInformation();
 	}
 
 	/**

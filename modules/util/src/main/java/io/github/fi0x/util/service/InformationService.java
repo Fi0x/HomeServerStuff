@@ -1,5 +1,6 @@
 package io.github.fi0x.util.service;
 
+import io.github.fi0x.util.components.ServiceInformation;
 import io.github.fi0x.util.dto.ServiceDataDto;
 import io.github.fi0x.util.dto.ServiceInfoDto;
 import lombok.RequiredArgsConstructor;
@@ -22,17 +23,12 @@ import java.io.InputStream;
 @RequiredArgsConstructor
 public class InformationService
 {
-	private final RestTemplate restTemplate = new RestTemplate();
-	@Value("${homeserver.hub.ip}")
-	private String hubIp;
 	@Value("${homeserver.service.login-enabled}")
 	private Boolean loginEnabled;
-	@Value("${homeserver.service.name}")
-	private String serviceName;
-	@Value("${homeserver.service.is-hub}")
-	private Boolean isHub;
-	@Value("${homeserver.hub.port}")
-	private String hubPort;
+
+	private final ServiceInformation serviceInformation;
+
+	private final RestTemplate restTemplate = new RestTemplate();
 
 	/**
 	 * This method returns all the information, that can be gathered, about this service.
@@ -43,9 +39,11 @@ public class InformationService
 	{
 		log.trace("getServiceInformation() called");
 
-		String url = "http://" + hubIp + ":" + hubPort + "/api/service/info?serviceName=" + serviceName;
+		String url =
+				"http://" + serviceInformation.getHubIp() + ":" + serviceInformation.getHubPort() + "/api/service/info?serviceName=" + serviceInformation.getServiceName();
 		ServiceInfoDto.ServiceInfoDtoBuilder builder =
-				ServiceInfoDto.builder().name(serviceName).loginDisabled(!loginEnabled).isHub(isHub);
+				ServiceInfoDto.builder().name(serviceInformation.getServiceName()).loginDisabled(!loginEnabled)
+							  .isHub(serviceInformation.getIsHub());
 
 		try
 		{

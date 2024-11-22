@@ -1,6 +1,7 @@
 package io.github.fi0x.hub.rest;
 
 import io.github.fi0x.hub.service.ConnectionService;
+import io.github.fi0x.util.components.ServiceInformation;
 import io.github.fi0x.util.dto.ServiceDataDto;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import java.util.List;
 public class ConnectionController
 {
 	private final ConnectionService connectionService;
+	private final ServiceInformation serviceInformation;
 
 	@PostMapping("/register")
 	public void registerService(HttpServletRequest request, @RequestBody ServiceDataDto requestDto)
@@ -41,6 +43,10 @@ public class ConnectionController
 	public ServiceDataDto getRegisteredServiceInfo(@RequestParam String serviceName)
 	{
 		log.debug("getRegisteredServiceInfo() called");
+
+		if(serviceInformation.getIsHub())
+			return ServiceDataDto.builder().name(serviceInformation.getServiceName()).protocol("http")
+								 .ip(serviceInformation.getHubIp()).port(serviceInformation.getHubPort()).build();
 
 		List<ServiceDataDto> possibleServices =
 				connectionService.getConnectedServices().stream().filter(dto -> serviceName.equals(dto.getName()))

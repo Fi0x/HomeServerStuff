@@ -1,5 +1,6 @@
 package io.github.fi0x.util.config;
 
+import io.github.fi0x.util.components.ServiceInformation;
 import io.github.fi0x.util.rest.ApiController;
 import io.github.fi0x.util.service.InformationService;
 import io.github.fi0x.util.service.RequestService;
@@ -29,23 +30,25 @@ public class ApiConfig
 
 	/**
 	 * This method creates a RequestService-bean, that is required by the apiController-bean
+	 * @param serviceInformation The serviceInformation-bean of this service
 	 *
 	 * @return The {@link RequestService} bean
 	 */
 	@Bean
-	public RequestService requestService()
+	public RequestService requestService(ServiceInformation serviceInformation)
 	{
-		return new RequestService();
+		return new RequestService(serviceInformation);
 	}
 
 	/**
 	 * This method creates an InfoService-bean, that is required by the apiController-bean
+	 * @param serviceInformation The serviceInformation-bean of this service
 	 *
 	 * @return The {@link InformationService} bean
 	 */
 	@Bean
-	public InformationService infoService()
+	public InformationService infoService(ServiceInformation serviceInformation)
 	{
-		return new InformationService();
+		return new InformationService(serviceInformation);
 	}
 }

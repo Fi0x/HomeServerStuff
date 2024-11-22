@@ -1,5 +1,6 @@
 package io.github.fi0x.util.service;
 
+import io.github.fi0x.util.components.ServiceInformation;
 import io.github.fi0x.util.dto.ServiceDataDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,14 +21,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RequestService
 {
-	@Value("${homeserver.hub.ip}")
-	private String hubIp;
-	@Value("${homeserver.hub.port}")
-	private String hubPort;
 	@Value("${homeserver.github.url}")
 	private String githubUrl;
-	@Value("${homeserver.service.name}")
-	private String serviceName;
+
+	private final ServiceInformation serviceInformation;
 
 	private final RestTemplate restTemplate = new RestTemplate();
 
@@ -40,13 +37,15 @@ public class RequestService
 	{
 		log.trace("getRegisteredServicesFromHub() called");
 
-		String url = "http://" + hubIp + ":" + hubPort + "/api/service/list";
+		String url =
+				"http://" + serviceInformation.getHubIp() + ":" + serviceInformation.getHubPort() + "/api/service/list";
 		try
 		{
 			ServiceDataDto[] result = restTemplate.getForObject(url, ServiceDataDto[].class);
 
 			if(result != null)
-				return Arrays.stream(result).filter(dto -> !serviceName.equals(dto.getName())).toList();
+				return Arrays.stream(result).filter(dto -> !serviceInformation.getServiceName().equals(dto.getName()))
+							 .toList();
 
 			log.warn("Could not fetch any service from hub.");
 			return Collections.emptyList();
@@ -78,6 +77,6 @@ public class RequestService
 	{
 		log.trace("getHubUrl() called");
 
-		return "http://" + hubIp + ":" + hubPort;
+		return "http://" + serviceInformation.getHubIp() + ":" + serviceInformation.getHubPort();
 	}
 }
