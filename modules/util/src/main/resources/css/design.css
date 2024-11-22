@@ -107,10 +107,6 @@ body {
     height: 40px;
 }
 
-.main-menu-icon {
-    margin: 10px;
-}
-
 .main-menu-element {
     background-color: var(--dark-accent2);
     padding: 10px;
