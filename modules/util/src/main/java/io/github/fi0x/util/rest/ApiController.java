@@ -1,6 +1,7 @@
 package io.github.fi0x.util.rest;
 
 import io.github.fi0x.util.components.Authenticator;
+import io.github.fi0x.util.dto.LoginDto;
 import io.github.fi0x.util.dto.ServiceDataDto;
 import io.github.fi0x.util.dto.ServiceInfoDto;
 import io.github.fi0x.util.service.InformationService;
@@ -94,13 +95,15 @@ public class ApiController
 	}
 
 	/**
-	 * This endpoint is used to provide the username of the currently logged in user.
+	 * This endpoint is used to provide the username of the currently logged-in user.
 	 *
 	 * @return The username.
 	 */
 	@GetMapping(path = "/username")
-	public String getCurrentUsername()
+	public LoginDto getCurrentUsername()
 	{
-		return authenticator.getAuthenticatedUsername();
+		log.debug("getCurrentUsername() called");
+
+		return LoginDto.builder().username(authenticator.getAuthenticatedUsername()).build();
 	}
 }

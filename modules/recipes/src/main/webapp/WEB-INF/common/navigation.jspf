@@ -11,11 +11,11 @@
     </div>
     <ul class="navbar-nav" id="loginNavBarElement">
         <%--@elvariable id="username" type="java.lang.String"--%>
-        <li class="nav-item logged-in-user">
+            <li class="nav-item anonymous-user">
             <a class="nav-link" href="${pageContext.request.contextPath}/custom-login">Login</a>
         </li>
-        <li class="anonymous-user">Logged in as ${username}</li>
-        <li class="nav-item anonymous-user"><a class="nav-link"
+            <li class="logged-in-user" id="usernameText">Logged in as ${username}</li>
+            <li class="nav-item logged-in-user"><a class="nav-link"
                                                href="${pageContext.request.contextPath}/logout">Logout</a>
         </li>
     </ul>
@@ -82,13 +82,19 @@
             dataType: 'json',
             success: function (res) {
                 if (loginElement) {
-                    if (!res || res === "" || res === "anonymousUser") {
-                        for (let element in document.getElementsByClassName('logged-in-user'))
-                            element.remove();
+                    if (!res.username || res.username.toLowerCase() === "" || res.username.toLowerCase() === "anonymoususer") {
+                        let elements = document.getElementsByClassName('logged-in-user');
+                        while (elements[0]) {
+                            elements[0].parentNode.removeChild(elements[0]);
+                        }
+                    } else {
+                        console.log(res.username)
+                        let elements = document.getElementsByClassName('anonymous-user');
+                        while (elements[0]) {
+                            elements[0].parentNode.removeChild(elements[0]);
+                        }
+                        document.getElementById('usernameText').innerText = "Logged in as " + res.username;
                     }
-                } else {
-                    for (let element in document.getElementsByClassName('anonymous-user'))
-                        element.remove;
                 }
             }
         });

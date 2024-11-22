@@ -22,6 +22,7 @@ public class Authenticator
 	public String getAuthenticatedUsername()
 	{
 		log.trace("getAuthenticatedUsername() called");
+
 		return SecurityContextHolder.getContext().getAuthentication().getName();
 	}
 }
