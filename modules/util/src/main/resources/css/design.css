@@ -3,6 +3,7 @@
     --custom-white: rgba(255, 255, 255, 0.88);
     --custom-black: rgba(0, 0, 0, 0.88);
     --dark-accent: rgba(98, 98, 98, 0.88);
+    --dark-accent2: rgba(120, 120, 120, 0.88);
     --light-accent: rgba(213, 213, 213, 0.88);
     --custom-green: #308600;
     --custom-light-green: #b8f693;
@@ -11,6 +12,8 @@
     --custom-yellow: #cba000;
     --custom-light-yellow: #e0bf47;
 }
+
+/*TODO: Change all px units to em or rem*/
 
 body {
     color: var(--custom-white);
@@ -94,16 +97,7 @@ body {
     text-decoration: none;
 }
 
-.home-image {
-    max-width: 100%;
-    max-height: 100%;
-    height: 50px;
-}
-
-.github-image {
-    max-width: 100%;
-    max-height: 100%;
-    height: 40px;
+.round-image {
     border-radius: 20px;
 }
 
@@ -113,14 +107,25 @@ body {
     height: 40px;
 }
 
+.main-menu-icon {
+    margin: 10px;
+}
+
+.main-menu-element {
+    background-color: var(--dark-accent2);
+    padding: 10px;
+    margin-right: 0.5rem;
+}
+
 .navbar {
     background-color: var(--dark-accent);
+    padding: 0.5rem;
+    margin-bottom: 1.5rem;
 }
 
 .nav-link {
     color: var(--custom-white);
     border-radius: 5px;
-    margin: 5px;
 }
 
 li {

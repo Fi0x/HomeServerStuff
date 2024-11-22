@@ -1,13 +1,10 @@
-<nav class="navbar navbar-expand-md navbar-light mb-4 p-1">
-    <a class="navbar-brand m-2 nav-link" href="${pageContext.request.contextPath}/api/v1/hub" title="Hub">
-        <img src="${pageContext.request.contextPath}/images/hub.png" alt="Home Server" class="home-image">
-    </a>
+<nav class="navbar navbar-expand-md navbar-light" id="mainNavBar">
     <div class="collapse navbar-collapse">
         <ul class="navbar-nav" id="menuBarList">
             <li class="nav-item" id="githubMenuBarItem">
                 <a href="${pageContext.request.contextPath}/api/v1/github" class="nav-link" title="GitHub">
                     <img src="${pageContext.request.contextPath}/images/github.png" alt="Project on Github"
-                         class="github-image">
+                         class="menu-bar-image round-image">
                 </a>
             </li>
         </ul>
@@ -38,12 +35,14 @@
             dataType: 'json',
             success: function (res) {
                 const githubElement = document.getElementById("githubMenuBarItem");
+
                 res.sort((a, b) => {
                     b.name.localeCompare(a.name);
                 });
+
                 res.forEach(s => {
                     const {protocol, ip, port, name} = s;
-                    const li = getMenuListElement(protocol, ip, port, name, false);
+                    const li = getMenuListElement(protocol, ip, port, name, null);
                     list.insertBefore(li, githubElement);
                 });
             }
@@ -54,28 +53,53 @@
             type: 'GET',
             dataType: 'json',
             success: function (res) {
-                const loginElement = document.getElementById("loginNavBarElement");
                 const {loginDisabled, isHub, protocol, ip, port, name} = res;
-                if (loginDisabled)
+                const navBarElement = document.getElementById("mainNavBar");
+
+                if (loginDisabled) {
+                    const loginElement = document.getElementById("loginNavBarElement");
                     loginElement.remove();
-                if (!isHub) {
-                    const li = getMenuListElement(protocol, ip, port, name, true);
+                }
+
+                if (isHub) {
+                    const a = getMenuElement(null, null, null, "Hub", "hub");
+
+                    a.classList.add('main-menu-icon')
+                    a.setAttribute('href', "${pageContext.request.contextPath}/api/v1/hub")
+
+                    navBarElement.prepend(a);
+                } else {
+                    const a = getMenuElement(protocol, ip, port, name, "logo");
+                    a.classList.add('main-menu-element')
+                    navBarElement.prepend(a);
+
+                    const li = getMenuListElement(null, null, null, "Hub", "hub");
+                    li.firstElementChild.setAttribute('href', "${pageContext.request.contextPath}/api/v1/hub");
                     list.prepend(li);
                 }
             }
         });
 
-        const getMenuListElement = function (protocol, ip, port, name, useIcon) {
+        const getMenuListElement = function (protocol, ip, port, name, iconName) {
             const li = document.createElement('li');
+            const a = getMenuElement(protocol, ip, port, name, iconName);
+
             li.classList.add('nav-item');
+            li.append(a);
+
+            return li;
+        }
+
+        const getMenuElement = function (protocol, ip, port, name, iconName) {
             const a = document.createElement('a');
+
             a.classList.add('nav-link');
             a.setAttribute('href', protocol + '://' + ip + ':' + port);
             a.setAttribute('title', name);
 
-            if (useIcon) {
+            if (iconName) {
                 const img = document.createElement('img');
-                img.setAttribute('src', "${pageContext.request.contextPath}/images/logo.png");
+                img.setAttribute('src', "${pageContext.request.contextPath}/images/" + iconName + ".png");
                 img.setAttribute('alt', name);
                 img.classList.add("menu-bar-image");
                 a.append(img);
@@ -83,8 +107,7 @@
                 a.innerText = name;
             }
 
-            li.append(a);
-            return li;
+            return a;
         }
     }
 </script>
