@@ -5,6 +5,7 @@
     --dark-accent: rgba(98, 98, 98, 0.88);
     --dark-accent2: rgba(120, 120, 120, 0.88);
     --light-accent: rgba(213, 213, 213, 0.88);
+    --light-accent2: rgba(150, 150, 150, 0.88);
     --custom-green: #308600;
     --custom-light-green: #b8f693;
     --custom-red: #9b0000;
@@ -199,4 +200,21 @@ input {
 
 .spaced-text {
     margin: 0.5rem;
+}
+
+.clickable-row:hover {
+    background-color: var(--light-accent2);
+    cursor: pointer;
+}
+
+.filter-option {
+    cursor: pointer;
+    margin: 0.5rem;
+    padding: 0.3rem;
+    background-color: var(--dark-accent);
+    border-radius: 0.3rem;
+}
+
+.filter-option:hover {
+    background-color: var(--dark-accent2);
 }

@@ -20,7 +20,7 @@ public class MainController
 
 	private final Authenticator authenticator;
 
-	@GetMapping("/")
+	@GetMapping({"/"})
 	public String showHomePage(ModelMap model)
 	{
 		log.info("showHomePage() called");
@@ -29,13 +29,5 @@ public class MainController
 		model.put("services", connectionService.getConnectedServices());
 
 		return "main-page";
-	}
-
-	@GetMapping("/*")
-	public String redirectHomePage()
-	{
-		log.info("redirectHomePage() called");
-
-		return "redirect:/";
 	}
 }

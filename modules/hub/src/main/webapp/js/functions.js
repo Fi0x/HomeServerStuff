@@ -26,7 +26,6 @@ function updateSaveState(originalWord, text, isAlreadySaved, listIndex) {
 }
 
 function updateRealState(checkbox) {
-    console.log("disabled state: " + checkbox)
     let elements = document.getElementsByClassName("onlyFictionalLanguageOption");
     for (let i = 0; i < elements.length; i++) {
         if (elements[i].type === "checkbox") {
@@ -40,4 +39,9 @@ function updateRealState(checkbox) {
             elements[i].classList.remove("non-editable")
         }
     }
+}
+
+function updateFilterState() {
+    console.log("Filtering")
+    //TODO
 }

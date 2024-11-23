@@ -24,14 +24,14 @@ public class RecipeController
 {
 	private RecipeService recipeService;
 
-	@GetMapping({"/", "/*", "/recipes"})
+	@GetMapping({"/"})
 	public String getRecipeList(ModelMap model)
 	{
 		log.info("getRecipeList() called");
 
 		model.put("recipeList", recipeService.getAllRecipes());
 
-		return "recipes";
+		return "recipe-list";
 	}
 
 	@GetMapping("/recipe/random")
@@ -97,7 +97,7 @@ public class RecipeController
 
 		model.put("recipeList", recipeService.getAllRecipes());
 
-		return "recipes";
+		return "recipe-list";
 	}
 
 	@GetMapping("/recipe")

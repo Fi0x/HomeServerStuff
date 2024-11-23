@@ -17,7 +17,7 @@ public class SpringSecurityConfig
 {
 	private static final String[] PUBLIC_URLS =
 			new String[]{"/recipe/*", "/WEB-INF/jsp/show-recipe.jsp", "/recipe/*/*", "WEB-INF/jsp/edit-recipe",
-					"/recipes", "/WEB-INF/jsp/recipes.jsp"};
+					"/recipes", "/WEB-INF/jsp/recipe-list.jsp"};
 	private static final String[] ANONYMOUS_URLS = new String[]{};
 	private static final String[] PRIVATE_URLS = new String[]{};
 
