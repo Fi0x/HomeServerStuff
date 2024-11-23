@@ -196,3 +196,7 @@ input {
 .align-top {
     align-content: start;
 }
+
+.spaced-text {
+    margin: 0.5rem;
+}
