@@ -2,6 +2,8 @@ package io.github.fi0x.recipes.rest;
 
 import io.github.fi0x.recipes.logic.dto.RecipeDto;
 import io.github.fi0x.recipes.service.RecipeService;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatusCode;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -105,9 +108,20 @@ public class RecipeController
 	{
 		log.info("newRecipe() called");
 
-		RecipeDto recipe = new RecipeDto();
+		RecipeDto recipe = RecipeDto.builder().rating(5f).visible(true).build();
 
 		model.put("recipe", recipe);
 		return "edit-recipe";
+	}
+
+	@Transactional
+	@PostMapping("/recipe/create")
+	public String createUpdateRecipe(ModelMap model, @Valid RecipeDto recipeDto)
+	{
+		log.info("createUpdateRecipe() called");
+
+		recipeService.saveRecipe(recipeDto);
+
+		return "redirect:/";
 	}
 }

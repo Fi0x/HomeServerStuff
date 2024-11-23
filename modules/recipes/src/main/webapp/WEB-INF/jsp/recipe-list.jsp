@@ -47,6 +47,7 @@
         </c:forEach>
         </tbody>
     </table>
+    <a href="${pageContext.request.contextPath}/recipe" class="btn">Create new recipe</a>
 </div>
 <%@include file="../common/scripts.jspf" %>
 <script src="${pageContext.request.contextPath}/js/functions.js"></script>

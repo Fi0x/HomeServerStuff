@@ -3,6 +3,7 @@ package io.github.fi0x.recipes.service;
 import io.github.fi0x.recipes.db.RecipeRepo;
 import io.github.fi0x.recipes.db.entities.RecipeEntity;
 import io.github.fi0x.recipes.logic.converter.ToRecipeDtoConverter;
+import io.github.fi0x.recipes.logic.converter.ToRecipeEntityConverter;
 import io.github.fi0x.recipes.logic.dto.RecipeDto;
 import io.github.fi0x.util.components.Authenticator;
 import lombok.AllArgsConstructor;
@@ -39,20 +40,51 @@ public class RecipeService
 		}).toList();
 	}
 
+	private static boolean ingredientsAllowed(RecipeDto dto, List<String> requiredIngredients,
+											  List<String> forbiddenIngredients)
+	{
+		for(String ingredient : dto.getIngredients())
+		{
+			if(forbiddenIngredients.contains(ingredient))
+				return false;
+		}
+		for(String ingredient : requiredIngredients)
+		{
+			if(!dto.getIngredients().contains(ingredient))
+				return false;
+		}
+		return true;
+	}
+
+	private static boolean tagsAllowed(RecipeDto dto, List<String> requiredTags, List<String> forbiddenTags)
+	{
+		for(String tag : dto.getTags())
+		{
+			if(forbiddenTags.contains(tag))
+				return false;
+		}
+		for(String tag : requiredTags)
+		{
+			if(!dto.getTags().contains(tag))
+				return false;
+		}
+		return true;
+	}
+
 	public List<RecipeDto> getAllRecipes()
 	{
 		log.trace("getAllRecipes() called");
 
-		List<RecipeEntity> recipeEntities = recipeRepo.findAllByUsernameOrVisible(
-				authenticator.getAuthenticatedUsername(), true);
+		List<RecipeEntity> recipeEntities =
+				recipeRepo.findAllByUsernameOrVisible(authenticator.getAuthenticatedUsername(), true);
 
 		List<RecipeDto> dtoList = new ArrayList<>();
-		for (RecipeEntity entity : recipeEntities)
+		for(RecipeEntity entity : recipeEntities)
 		{
 			try
 			{
 				dtoList.add(ToRecipeDtoConverter.convertFully(entity));
-			} catch (InvalidObjectException e)
+			} catch(InvalidObjectException e)
 			{
 				log.warn("Could not convert a recipe-entity to a dto.", e);
 			}
@@ -69,11 +101,29 @@ public class RecipeService
 				() -> new ResponseStatusException(HttpStatusCode.valueOf(404),
 												  "Could not find a recipe with id '" + recipeId + "'"));
 
-		if (!recipeEntity.getUsername().equals(authenticator.getAuthenticatedUsername()) && !recipeEntity.getVisible())
+		if(!recipeEntity.getUsername().equals(authenticator.getAuthenticatedUsername()) && !recipeEntity.getVisible())
 			throw new ResponseStatusException(HttpStatusCode.valueOf(403),
 											  "You are not authorized to view this recipe");
 
 		return ToRecipeDtoConverter.convertFully(recipeEntity);
+	}
+
+	public void saveRecipe(RecipeDto recipeDto)
+	{
+		log.trace("saveRecipe() called");
+
+		if(recipeDto.getUsername() != null && !authenticator.getAuthenticatedUsername().equals(recipeDto.getUsername()))
+			throw new ResponseStatusException(HttpStatusCode.valueOf(403), "User is not allowed to save this recipe");
+
+		if(recipeDto.getUsername() == null)
+			recipeDto.setUsername(authenticator.getAuthenticatedUsername());
+
+		if(recipeDto.getId() == null)
+			recipeDto.setId(recipeRepo.getHighestId().orElse(-1L) + 1);
+
+		recipeRepo.save(ToRecipeEntityConverter.convert(recipeDto));
+
+		log.info("Saving recipe {}", recipeDto);
 	}
 
 	public void deleteRecipe(Long recipeId)
@@ -84,42 +134,11 @@ public class RecipeService
 				() -> new ResponseStatusException(HttpStatusCode.valueOf(404),
 												  "Could not find a recipe with id '" + recipeId + "'"));
 
-		if (!recipeEntity.getUsername().equals(authenticator.getAuthenticatedUsername()))
+		if(!recipeEntity.getUsername().equals(authenticator.getAuthenticatedUsername()))
 			throw new ResponseStatusException(HttpStatusCode.valueOf(403),
 											  "You are not authorized to delete this recipe");
 
 		recipeRepo.deleteById(recipeId);
-	}
-
-	private static boolean ingredientsAllowed(RecipeDto dto, List<String> requiredIngredients,
-											  List<String> forbiddenIngredients)
-	{
-		for (String ingredient : dto.getIngredients())
-		{
-			if (forbiddenIngredients.contains(ingredient))
-				return false;
-		}
-		for (String ingredient : requiredIngredients)
-		{
-			if (!dto.getIngredients().contains(ingredient))
-				return false;
-		}
-		return true;
-	}
-
-	private static boolean tagsAllowed(RecipeDto dto, List<String> requiredTags, List<String> forbiddenTags)
-	{
-		for (String tag : dto.getTags())
-		{
-			if (forbiddenTags.contains(tag))
-				return false;
-		}
-		for (String tag : requiredTags)
-		{
-			if (!dto.getTags().contains(tag))
-				return false;
-		}
-		return true;
 	}
 
 	private static boolean numbersAllowed(RecipeDto dto, Float minRating, Float maxRating, Float minTime, Float maxTime)

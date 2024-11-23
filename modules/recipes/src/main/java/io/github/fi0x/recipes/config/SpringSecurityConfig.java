@@ -16,10 +16,10 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SpringSecurityConfig
 {
 	private static final String[] PUBLIC_URLS =
-			new String[]{"/recipe/*", "/WEB-INF/jsp/show-recipe.jsp", "/recipe/*/*", "WEB-INF/jsp/edit-recipe",
-					"/recipes", "/WEB-INF/jsp/recipe-list.jsp"};
+			new String[]{"/", "/WEB-INF/jsp/recipe-list.jsp", "/recipe/*", "/WEB-INF/jsp/show-recipe.jsp"};
 	private static final String[] ANONYMOUS_URLS = new String[]{};
-	private static final String[] PRIVATE_URLS = new String[]{};
+	private static final String[] PRIVATE_URLS =
+			new String[]{"/recipe", "/recipe/*/edit", "WEB-INF/jsp/edit-recipe", "/recipe/*/delete"};
 
 	@Bean
 	@Order(SecurityProperties.BASIC_AUTH_ORDER)
