@@ -121,9 +121,14 @@ public class RecipeService
 		if(recipeDto.getId() == null)
 			recipeDto.setId(recipeRepo.getHighestId().orElse(-1L) + 1);
 
-		recipeRepo.save(ToRecipeEntityConverter.convert(recipeDto));
-
-		log.info("Saving recipe {}", recipeDto);
+		try
+		{
+			recipeRepo.save(ToRecipeEntityConverter.convert(recipeDto));
+		} catch(IllegalArgumentException e)
+		{
+			log.warn("Could not save or convert a recipe", e);
+			throw new ResponseStatusException(HttpStatusCode.valueOf(400), e.getMessage());
+		}
 	}
 
 	public void deleteRecipe(Long recipeId)

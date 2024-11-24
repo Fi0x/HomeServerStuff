@@ -11,12 +11,9 @@ public class ToRecipeEntityConverter
 			throw new IllegalArgumentException("RecipeDto does not contain a valid id");
 		if(recipeDto.getUsername() == null)
 			throw new IllegalArgumentException("RecipeDto does not contain a valid username");
-		if(recipeDto.getVisible() == null)
-			throw new IllegalArgumentException(
-					"Visibility for RecipeDto is not set and can therefore not be converted");
 
 		return RecipeEntity.builder().id(recipeDto.getId()).username(recipeDto.getUsername())
-						   .visible(recipeDto.getVisible()).name(recipeDto.getName())
+						   .visible(recipeDto.isVisible()).name(recipeDto.getName())
 						   .tags(recipeDto.getTags().toString()).ingredients(recipeDto.getIngredients().toString())
 						   .time(recipeDto.getTime()).rating(recipeDto.getRating()).build();
 	}

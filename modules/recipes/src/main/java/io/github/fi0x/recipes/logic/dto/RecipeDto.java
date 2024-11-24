@@ -15,7 +15,7 @@ public class RecipeDto
 {
 	private Long id;
 	private String username;
-	private Boolean visible;
+	private boolean visible;
 
 	private String name;
 	private List<String> tags;

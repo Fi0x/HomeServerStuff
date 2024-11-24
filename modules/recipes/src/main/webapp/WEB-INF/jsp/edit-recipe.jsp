@@ -7,6 +7,7 @@
 <%@include file="../common/navigation.jspf" %>
 <div class="container">
     <h1>${recipe.name}</h1>
+    <%--@elvariable id="recipe" type="io.github.fi0x.recipes.logic.dto.RecipeDto"--%>
     <form:form method="post" modelAttribute="recipe" action="/recipe/create">
         <table class="table">
             <tbody>
@@ -20,10 +21,9 @@
                 <td>Rating</td>
                 <td>
                     <label>
-                            <%--TODO: Make this work--%>
-                        <input type="range" value="rating" min="0" max="10" step="0.1"
-                               onchange="document.getElementById('ratingText').innerText = value"/>
-                        <span id="ratingText"></span>
+                        <form:input path="rating" type="range" min="0" max="10" step="0.1"
+                                    onmousemove="updateSlider(this)"/>
+                        <span id="ratingText">${recipe.rating}</span>
                     </label>
                 </td>
             </tr>
@@ -50,8 +50,7 @@
             <tr>
                 <td class="align-top">Public</td>
                 <td>
-                        <%--TODO: Make this work (Check langauge-generator)--%>
-                    <input type="checkbox" src="visible"/>
+                    <form:checkbox path="visible"/>
                 </td>
             </tr>
             </tbody>
@@ -61,5 +60,6 @@
 </div>
 <%@include file="../common/scripts.jspf" %>
 <script src="${pageContext.request.contextPath}/js/functions.js"></script>
+<script src="${pageContext.request.contextPath}/js/recipe-functions.js"></script>
 </body>
 </html>
