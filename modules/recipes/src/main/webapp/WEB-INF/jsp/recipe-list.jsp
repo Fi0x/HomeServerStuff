@@ -50,6 +50,6 @@
     <a href="${pageContext.request.contextPath}/recipe" class="btn">Create new recipe</a>
 </div>
 <%@include file="../common/scripts.jspf" %>
-<script src="${pageContext.request.contextPath}/js/functions.js"></script>
+<script src="${pageContext.request.contextPath}/js/recipe-functions.js"></script>
 </body>
 </html>

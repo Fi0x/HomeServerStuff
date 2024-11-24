@@ -9,6 +9,8 @@
     <h1>${recipe.name}</h1>
     <%--@elvariable id="recipe" type="io.github.fi0x.recipes.logic.dto.RecipeDto"--%>
     <form:form method="post" modelAttribute="recipe" action="/recipe/create">
+        <form:hidden path="id"/>
+        <form:hidden path="username"/>
         <table class="table">
             <tbody>
             <tr>
@@ -36,15 +38,21 @@
             <tr>
                 <td class="align-top">Ingredients</td>
                 <td>
-                        <%--TODO: Transform this into a list that allows the user to also delete and add entries--%>
-                    <form:input path="ingredients"/>
+                        <%--TODO: Save the list in the correct format (without [])--%>
+                        <%--TODO: Add an add and a delete button for the texts--%>
+                    <c:forEach begin="0" end="${recipe.ingredients.size() - 1}" varStatus="loop">
+                        <p><form:input path="ingredients[${loop['index']}]"/></p>
+                    </c:forEach>
                 </td>
             </tr>
             <tr>
                 <td class="align-top">Tags</td>
                 <td>
-                        <%--TODO: Transform this into a list that allows the user to also delete and add entries--%>
-                    <form:input path="tags"/>
+                        <%--TODO: Save the list in the correct format (without [])--%>
+                        <%--TODO: Add an add and a delete button for the texts--%>
+                    <c:forEach begin="0" end="${recipe.tags.size() - 1}" varStatus="loop">
+                        <p><form:input path="tags[${loop['index']}]"/></p>
+                    </c:forEach>
                 </td>
             </tr>
             <tr>
@@ -59,7 +67,11 @@
     </form:form>
 </div>
 <%@include file="../common/scripts.jspf" %>
-<script src="${pageContext.request.contextPath}/js/functions.js"></script>
 <script src="${pageContext.request.contextPath}/js/recipe-functions.js"></script>
+<script>
+    function updateSlider(slider) {
+        document.getElementById('ratingText').innerText = slider.value;
+    }
+</script>
 </body>
 </html>
