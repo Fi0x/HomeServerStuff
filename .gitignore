@@ -1,7 +1,8 @@
 /.idea/
 /target/
 /HomeServerStuff.iml
-/src/util/target/
-/src/recipes/target/
-/src/hub/target/
-/src/data/target/
+/modules/util/target/
+/modules/recipes/target/
+/modules/hub/target/
+/modules/data/target/
+/src/

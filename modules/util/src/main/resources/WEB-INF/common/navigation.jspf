@@ -1,0 +1,132 @@
+<nav class="navbar navbar-expand-md navbar-light" id="mainNavBar">
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav" id="menuBarList">
+            <li class="nav-item" id="githubMenuBarItem">
+                <a href="${pageContext.request.contextPath}/api/v1/github" class="nav-link" title="GitHub">
+                    <img src="${pageContext.request.contextPath}/images/github.png" alt="Project on Github"
+                         class="menu-bar-image round-image">
+                </a>
+            </li>
+        </ul>
+    </div>
+    <ul class="navbar-nav" id="loginNavBarElement">
+        <%--@elvariable id="username" type="java.lang.String"--%>
+            <li class="nav-item anonymous-user">
+            <a class="nav-link" href="${pageContext.request.contextPath}/custom-login">Login</a>
+        </li>
+            <li class="logged-in-user spaced-text" id="usernameText">Logged in as ${username}</li>
+            <li class="nav-item logged-in-user"><a class="nav-link"
+                                               href="${pageContext.request.contextPath}/logout">Logout</a>
+        </li>
+    </ul>
+</nav>
+<script>
+    onload = function () {
+        const list = document.getElementById("menuBarList");
+        const loginElement = document.getElementById("loginNavBarElement");
+
+        $.ajax({
+            url: "${pageContext.request.contextPath}/api/v1/service/list",
+            type: 'GET',
+            dataType: 'json',
+            success: function (res) {
+                const githubElement = document.getElementById("githubMenuBarItem");
+
+                res.sort((a, b) => {
+                    b.name.localeCompare(a.name);
+                });
+
+                res.forEach(s => {
+                    const {protocol, ip, port, name} = s;
+                    const li = getMenuListElement(protocol, ip, port, name, null);
+                    list.insertBefore(li, githubElement);
+                });
+            }
+        });
+
+        $.ajax({
+            url: "${pageContext.request.contextPath}/api/v1/service/info",
+            type: 'GET',
+            dataType: 'json',
+            success: function (res) {
+                const {loginDisabled, isHub, name} = res;
+                const navBarElement = document.getElementById("mainNavBar");
+
+                if (loginDisabled) {
+                    loginElement.remove();
+                }
+
+                if (isHub) {
+                    const a = getMenuElement(null, null, null, "Hub", "hub");
+
+                    a.classList.add('main-menu-element')
+                    a.setAttribute('href', "${pageContext.request.contextPath}/api/v1/hub")
+
+                    navBarElement.prepend(a);
+                } else {
+                    const a = getMenuElement(null, null, null, name, "logo");
+                    a.classList.add('main-menu-element');
+                    a.setAttribute('href', "${pageContext.request.contextPath}/");
+                    navBarElement.prepend(a);
+
+                    const li = getMenuListElement(null, null, null, "Hub", "hub");
+                    li.firstElementChild.setAttribute('href', "${pageContext.request.contextPath}/api/v1/hub");
+                    list.prepend(li);
+                }
+            }
+        });
+
+        $.ajax({
+            url: "${pageContext.request.contextPath}/api/v1/username",
+            type: 'GET',
+            dataType: 'json',
+            success: function (res) {
+                if (loginElement) {
+                    if (!res.username || res.username.toLowerCase() === "" || res.username.toLowerCase() === "anonymoususer") {
+                        let elements = document.getElementsByClassName('logged-in-user');
+                        while (elements[0]) {
+                            elements[0].parentNode.removeChild(elements[0]);
+                        }
+                    } else {
+                        console.log(res.username)
+                        let elements = document.getElementsByClassName('anonymous-user');
+                        while (elements[0]) {
+                            elements[0].parentNode.removeChild(elements[0]);
+                        }
+                        document.getElementById('usernameText').innerText = "Logged in as " + res.username;
+                    }
+                }
+            }
+        });
+
+        const getMenuListElement = function (protocol, ip, port, name, iconName) {
+            const li = document.createElement('li');
+            const a = getMenuElement(protocol, ip, port, name, iconName);
+
+            li.classList.add('nav-item');
+            li.append(a);
+
+            return li;
+        }
+
+        const getMenuElement = function (protocol, ip, port, name, iconName) {
+            const a = document.createElement('a');
+
+            a.classList.add('nav-link');
+            a.setAttribute('href', protocol + '://' + ip + ':' + port);
+            a.setAttribute('title', name);
+
+            if (iconName) {
+                const img = document.createElement('img');
+                img.setAttribute('src', "${pageContext.request.contextPath}/images/" + iconName + ".png");
+                img.setAttribute('alt', name);
+                img.classList.add("menu-bar-image");
+                a.append(img);
+            } else {
+                a.innerText = name;
+            }
+
+            return a;
+        }
+    }
+</script>
