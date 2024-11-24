@@ -32,7 +32,7 @@ jobs:
 
     - name: Publish to Maven Central
       run: |
-        mvn --file /modules/util/pom.xml -P release -Dgpg.keyname=${{ secrets.GPG_KEY_NAME }} -Dgpg.passphrase=${{ secrets.MAVEN_SIGNING_KEY_PASSPHRASE }} \
+        mvn --file pom.xml --projects modules/util -P release -Dgpg.keyname=${{ secrets.GPG_KEY_NAME }} -Dgpg.passphrase=${{ secrets.MAVEN_SIGNING_KEY_PASSPHRASE }} \
           -Drevision=${{ steps.calculate-version.outputs.version-string }} -Dgpg.skip=false deploy
       env:
         MVN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
