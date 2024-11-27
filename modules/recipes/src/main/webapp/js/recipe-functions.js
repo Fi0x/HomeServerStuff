@@ -22,3 +22,13 @@ function updateFilterState() {
     console.log("Filtering")
     //TODO
 }
+
+function deleteElement() {
+    console.log("Deleting")
+    //TODO
+}
+
+function addElement() {
+    console.log("Adding")
+    //TODO
+}

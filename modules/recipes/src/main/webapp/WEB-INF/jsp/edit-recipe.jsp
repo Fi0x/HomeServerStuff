@@ -38,21 +38,37 @@
             <tr>
                 <td class="align-top">Ingredients</td>
                 <td>
-                        <%--TODO: Save the list in the correct format (without [])--%>
-                        <%--TODO: Add an add and a delete button for the texts--%>
-                    <c:forEach begin="0" end="${recipe.ingredients.size() - 1}" varStatus="loop">
-                        <p><form:input path="ingredients[${loop['index']}]"/></p>
-                    </c:forEach>
+                    <c:choose>
+                        <c:when test="${recipe.ingredients.size() > 0}">
+                            <c:forEach begin="0" end="${recipe.ingredients.size() - 1}" varStatus="loop">
+                                <p>
+                                    <form:input cssClass="long-input" path="ingredients[${loop['index']}]"/>
+                                    <button class="btn-danger round-button" onclick="deleteElement()">X</button>
+                                </p>
+                            </c:forEach>
+                        </c:when>
+                    </c:choose>
+                    <p>
+                        <button class="btn-success" onclick="addElement()">Add</button>
+                    </p>
                 </td>
             </tr>
             <tr>
                 <td class="align-top">Tags</td>
                 <td>
-                        <%--TODO: Save the list in the correct format (without [])--%>
-                        <%--TODO: Add an add and a delete button for the texts--%>
-                    <c:forEach begin="0" end="${recipe.tags.size() - 1}" varStatus="loop">
-                        <p><form:input path="tags[${loop['index']}]"/></p>
-                    </c:forEach>
+                    <c:choose>
+                        <c:when test="${recipe.tags.size() > 0}">
+                            <c:forEach begin="0" end="${recipe.tags.size() - 1}" varStatus="loop">
+                                <p>
+                                    <form:input cssClass="long-input" path="tags[${loop['index']}]"/>
+                                    <button class="btn-danger round-button" onclick="deleteElement()">X</button>
+                                </p>
+                            </c:forEach>
+                        </c:when>
+                    </c:choose>
+                    <p>
+                        <button class="btn-success" onclick="addElement()">Add</button>
+                    </p>
                 </td>
             </tr>
             <tr>

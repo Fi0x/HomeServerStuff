@@ -14,7 +14,8 @@ public class ToRecipeEntityConverter
 
 		return RecipeEntity.builder().id(recipeDto.getId()).username(recipeDto.getUsername())
 						   .visible(recipeDto.isVisible()).name(recipeDto.getName())
-						   .tags(recipeDto.getTags().toString()).ingredients(recipeDto.getIngredients().toString())
-						   .time(recipeDto.getTime()).rating(recipeDto.getRating()).build();
+						   .tags(String.join(",", recipeDto.getTags()))
+						   .ingredients(String.join(",", recipeDto.getIngredients())).time(recipeDto.getTime())
+						   .rating(recipeDto.getRating()).build();
 	}
 }

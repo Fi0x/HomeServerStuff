@@ -39,10 +39,18 @@
             <tr class="clickable-row"
                 onclick="window.location='${pageContext.request.contextPath}/recipe/${recipe.id}'">
                 <td>${recipe.name}</td>
-                <td>${recipe.ingredients}</td>
+                <td>
+                    <c:forEach items="${recipe.ingredients}" var="ingredient">
+                        ${ingredient},
+                    </c:forEach>
+                </td>
                 <td>${recipe.rating}</td>
                 <td>${recipe.time} min</td>
-                <td>${recipe.tags}</td>
+                <td>
+                    <c:forEach items="${recipe.tags}" var="tag">
+                        ${tag},
+                    </c:forEach>
+                </td>
             </tr>
         </c:forEach>
         </tbody>
