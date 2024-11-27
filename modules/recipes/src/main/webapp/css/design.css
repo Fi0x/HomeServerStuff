@@ -45,6 +45,7 @@ body {
     padding: 0.3rem;
     text-decoration: none;
     border-width: 0;
+    cursor: pointer;
 }
 
 .btn-success:hover {
@@ -104,6 +105,8 @@ body {
     border-radius: 2rem;
     width: 2rem;
     height: 2rem;
+    cursor: pointer;
+    padding: 0.3rem 0.6rem;
 }
 
 .menu-bar-image {

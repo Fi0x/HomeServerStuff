@@ -1,3 +1,4 @@
+<%@ page import="io.github.fi0x.recipes.logic.dto.RecipeDto" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
@@ -16,7 +17,7 @@
             <tr>
                 <td>Name</td>
                 <td>
-                    <form:input path="name"/> minutes
+                    <form:input path="name"/>
                 </td>
             </tr>
             <tr>
@@ -43,13 +44,14 @@
                             <c:forEach begin="0" end="${recipe.ingredients.size() - 1}" varStatus="loop">
                                 <p>
                                     <form:input cssClass="long-input" path="ingredients[${loop['index']}]"/>
-                                    <button class="btn-danger round-button" onclick="deleteElement()">X</button>
+                                    <a class="btn-danger round-button"
+                                       onclick="deleteElement('${recipe.ingredients}', ${loop['index']})">X</a>
                                 </p>
                             </c:forEach>
                         </c:when>
                     </c:choose>
                     <p>
-                        <button class="btn-success" onclick="addElement()">Add</button>
+                        <a class="btn-success" onclick="addElement('${recipe}', 'ingredients')">Add</a>
                     </p>
                 </td>
             </tr>
@@ -61,13 +63,14 @@
                             <c:forEach begin="0" end="${recipe.tags.size() - 1}" varStatus="loop">
                                 <p>
                                     <form:input cssClass="long-input" path="tags[${loop['index']}]"/>
-                                    <button class="btn-danger round-button" onclick="deleteElement()">X</button>
+                                    <a class="btn-danger round-button"
+                                       onclick="deleteElement('${recipe.tags}', ${loop['index']})">X</a>
                                 </p>
                             </c:forEach>
                         </c:when>
                     </c:choose>
                     <p>
-                        <button class="btn-success" onclick="addElement()">Add</button>
+                        <a class="btn-success" onclick="addElement('${recipe}', 'tags')">Add</a>
                     </p>
                 </td>
             </tr>
