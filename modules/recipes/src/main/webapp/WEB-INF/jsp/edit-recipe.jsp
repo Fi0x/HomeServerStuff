@@ -50,8 +50,9 @@
                             </c:forEach>
                         </c:when>
                     </c:choose>
-                    <p>
-                        <a class="btn-success" onclick="addElement('${recipe}', 'ingredients')">Add</a>
+                    <p id="ingredientsBtn">
+                        <a class="btn-success"
+                           onclick="addElement('${recipe.ingredients.size()}', 'ingredients')">Add</a>
                     </p>
                 </td>
             </tr>
@@ -69,8 +70,8 @@
                             </c:forEach>
                         </c:when>
                     </c:choose>
-                    <p>
-                        <a class="btn-success" onclick="addElement('${recipe}', 'tags')">Add</a>
+                    <p id="tagsBtn">
+                        <a class="btn-success" onclick="addElement('${recipe.ingredients.size()}', 'tags')">Add</a>
                     </p>
                 </td>
             </tr>

@@ -1,3 +1,9 @@
+const listSizes =
+    {
+        'ingredients': -1,
+        'tags': -1
+    };
+
 function searchFunction() {
     let input, filter, table, rows, td, i, txtValue;
     input = document.getElementById("searchText");
@@ -29,13 +35,35 @@ function deleteElement(list, idx) {
     console.log("This is a list: " + jsList);
     jsList.splice(0, 1);
     console.log("The js list: " + jsList);
-    list.splice(idx, 1);
+    // list.splice(idx, 1);
     console.log("New list: " + list);
     //TODO
 }
 
-function addElement(recipe, listType) {
-    console.log("Adding to list " + listType);
-    console.log(recipe);
-    //TODO
+function addElement(listSize, listType) {
+    if (listSizes[listType] < 0)
+        listSizes[listType] = listSize;
+    else
+        listSizes[listType]++;
+
+    let buttonParagraph = document.getElementById(`${listType}Btn`)
+    let parent = buttonParagraph.parentElement;
+    let newParagraph = document.createElement('p');
+
+    let newForm = document.createElement('input');
+    newForm.id = listType + listSizes[listType];
+    newForm.name = `${listType}[${listSizes[listType]}]`;
+    newForm.classList.add('long-input');
+    newForm.type = 'text';
+    newForm.value = '';
+
+    let newAnchor = document.createElement('a');
+    newAnchor.classList.add('btn-danger');
+    newAnchor.classList.add('round-button');
+    newAnchor.setAttribute('onclick', `deleteElement(${null}, ${listSizes[listType]})`); //TODO: Change to correct recipe-list
+    newAnchor.innerText = 'X';
+
+    newParagraph.append(newForm);
+    newParagraph.append(newAnchor);
+    parent.insertBefore(newParagraph, buttonParagraph);
 }
