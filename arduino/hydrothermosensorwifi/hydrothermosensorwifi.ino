@@ -17,41 +17,33 @@
 // Sensor zuordnen
 DHT dht(DHTPIN, DHTTYPE);
 
-#define Router "SSID"
-#define Passwort "PW"
+#define WIFI_SSID "SSID"
+#define WIFI_PASSWORD "PW"
 
-#define Zeitserver "de.pool.ntp.org"
+#define TIME_SERVER "de.pool.ntp.org"
 
-/*
-  Liste der Zeitzonen
-  https://github.com/nayarsystems/posix_tz_db/blob/master/zones.csv
-  Zeitzone CET = Central European Time -1 -> 1 Stunde zurück
-  CEST = Central European Summer Time von
-  M3 = März, 5.0 = Sonntag 5. Woche, 02 = 2 Uhr
-  bis M10 = Oktober, 5.0 = Sonntag 5. Woche 03 = 3 Uhr
-*/
-#define Zeitzone "CET-1CEST,M3.5.0/02,M10.5.0/03"
+// Set time-zone
+#define TIME_ZONE "CET-1CEST,M3.5.0/02,M10.5.0/03"
 
-// time_t enthält die Anzahl der Sekunden seit dem 1.1.1970 0 Uhr
-time_t aktuelleZeit;
+time_t currentTime;
 
 /*
-  Struktur tm wandelt die ermittelte Zeit in ein "lesbares" Format um:
-  tm_hour -> Stunde: 0 bis 23
-  tm_min -> Minuten: 0 bis 59
-  tm_sec -> Sekunden 0 bis 59
-  tm_mday -> Tag 1 bis 31
-  tm_mon -> Monat: 0 (Januar) bis 11 (Dezember)
-  tm_year -> Jahre seit 1900
-  tm_yday -> vergangene Tage seit 1. Januar des Jahres
-  tm_isdst -> Wert > 0 = Sommerzeit (dst = daylight saving time)
+  tm_hour -> hour: 0 bis 23
+  tm_min -> minutes: 0 bis 59
+  tm_sec -> seconds 0 bis 59
+  tm_mday -> day 1 to 31
+  tm_mon -> month: 0 (January) to 11 (December)
+  tm_year -> years since 1900
+  tm_yday -> passed days since 1.1. of this year
+  tm_isdst -> value > 0 = summer-time (dst = daylight saving time)
 */
+//Transform time to readable format
 tm Zeit;
 
 // Webserver Port 80
 WiFiServer Server(80);
 
-// Client-Objekt mit dem Namen Client erstellen
+// create wifi client
 WiFiClient Client;
 
 //Setup
@@ -59,12 +51,12 @@ void setup()
 {
   Serial.begin(9600);
 
-  // Parameter für die zu ermittelnde Zeit
-  configTime(Zeitzone, Zeitserver);
+  // Parameters for the time
+  configTime(TIME_ZONE, TIME_SERVER);
 
-  WiFi.begin(Router, Passwort);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
-  // Verbindung herstellen
+  // Open wifi connection
   while (WiFi.status() != WL_CONNECTED)
   {
     delay(200);
@@ -73,28 +65,20 @@ void setup()
 
   Server.begin();
 
-  // SSID des Routers anzeigen
-  Serial.println();
-  Serial.print("Verbunden mit ");
-  Serial.println(WiFi.SSID());
-
-  // IP des D! anzeigen
-  Serial.println(WiFi.localIP());
-
-  // dht starten
+  // start sensor
   dht.begin();
 }
 
 //Loop
 void loop()
 {
-  // aktuelle Zeit lesen
-  time(&aktuelleZeit);
+  // read current time
+  time(&currentTime);
 
-  // localtime_r -> ermittelte Zeit in die lokale Zeitzone setzen
-  localtime_r(&aktuelleZeit, &Zeit);
+  // transform time to current time-zone
+  localtime_r(&currentTime, &Zeit);
 
-  // Variable für Temperatur und Luftfeuchtigkeit
+  // variables for temp and humidity
   float Temperatur;
   float Luftfeuchtigkeit;
   String AnzeigeTemperatur;
