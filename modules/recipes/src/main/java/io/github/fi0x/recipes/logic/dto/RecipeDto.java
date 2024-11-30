@@ -22,5 +22,7 @@ public class RecipeDto
 	private List<String> ingredients;
 	private Integer time;
 	private Float rating;
-	//	private List<String> description; // TODO: Implement everything to make this work
+	// TODO: Make descriptions and notes work
+	//	private List<String> description;
+	//	private Map<String, List<String>> additionalNotes;
 }
