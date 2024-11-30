@@ -12,7 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 public class MainController
 {
-
+	//TODO: Add a scheduled task to cleanup the database from old data
 	@GetMapping("/")
 	public String showHomePage()
 	{
