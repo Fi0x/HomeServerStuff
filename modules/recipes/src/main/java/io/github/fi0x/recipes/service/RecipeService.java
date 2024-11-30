@@ -14,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.InvalidObjectException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -112,10 +113,12 @@ public class RecipeService
 	{
 		log.trace("saveRecipe() called");
 
-		if(recipeDto.getUsername() != null && !authenticator.getAuthenticatedUsername().equals(recipeDto.getUsername()))
+		if(recipeDto.getUsername() != null && !recipeDto.getUsername()
+														.isBlank() && !authenticator.getAuthenticatedUsername()
+																					.equals(recipeDto.getUsername()))
 			throw new ResponseStatusException(HttpStatusCode.valueOf(403), "User is not allowed to save this recipe");
 
-		if(recipeDto.getUsername() == null)
+		if(recipeDto.getUsername() == null || recipeDto.getUsername().isBlank())
 			recipeDto.setUsername(authenticator.getAuthenticatedUsername());
 
 		if(recipeDto.getId() == null)
@@ -123,6 +126,13 @@ public class RecipeService
 
 		try
 		{
+			recipeDto.setTags(recipeDto.getTags() == null ? Collections.emptyList() : recipeDto.getTags().stream()
+																							   .filter(tag -> !tag.isBlank())
+																							   .toList());
+			recipeDto.setIngredients(
+					recipeDto.getIngredients() == null ? Collections.emptyList() : recipeDto.getIngredients().stream()
+																							.filter(ingredient -> !ingredient.isBlank())
+																							.toList());
 			recipeRepo.save(ToRecipeEntityConverter.convert(recipeDto));
 		} catch(IllegalArgumentException e)
 		{

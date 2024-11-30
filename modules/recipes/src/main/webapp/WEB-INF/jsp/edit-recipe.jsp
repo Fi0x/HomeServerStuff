@@ -1,4 +1,3 @@
-<%@ page import="io.github.fi0x.recipes.logic.dto.RecipeDto" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
@@ -44,8 +43,6 @@
                             <c:forEach begin="0" end="${recipe.ingredients.size() - 1}" varStatus="loop">
                                 <p>
                                     <form:input cssClass="long-input" path="ingredients[${loop['index']}]"/>
-                                    <a class="btn-danger round-button"
-                                       onclick="deleteElement('${recipe.ingredients}', ${loop['index']})">X</a>
                                 </p>
                             </c:forEach>
                         </c:when>
@@ -64,8 +61,6 @@
                             <c:forEach begin="0" end="${recipe.tags.size() - 1}" varStatus="loop">
                                 <p>
                                     <form:input cssClass="long-input" path="tags[${loop['index']}]"/>
-                                    <a class="btn-danger round-button"
-                                       onclick="deleteElement('${recipe.tags}', ${loop['index']})">X</a>
                                 </p>
                             </c:forEach>
                         </c:when>

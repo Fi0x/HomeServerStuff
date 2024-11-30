@@ -29,17 +29,6 @@ function updateFilterState() {
     //TODO
 }
 
-function deleteElement(list, idx) {
-    console.log("Deleting from list " + list + " index " + idx);
-    let jsList = ["A", "B", "C"];
-    console.log("This is a list: " + jsList);
-    jsList.splice(0, 1);
-    console.log("The js list: " + jsList);
-    // list.splice(idx, 1);
-    console.log("New list: " + list);
-    //TODO
-}
-
 function addElement(listSize, listType) {
     if (listSizes[listType] < 0)
         listSizes[listType] = listSize;
@@ -57,13 +46,6 @@ function addElement(listSize, listType) {
     newForm.type = 'text';
     newForm.value = '';
 
-    let newAnchor = document.createElement('a');
-    newAnchor.classList.add('btn-danger');
-    newAnchor.classList.add('round-button');
-    newAnchor.setAttribute('onclick', `deleteElement(${null}, ${listSizes[listType]})`); //TODO: Change to correct recipe-list
-    newAnchor.innerText = 'X';
-
     newParagraph.append(newForm);
-    newParagraph.append(newAnchor);
     parent.insertBefore(newParagraph, buttonParagraph);
 }
