@@ -19,7 +19,7 @@ public class SpringSecurityConfig
 			new String[]{"/", "/WEB-INF/jsp/recipe-list.jsp", "/recipe/*", "/WEB-INF/jsp/show-recipe.jsp"};
 	private static final String[] ANONYMOUS_URLS = new String[]{};
 	private static final String[] PRIVATE_URLS =
-			new String[]{"/recipe", "/recipe/*/edit", "WEB-INF/jsp/edit-recipe", "/recipe/*/delete"};
+			new String[]{"/recipe", "/recipe/*/edit", "WEB-INF/jsp/edit-recipe", "/recipe/*/delete", "/recipe/create"};
 
 	@Bean
 	@Order(SecurityProperties.BASIC_AUTH_ORDER)

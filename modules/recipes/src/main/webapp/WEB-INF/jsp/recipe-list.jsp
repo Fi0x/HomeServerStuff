@@ -39,10 +39,18 @@
             <tr class="clickable-row"
                 onclick="window.location='${pageContext.request.contextPath}/recipe/${recipe.id}'">
                 <td>${recipe.name}</td>
-                <td>${recipe.ingredients}</td>
+                <td>
+                    <c:forEach items="${recipe.ingredients}" var="ingredient">
+                        ${ingredient},
+                    </c:forEach>
+                </td>
                 <td>${recipe.rating}</td>
                 <td>${recipe.time} min</td>
-                <td>${recipe.tags}</td>
+                <td>
+                    <c:forEach items="${recipe.tags}" var="tag">
+                        ${tag},
+                    </c:forEach>
+                </td>
             </tr>
         </c:forEach>
         </tbody>
@@ -50,6 +58,6 @@
     <a href="${pageContext.request.contextPath}/recipe" class="btn">Create new recipe</a>
 </div>
 <%@include file="../common/scripts.jspf" %>
-<script src="${pageContext.request.contextPath}/js/functions.js"></script>
+<script src="${pageContext.request.contextPath}/js/recipe-functions.js"></script>
 </body>
 </html>

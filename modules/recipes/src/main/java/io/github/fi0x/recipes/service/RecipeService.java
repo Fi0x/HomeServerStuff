@@ -1,6 +1,10 @@
 package io.github.fi0x.recipes.service;
 
+import io.github.fi0x.recipes.db.DescriptionRepo;
+import io.github.fi0x.recipes.db.NotesRepo;
 import io.github.fi0x.recipes.db.RecipeRepo;
+import io.github.fi0x.recipes.db.entities.DescriptionEntity;
+import io.github.fi0x.recipes.db.entities.NotesEntity;
 import io.github.fi0x.recipes.db.entities.RecipeEntity;
 import io.github.fi0x.recipes.logic.converter.ToRecipeDtoConverter;
 import io.github.fi0x.recipes.logic.converter.ToRecipeEntityConverter;
@@ -13,8 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.InvalidObjectException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -22,6 +26,8 @@ import java.util.List;
 public class RecipeService
 {
 	private RecipeRepo recipeRepo;
+	private DescriptionRepo descriptionRepo;
+	private NotesRepo notesRepo;
 
 	private Authenticator authenticator;
 
@@ -83,7 +89,10 @@ public class RecipeService
 		{
 			try
 			{
-				dtoList.add(ToRecipeDtoConverter.convertFully(entity));
+				RecipeDto recipeDto = ToRecipeDtoConverter.convertFully(entity);
+				recipeDto.setDescription(Collections.emptyList());
+				recipeDto.setAdditionalNotes(Collections.emptyMap());
+				dtoList.add(recipeDto);
 			} catch(InvalidObjectException e)
 			{
 				log.warn("Could not convert a recipe-entity to a dto.", e);
@@ -105,17 +114,22 @@ public class RecipeService
 			throw new ResponseStatusException(HttpStatusCode.valueOf(403),
 											  "You are not authorized to view this recipe");
 
-		return ToRecipeDtoConverter.convertFully(recipeEntity);
+		RecipeDto recipeDto = ToRecipeDtoConverter.convertFully(recipeEntity);
+		recipeDto.setDescription(getDescriptions(recipeDto.getId()));
+		recipeDto.setAdditionalNotes(getAdditionalNotes(recipeDto.getId()));
+		return recipeDto;
 	}
 
 	public void saveRecipe(RecipeDto recipeDto)
 	{
 		log.trace("saveRecipe() called");
 
-		if(recipeDto.getUsername() != null && !authenticator.getAuthenticatedUsername().equals(recipeDto.getUsername()))
+		if(recipeDto.getUsername() != null && !recipeDto.getUsername()
+														.isBlank() && !authenticator.getAuthenticatedUsername()
+																					.equals(recipeDto.getUsername()))
 			throw new ResponseStatusException(HttpStatusCode.valueOf(403), "User is not allowed to save this recipe");
 
-		if(recipeDto.getUsername() == null)
+		if(recipeDto.getUsername() == null || recipeDto.getUsername().isBlank())
 			recipeDto.setUsername(authenticator.getAuthenticatedUsername());
 
 		if(recipeDto.getId() == null)
@@ -123,6 +137,13 @@ public class RecipeService
 
 		try
 		{
+			recipeDto.setTags(recipeDto.getTags() == null ? Collections.emptyList() : recipeDto.getTags().stream()
+																							   .filter(tag -> !tag.isBlank())
+																							   .toList());
+			recipeDto.setIngredients(
+					recipeDto.getIngredients() == null ? Collections.emptyList() : recipeDto.getIngredients().stream()
+																							.filter(ingredient -> !ingredient.isBlank())
+																							.toList());
 			recipeRepo.save(ToRecipeEntityConverter.convert(recipeDto));
 		} catch(IllegalArgumentException e)
 		{
@@ -154,5 +175,30 @@ public class RecipeService
 		boolean minTimeOk = minTime == null || dto.getTime() >= minTime;
 
 		return maxRatingOk && minRatingOk && maxTimeOk && minTimeOk;
+	}
+
+	private List<String> getDescriptions(Long recipeId)
+	{
+		List<DescriptionEntity> entities = descriptionRepo.findAllByRecipeId(recipeId);
+		entities.sort(Comparator.comparing(DescriptionEntity::getTextNumber));
+		return entities.stream().map(DescriptionEntity::getText).toList();
+	}
+
+	private Map<String, List<String>> getAdditionalNotes(Long recipeId)
+	{
+		List<NotesEntity> entities = notesRepo.findAllByRecipeId(recipeId);
+
+		Map<String, List<NotesEntity>> entityMap =
+				entities.stream().collect(Collectors.groupingBy(NotesEntity::getUsername));
+
+		Map<String, List<String>> resultMap = new HashMap<>();
+		for(Map.Entry<String, List<NotesEntity>> entry : entityMap.entrySet())
+		{
+			resultMap.put(entry.getKey(),
+						  entry.getValue().stream().sorted(Comparator.comparing(NotesEntity::getTextNumber))
+							   .map(NotesEntity::getText).toList());
+		}
+
+		return resultMap;
 	}
 }
