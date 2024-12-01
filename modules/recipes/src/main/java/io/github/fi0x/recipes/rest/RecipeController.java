@@ -116,7 +116,7 @@ public class RecipeController
 
 	@Transactional
 	@PostMapping("/recipe/create")
-	public String createUpdateRecipe(ModelMap model, @Valid RecipeDto recipeDto)
+	public String createUpdateRecipe(@Valid RecipeDto recipeDto)
 	{
 		log.info("createUpdateRecipe() called");
 

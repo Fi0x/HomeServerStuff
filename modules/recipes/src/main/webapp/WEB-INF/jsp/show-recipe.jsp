@@ -33,12 +33,31 @@
                 </c:forEach>
             </td>
         </tr>
+        <tr>
+            <td class="align-top">Description</td>
+            <td>
+                <c:forEach items="${recipe.description}" var="descriptionText">
+                    <p>${descriptionText}</p>
+                </c:forEach>
+            </td>
+        </tr>
+        <tr>
+            <td class="align-top">User-Notes</td>
+            <td>
+                <c:forEach items="${recipe.additionalNotes}" var="userNotes">
+                    <p>---${userNotes.key}---</p>
+                    <c:forEach items="${userNotes.value}" var="note">
+                        <p>${note}</p>
+                    </c:forEach>
+                </c:forEach>
+            </td>
+        </tr>
         </tbody>
     </table>
     <a href="${pageContext.request.contextPath}/recipe/${recipe.id}/edit" class="btn">Edit Recipe</a>
     <a href="${pageContext.request.contextPath}/recipe/${recipe.id}/delete" class="btn">Delete Recipe</a>
 </div>
 <%@include file="../common/scripts.jspf" %>
-<script src="${pageContext.request.contextPath}/js/functions.js"></script>
+<script src="${pageContext.request.contextPath}/js/recipe-functions.js"></script>
 </body>
 </html>

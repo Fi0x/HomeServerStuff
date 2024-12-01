@@ -45,6 +45,7 @@ body {
     padding: 0.3rem;
     text-decoration: none;
     border-width: 0;
+    cursor: pointer;
 }
 
 .btn-success:hover {
@@ -98,6 +99,14 @@ body {
 
 .round-image {
     border-radius: 1rem;
+}
+
+.round-button {
+    border-radius: 2rem;
+    width: 2rem;
+    height: 2rem;
+    cursor: pointer;
+    padding: 0.3rem 0.6rem;
 }
 
 .menu-bar-image {
@@ -182,6 +191,10 @@ table {
 
 .non-editable:focus-visible {
     outline-width: 0;
+}
+
+.long-input {
+    width: 25rem;
 }
 
 .file-input {

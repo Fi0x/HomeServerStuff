@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Builder
@@ -22,4 +23,7 @@ public class RecipeDto
 	private List<String> ingredients;
 	private Integer time;
 	private Float rating;
+
+	private List<String> description;
+	private Map<String, List<String>> additionalNotes;
 }

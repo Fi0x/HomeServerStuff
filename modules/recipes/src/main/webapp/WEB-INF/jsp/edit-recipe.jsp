@@ -9,12 +9,16 @@
     <h1>${recipe.name}</h1>
     <%--@elvariable id="recipe" type="io.github.fi0x.recipes.logic.dto.RecipeDto"--%>
     <form:form method="post" modelAttribute="recipe" action="/recipe/create">
+        <form:hidden path="id"/>
+        <form:hidden path="username"/>
+        <%--TODO: Add additional notes to visible text fields--%>
+        <form:hidden path="additionalNotes"/>
         <table class="table">
             <tbody>
             <tr>
                 <td>Name</td>
                 <td>
-                    <form:input path="name"/> minutes
+                    <form:input path="name"/>
                 </td>
             </tr>
             <tr>
@@ -36,15 +40,36 @@
             <tr>
                 <td class="align-top">Ingredients</td>
                 <td>
-                        <%--TODO: Transform this into a list that allows the user to also delete and add entries--%>
-                    <form:input path="ingredients"/>
+                    <c:choose>
+                        <c:when test="${recipe.ingredients.size() > 0}">
+                            <c:forEach begin="0" end="${recipe.ingredients.size() - 1}" varStatus="loop">
+                                <p>
+                                    <form:input cssClass="long-input" path="ingredients[${loop['index']}]"/>
+                                </p>
+                            </c:forEach>
+                        </c:when>
+                    </c:choose>
+                    <p id="ingredientsBtn">
+                        <a class="btn-success"
+                           onclick="addElement('${recipe.ingredients.size()}', 'ingredients')">Add</a>
+                    </p>
                 </td>
             </tr>
             <tr>
                 <td class="align-top">Tags</td>
                 <td>
-                        <%--TODO: Transform this into a list that allows the user to also delete and add entries--%>
-                    <form:input path="tags"/>
+                    <c:choose>
+                        <c:when test="${recipe.tags.size() > 0}">
+                            <c:forEach begin="0" end="${recipe.tags.size() - 1}" varStatus="loop">
+                                <p>
+                                    <form:input cssClass="long-input" path="tags[${loop['index']}]"/>
+                                </p>
+                            </c:forEach>
+                        </c:when>
+                    </c:choose>
+                    <p id="tagsBtn">
+                        <a class="btn-success" onclick="addElement('${recipe.ingredients.size()}', 'tags')">Add</a>
+                    </p>
                 </td>
             </tr>
             <tr>
@@ -53,13 +78,32 @@
                     <form:checkbox path="visible"/>
                 </td>
             </tr>
+            <tr>
+                <td class="align-top">Description</td>
+                <c:choose>
+                    <c:when test="${recipe.description.size() > 0}">
+                        <c:forEach begin="0" end="${recipe.description.size() - 1}" varStatus="loop">
+                            <p>
+                                <form:input cssClass="long-input" path="description[${loop['index']}]"/>
+                            </p>
+                        </c:forEach>
+                    </c:when>
+                </c:choose>
+                <p id="descriptionBtn">
+                    <a class="btn-success" onclick="addElement('${recipe.description.size()}', 'description')">Add</a>
+                </p>
+            </tr>
             </tbody>
         </table>
         <input type="submit" class="btn-success"/>
     </form:form>
 </div>
 <%@include file="../common/scripts.jspf" %>
-<script src="${pageContext.request.contextPath}/js/functions.js"></script>
 <script src="${pageContext.request.contextPath}/js/recipe-functions.js"></script>
+<script>
+    function updateSlider(slider) {
+        document.getElementById('ratingText').innerText = slider.value;
+    }
+</script>
 </body>
 </html>
