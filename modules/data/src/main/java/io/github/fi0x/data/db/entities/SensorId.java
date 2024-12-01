@@ -9,8 +9,8 @@ import java.io.Serializable;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class DataTagId implements Serializable
+public class SensorId implements Serializable
 {
-	private Long dataId;
-	private Long tagId;
+	private String address;
+	private String name;
 }

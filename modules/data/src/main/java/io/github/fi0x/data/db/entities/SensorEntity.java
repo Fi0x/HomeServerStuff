@@ -14,12 +14,18 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "DATATAGS")
-@IdClass(DataTagId.class)
-public class DataTagEntity
+@Table(name = "DTSENSORS")
+@IdClass(SensorId.class)
+public class SensorEntity
 {
 	@Id
-	private Long dataId;
+	private String address;
 	@Id
-	private Long tagId;
+	private String name;
+
+	private Long lastUpdate;
+
+	private String description;
+	private String unit;
+	private String type;
 }

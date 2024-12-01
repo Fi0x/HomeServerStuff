@@ -11,11 +11,13 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SensorDto
+public class ExpandedSensorDto
 {
+	private String address;
 	private String name;
 	private String description;
 	private String unit;
 	private String type;
 	private List<String> tags;
+	private Double value;
 }

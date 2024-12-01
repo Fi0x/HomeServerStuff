@@ -1,15 +1,12 @@
 package io.github.fi0x.data.db;
 
 import io.github.fi0x.data.db.entities.TagEntity;
+import io.github.fi0x.data.db.entities.TagId;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
-import java.util.Optional;
+import java.util.List;
 
-public interface TagRepo extends JpaRepository<TagEntity, Long>
+public interface TagRepo extends JpaRepository<TagEntity, TagId>
 {
-	Optional<TagEntity> findByTag(String tag);
-
-	@Query(value = "SELECT MAX(ID) FROM tags", nativeQuery = true)
-	Optional<Long> getHighestId();
+	List<TagEntity> findAllBySensorName(String sensorName);
 }
