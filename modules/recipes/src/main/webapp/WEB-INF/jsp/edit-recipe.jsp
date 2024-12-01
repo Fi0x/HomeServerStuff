@@ -11,6 +11,8 @@
     <form:form method="post" modelAttribute="recipe" action="/recipe/create">
         <form:hidden path="id"/>
         <form:hidden path="username"/>
+        <%--TODO: Add additional notes to visible text fields--%>
+        <form:hidden path="additionalNotes"/>
         <table class="table">
             <tbody>
             <tr>
@@ -75,6 +77,21 @@
                 <td>
                     <form:checkbox path="visible"/>
                 </td>
+            </tr>
+            <tr>
+                <td class="align-top">Description</td>
+                <c:choose>
+                    <c:when test="${recipe.description.size() > 0}">
+                        <c:forEach begin="0" end="${recipe.description.size() - 1}" varStatus="loop">
+                            <p>
+                                <form:input cssClass="long-input" path="description[${loop['index']}]"/>
+                            </p>
+                        </c:forEach>
+                    </c:when>
+                </c:choose>
+                <p id="descriptionBtn">
+                    <a class="btn-success" onclick="addElement('${recipe.description.size()}', 'description')">Add</a>
+                </p>
             </tr>
             </tbody>
         </table>
