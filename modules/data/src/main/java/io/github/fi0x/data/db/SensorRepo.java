@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface SensorRepo extends JpaRepository<SensorEntity, SensorId>
 {
-	Optional<SensorEntity> findByAddress(String address);
+	Optional<SensorEntity> findByAddressAndName(String address, String name);
 
 	List<SensorEntity> findAllByName(String name);
 }

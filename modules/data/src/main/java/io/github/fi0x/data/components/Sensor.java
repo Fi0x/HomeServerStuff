@@ -22,9 +22,9 @@ public class Sensor
 	private final SensorRepo sensorRepo;
 	private final TagRepo tagRepo;
 
-	public SensorDto getSensor(String address) throws ResponseStatusException
+	public SensorDto getSensor(String address, String name) throws ResponseStatusException
 	{
-		SensorEntity entity = sensorRepo.findByAddress(address).orElseThrow(() -> {
+		SensorEntity entity = sensorRepo.findByAddressAndName(address, name).orElseThrow(() -> {
 			log.warn("Sensor at address '{}' is not registered", address);
 			return new ResponseStatusException(HttpStatusCode.valueOf(404),
 											   "The address from which data was received, could not be mapped to a registered sensor");
@@ -36,9 +36,9 @@ public class Sensor
 		return sensorDto;
 	}
 
-	public void updateSensorTimestamp(String address)
+	public void updateSensorTimestamp(String address, String name)
 	{
-		SensorEntity entity = sensorRepo.findByAddress(address).orElseThrow(() -> {
+		SensorEntity entity = sensorRepo.findByAddressAndName(address, name).orElseThrow(() -> {
 			log.warn("No sensor registered under ip '{}'", address);
 			return new ResponseStatusException(HttpStatusCode.valueOf(404),
 											   "The sensor at ip " + address + " is not registered and can therefore not be updated with a new timestamp");

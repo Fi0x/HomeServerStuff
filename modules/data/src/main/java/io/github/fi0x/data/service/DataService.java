@@ -4,7 +4,6 @@ import io.github.fi0x.data.components.Sensor;
 import io.github.fi0x.data.db.DataRepo;
 import io.github.fi0x.data.db.entities.DataEntity;
 import io.github.fi0x.data.logic.dto.DataDto;
-import io.github.fi0x.data.logic.dto.SensorDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,11 +22,11 @@ public class DataService
 	{
 		log.trace("addData() called from address {}", address);
 
-		SensorDto sensorDto = sensor.getSensor(address);
-		sensor.updateSensorTimestamp(address);
+		sensor.updateSensorTimestamp(address, data.getSensorName());
 
-		DataEntity dataEntity = DataEntity.builder().address(address).sensor(sensorDto.getName())
-										  .timestamp(System.currentTimeMillis()).value(data.getValue()).build();
+		DataEntity dataEntity =
+				DataEntity.builder().address(address).sensor(data.getSensorName()).timestamp(System.currentTimeMillis())
+						  .value(data.getValue()).build();
 		dataRepo.save(dataEntity);
 	}
 }
