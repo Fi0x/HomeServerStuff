@@ -7,37 +7,24 @@
 #include <time.h>
 #include <DHT.h>
 
-// DHT11
+// DHT11 / DHT22
 //# define DHTTYPE DHT11
-
-// DHT22
 #define DHTTYPE DHT22
 #define DHTPIN D7
 
-// Sensor zuordnen
-DHT dht(DHTPIN, DHTTYPE);
-
+// WIFI settings
 #define WIFI_SSID "SSID"
 #define WIFI_PASSWORD "PW"
 
+// Set time-server and time-zone
 #define TIME_SERVER "de.pool.ntp.org"
-
-// Set time-zone
 #define TIME_ZONE "CET-1CEST,M3.5.0/02,M10.5.0/03"
 
-time_t currentTime;
+// Set sensor to pin
+DHT dht(DHTPIN, DHTTYPE);
 
-/*
-  tm_hour -> hour: 0 bis 23
-  tm_min -> minutes: 0 bis 59
-  tm_sec -> seconds 0 bis 59
-  tm_mday -> day 1 to 31
-  tm_mon -> month: 0 (January) to 11 (December)
-  tm_year -> years since 1900
-  tm_yday -> passed days since 1.1. of this year
-  tm_isdst -> value > 0 = summer-time (dst = daylight saving time)
-*/
-//Transform time to readable format
+// Time setup
+time_t currentTime;
 tm Zeit;
 
 // Webserver Port 80
