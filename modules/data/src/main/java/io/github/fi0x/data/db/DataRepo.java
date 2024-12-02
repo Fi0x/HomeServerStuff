@@ -6,9 +6,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface DataRepo extends JpaRepository<DataEntity, DataId>
 {
 	@Query(value = "SELECT * FROM dtdata WHERE TIMESTAMP < ?1", nativeQuery = true)
 	List<DataEntity> findAllValuesOlderThan(Long time);
+
+	Optional<DataEntity> findFirstByAddressAndSensorOrderByTimestampDesc(String address, String sensor);
 }

@@ -26,8 +26,8 @@ public class DataService
 		SensorDto sensorDto = sensor.getSensor(address);
 		sensor.updateSensorTimestamp(address);
 
-		DataEntity dataEntity = DataEntity.builder().sensor(sensorDto.getName()).timestamp(System.currentTimeMillis())
-										  .value(data.getValue()).build();
+		DataEntity dataEntity = DataEntity.builder().address(address).sensor(sensorDto.getName())
+										  .timestamp(System.currentTimeMillis()).value(data.getValue()).build();
 		dataRepo.save(dataEntity);
 	}
 }

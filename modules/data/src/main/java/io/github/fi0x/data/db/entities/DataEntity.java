@@ -19,6 +19,8 @@ import lombok.NoArgsConstructor;
 public class DataEntity
 {
 	@Id
+	private String address;
+	@Id
 	private String sensor;
 	@Id
 	private Long timestamp;

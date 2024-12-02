@@ -11,6 +11,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class DataId implements Serializable
 {
+	private String address;
 	private String sensor;
 	private Long timestamp;
 }
