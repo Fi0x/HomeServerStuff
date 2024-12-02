@@ -5,6 +5,7 @@ import io.github.fi0x.data.logic.dto.SensorDto;
 import io.github.fi0x.data.service.DataService;
 import io.github.fi0x.data.service.SensorService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,7 +31,7 @@ public class SensorController
 	}
 
 	@PostMapping("/register")
-	public void registerSensor(HttpServletRequest request, @RequestBody SensorDto requestDto)
+	public void registerSensor(HttpServletRequest request, @Valid @RequestBody SensorDto requestDto)
 	{
 		log.debug("registerSensor() called");
 

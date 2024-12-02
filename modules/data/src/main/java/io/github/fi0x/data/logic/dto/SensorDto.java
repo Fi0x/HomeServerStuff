@@ -1,5 +1,6 @@
 package io.github.fi0x.data.logic.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class SensorDto
 {
+	@NotBlank
 	private String name;
 	private String description;
 	private String unit;
