@@ -228,3 +228,8 @@ input {
 .filter-option:hover {
     background-color: var(--dark-accent2);
 }
+
+#dataChart {
+    width: 100%;
+    max-width: 700px;
+}
