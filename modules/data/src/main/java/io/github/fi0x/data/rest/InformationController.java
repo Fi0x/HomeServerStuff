@@ -1,14 +1,13 @@
 package io.github.fi0x.data.rest;
 
+import io.github.fi0x.data.service.DataService;
 import io.github.fi0x.data.service.SensorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @Controller
@@ -16,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class InformationController
 {
 	private final SensorService sensorService;
+	private final DataService dataService;
 
 	@GetMapping("/")
 	public String showSensorList(ModelMap model)
@@ -29,11 +29,13 @@ public class InformationController
 	}
 
 	@GetMapping("/sensor/{address}/{name}")
-	public String showSensor(@PathVariable String address, @PathVariable String name)
+	public String showSensor(ModelMap model, @PathVariable String address, @PathVariable String name)
 	{
 		log.info("showSensor() called");
 
-		//TODO: Show a page with the sensor data
-		throw new ResponseStatusException(HttpStatusCode.valueOf(501), "This page is not yet finished");
+		model.put("sensor", sensorService.getDetailedSensor(address, name));
+		model.put("data", dataService.getAllData(address, name));
+
+		return "show-sensor";
 	}
 }

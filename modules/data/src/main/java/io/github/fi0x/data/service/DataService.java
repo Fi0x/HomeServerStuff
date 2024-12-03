@@ -9,6 +9,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -24,9 +29,16 @@ public class DataService
 
 		sensor.updateSensorTimestamp(address, data.getSensorName());
 
-		DataEntity dataEntity =
-				DataEntity.builder().address(address).sensor(data.getSensorName()).timestamp(System.currentTimeMillis())
-						  .value(data.getValue()).build();
+		DataEntity dataEntity = DataEntity.builder().address(address).sensor(data.getSensorName())
+										  .timestamp(System.currentTimeMillis()).value(data.getValue()).build();
 		dataRepo.save(dataEntity);
+	}
+
+	public SortedMap<Long, Double> getAllData(String address, String sensorName)
+	{
+		List<DataEntity> entities = dataRepo.findAllByAddressAndSensorOrderByTimestampAsc(address, sensorName);
+
+		return new TreeMap<>(
+				entities.stream().collect(Collectors.toMap(DataEntity::getTimestamp, DataEntity::getValue)));
 	}
 }

@@ -12,7 +12,9 @@ import io.github.fi0x.data.logic.dto.ExpandedSensorDto;
 import io.github.fi0x.data.logic.dto.SensorDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -69,6 +71,21 @@ public class SensorService
 				dto.setValue(0D);
 		});
 		return sensorDtos;
+	}
+
+	public ExpandedSensorDto getDetailedSensor(String address, String name) throws ResponseStatusException
+	{
+		Optional<ExpandedSensorDto> optionalSensorDto = sensorRepo.findById(new SensorId(address, name))
+																  .map(SensorConverter::toExpandedDto);
+		ExpandedSensorDto sensorDto = optionalSensorDto.orElseThrow(
+				() -> new ResponseStatusException(HttpStatusCode.valueOf(404),
+												  "The requested sensor is not registered in the database"));
+
+		sensorDto.setTags(tagRepo.findAllBySensorName(name).stream().map(TagEntity::getTag).toList());
+		Optional<DataEntity> mostRecentValue = dataRepo.findFirstByAddressAndSensorOrderByTimestampDesc(address, name);
+		mostRecentValue.ifPresent(dataEntity -> sensorDto.setValue(dataEntity.getValue()));
+
+		return sensorDto;
 	}
 
 	public List<String> getAllSensorTypes()

@@ -57,6 +57,7 @@ void setup()
   requestJson.concat(TEMPERATURE_SENSOR_DESCRIPTION);
   requestJson.concat("\",\"unit\":\"");
   requestJson.concat(TEMPERATURE_UNIT);
+  // TODO: Change the type and tags to defined constants at the top
   requestJson.concat("\",\"type\":\"Temperature\",\"tags\":[\"Temperature\"]}");
   statusCode = -1;
   while(statusCode != 200)
