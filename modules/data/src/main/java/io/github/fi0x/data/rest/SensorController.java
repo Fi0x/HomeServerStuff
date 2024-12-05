@@ -23,9 +23,9 @@ public class SensorController
 	private final SensorService sensorService;
 
 	@PostMapping("/upload")
-	public void getData(HttpServletRequest request, @RequestBody DataDto requestDto)
+	public void uploadData(HttpServletRequest request, @RequestBody DataDto requestDto)
 	{
-		log.debug("getData() called");
+		log.debug("uploadData() called");
 
 		dataService.addData(request.getRemoteAddr(), requestDto);
 	}

@@ -1,5 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <html>
 <%@include file="../common/head.jspf" %>
@@ -19,7 +20,9 @@
         <c:forEach items="${data}" var="datapoint">
             <tr>
                 <td>${datapoint.value}</td>
-                <td>${datapoint.key}</td>
+                <td>
+                    <fmt:formatDate value="${datapoint.key}" pattern="dd.MM HH:mm:ss"/>
+                </td>
             </tr>
         </c:forEach>
         </tbody>

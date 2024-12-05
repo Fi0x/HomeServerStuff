@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Date;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -34,11 +35,13 @@ public class DataService
 		dataRepo.save(dataEntity);
 	}
 
-	public SortedMap<Long, Double> getAllData(String address, String sensorName)
+	public SortedMap<Date, Double> getAllData(String address, String sensorName)
 	{
 		List<DataEntity> entities = dataRepo.findAllByAddressAndSensorOrderByTimestampAsc(address, sensorName);
 
-		return new TreeMap<>(
-				entities.stream().collect(Collectors.toMap(DataEntity::getTimestamp, DataEntity::getValue)));
+		TreeMap<Date, Double> map = new TreeMap<>(entities.stream().collect(
+				Collectors.toMap(entity -> new Date(entity.getTimestamp()), DataEntity::getValue)));
+
+		return map.descendingMap();
 	}
 }
