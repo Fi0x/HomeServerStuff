@@ -19,7 +19,7 @@
 // Sensor settings
 #define TEMPERATURE_SENSOR_NAME "Temperature-sensor-name"
 #define TEMPERATURE_SENSOR_DESCRIPTION "Temperature-Description"
-#define TEMPERATURE_UNIT "C"
+#define TEMPERATURE_UNIT "°C"
 #define HUMIDITY_SENSOR_NAME "Humidity-sensor-name"
 #define HUMIDITY_SENSOR_DESCRIPTION "Humidity-Description"
 #define HUMIDITY_UNIT "%"

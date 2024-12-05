@@ -20,7 +20,7 @@
         <tbody>
         <c:forEach items="${data}" var="datapoint">
             <tr>
-                <td>${datapoint.value}</td>
+                <td>${datapoint.value}${sensor.unit}</td>
                 <td>
                     <fmt:formatDate value="${datapoint.key}" pattern="dd.MM HH:mm:ss"/>
                 </td>
@@ -31,6 +31,6 @@
 </div>
 <%@include file="../common/scripts.jspf" %>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="${pageContext.request.contextPath}/js/data-functions.js"></script>
+<script src="${pageContext.request.contextPath}/js/data-functions.js" type="module"></script>
 </body>
 </html>
