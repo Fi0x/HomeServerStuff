@@ -8,6 +8,7 @@
 <%@include file="../common/navigation.jspf" %>
 <div class="container">
     <h1>${sensor.name} (${sensor.address})</h1>
+    <p>${sensor.description}</p>
     <canvas id="dataChart"></canvas>
     <table id="searchableTable" class="table sortable">
         <thead>
@@ -29,7 +30,7 @@
     </table>
 </div>
 <%@include file="../common/scripts.jspf" %>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="${pageContext.request.contextPath}/js/data-functions.js"></script>
 </body>
 </html>
