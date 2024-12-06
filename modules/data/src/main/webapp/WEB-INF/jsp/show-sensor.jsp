@@ -30,7 +30,18 @@
     </table>
 </div>
 <%@include file="../common/scripts.jspf" %>
+<script>
+    let sensorData = [
+        <c:forEach items="${data}" var="entry" varStatus="loop">
+        {
+            x: "${entry.key}",
+            y: ${entry.value}
+        }${not loop.last ? ',' : ''}
+        </c:forEach>
+    ]
+</script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="${pageContext.request.contextPath}/js/data-functions.js" type="module"></script>
+<script src="${pageContext.request.contextPath}/js/data-functions.js"></script>
+<script src="${pageContext.request.contextPath}/js/data-chart.js" type="module"></script>
 </body>
 </html>

@@ -20,7 +20,7 @@ public class DatabaseCleanup
 
 	private final DataRepo dataRepo;
 
-	@Scheduled(fixedRate = 600000)
+	@Scheduled(fixedRate = 3600000)
 	public void cleanDatabase()
 	{
 		log.debug("Database cleanup running");
