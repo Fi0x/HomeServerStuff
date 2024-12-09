@@ -18,6 +18,7 @@
             </label>
         </c:forEach>
     </div>
+    <%--TODO: Make the table sortable--%>
     <table id="searchableTable" class="table sortable">
         <thead>
         <tr class="underlined-row">
@@ -34,12 +35,12 @@
             <tr class="clickable-row ${sensor.offline ? 'red' : ''}" title="${sensor.description}"
                 onclick="window.location='${pageContext.request.contextPath}/sensor/${sensor.address}/${sensor.name}'">
                 <td>${sensor.name}</td>
-                <td>${sensor.type}</td>
+                <td class="filter-tag">${sensor.type}</td>
                 <td>${sensor.address}</td>
                 <td>${sensor.value}${sensor.unit}</td>
-                <td>
-                    <c:forEach items="${sensor.tags}" var="tag">
-                        ${tag},
+                <td class="filter-tag">
+                    <c:forEach items="${sensor.tags}" var="tag" varStatus="loop">
+                        ${tag}${loop.last ? '': ','}
                     </c:forEach>
                 </td>
             </tr>

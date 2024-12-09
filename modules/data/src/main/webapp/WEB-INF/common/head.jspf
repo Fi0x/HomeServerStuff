@@ -1,6 +1,6 @@
 <head>
     <link href="${pageContext.request.contextPath}/webjars/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/design.css" rel="stylesheet">
-    <title>Home Server Util</title>
+    <title>Home Server Data</title>
     <link rel="icon" href="${pageContext.request.contextPath}/images/hub.ico">
 </head>
