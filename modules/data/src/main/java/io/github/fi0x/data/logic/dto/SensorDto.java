@@ -20,4 +20,5 @@ public class SensorDto
 	private String unit;
 	private String type;
 	private List<String> tags;
+	private Long dataDelay;
 }

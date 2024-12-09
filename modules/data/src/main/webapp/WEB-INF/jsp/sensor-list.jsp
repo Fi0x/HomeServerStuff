@@ -30,9 +30,8 @@
         </thead>
         <tbody>
         <c:forEach items="${sensorList}" var="sensor">
-            <%--TODO: Make line red, when data wasn't updated in a long time and the sensor seems unreachable--%>
             <%--TODO: Make line yellow, when data is outside of a user-specified range--%>
-            <tr class="clickable-row" title="${sensor.description}"
+            <tr class="clickable-row ${sensor.offline ? 'red' : ''}" title="${sensor.description}"
                 onclick="window.location='${pageContext.request.contextPath}/sensor/${sensor.address}/${sensor.name}'">
                 <td>${sensor.name}</td>
                 <td>${sensor.type}</td>

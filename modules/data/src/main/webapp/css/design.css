@@ -233,3 +233,11 @@ input {
     width: 100%;
     max-width: 700px;
 }
+
+.red {
+    background-color: var(--custom-red);
+}
+
+.red:hover {
+    background-color: var(--custom-light-red);
+}

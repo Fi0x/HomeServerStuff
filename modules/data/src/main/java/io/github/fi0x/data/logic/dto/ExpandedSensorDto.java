@@ -20,4 +20,6 @@ public class ExpandedSensorDto
 	private String type;
 	private List<String> tags;
 	private Double value;
+	private Long dataDelay;
+	private Boolean offline;
 }

@@ -28,4 +28,5 @@ public class SensorEntity
 	private String description;
 	private String unit;
 	private String type;
+	private Long dataDelay;
 }

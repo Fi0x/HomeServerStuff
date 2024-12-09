@@ -41,6 +41,7 @@ public class SensorService
 		sensorEntity.setDescription(sensor.getDescription());
 		sensorEntity.setUnit(sensor.getUnit());
 		sensorEntity.setType(sensor.getType());
+		sensorEntity.setDataDelay(sensor.getDataDelay());
 		sensorRepo.save(sensorEntity);
 
 		List<TagEntity> existingTags = tagRepo.findAllBySensorName(sensor.getName());
@@ -88,11 +89,6 @@ public class SensorService
 		mostRecentValue.ifPresent(dataEntity -> sensorDto.setValue(dataEntity.getValue()));
 
 		return sensorDto;
-	}
-
-	public Set<String> getAllSensorTypes()
-	{
-		return sensorRepo.findAll().stream().map(SensorEntity::getType).collect(Collectors.toSet());
 	}
 
 	public Set<String> getAllSensorTags()

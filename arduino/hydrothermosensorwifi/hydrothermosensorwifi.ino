@@ -57,7 +57,9 @@ void setup()
   requestJson.concat(TEMPERATURE_SENSOR_DESCRIPTION);
   requestJson.concat("\",\"unit\":\"");
   requestJson.concat(TEMPERATURE_UNIT);
-  requestJson.concat("\",\"type\":\"Temperature\",\"tags\":[\"Temperature\"]}");
+  requestJson.concat("\",\"type\":\"Temperature\",\"tags\":[\"Temperature\"],\"dataDelay\":\"");
+  requestJson.concat(DELAY);
+  requestJson.concat("\"}");
   statusCode = -1;
   while(statusCode != 200)
   {
