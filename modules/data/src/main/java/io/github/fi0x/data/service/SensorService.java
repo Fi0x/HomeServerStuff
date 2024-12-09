@@ -18,6 +18,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -88,8 +90,15 @@ public class SensorService
 		return sensorDto;
 	}
 
-	public List<String> getAllSensorTypes()
+	public Set<String> getAllSensorTypes()
 	{
-		return sensorRepo.findAll().stream().map(SensorEntity::getType).toList();
+		return sensorRepo.findAll().stream().map(SensorEntity::getType).collect(Collectors.toSet());
+	}
+
+	public Set<String> getAllSensorTags()
+	{
+		Set<String> results = sensorRepo.findAll().stream().map(SensorEntity::getType).collect(Collectors.toSet());
+		results.addAll(tagRepo.findAll().stream().map(TagEntity::getTag).collect(Collectors.toSet()));
+		return results;
 	}
 }

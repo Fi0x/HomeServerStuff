@@ -11,9 +11,9 @@
         <input type="text" id="searchText" onkeyup="searchFunction()" class="search-input" placeholder="Search...">
     </label>
     <div>
-        <c:forEach items="${typeList}" var="type">
-            <label class="filter-option" title="Will include sensors of type '${type}'">
-                    ${type}
+        <c:forEach items="${tagList}" var="tag">
+            <label class="filter-option" title="Will include sensors with tag '${tag}'">
+                    ${tag}
                 <input type="checkbox" onclick="updateFilterState()">
             </label>
         </c:forEach>
@@ -30,6 +30,8 @@
         </thead>
         <tbody>
         <c:forEach items="${sensorList}" var="sensor">
+            <%--TODO: Make line red, when data wasn't updated in a long time and the sensor seems unreachable--%>
+            <%--TODO: Make line yellow, when data is outside of a user-specified range--%>
             <tr class="clickable-row" title="${sensor.description}"
                 onclick="window.location='${pageContext.request.contextPath}/sensor/${sensor.address}/${sensor.name}'">
                 <td>${sensor.name}</td>

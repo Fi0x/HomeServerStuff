@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class DataDto
 {
-	private String sensorName;//TODO: Use this to distinguish between sensors with the same address
+	private String sensorName;
 	private Double value;
 }

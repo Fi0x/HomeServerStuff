@@ -23,7 +23,7 @@ public class InformationController
 		log.info("showSensorList() called");
 
 		model.put("sensorList", sensorService.getAllDetailedSensors());
-		model.put("typeList", sensorService.getAllSensorTypes());
+		model.put("tagList", sensorService.getAllSensorTags());
 
 		return "sensor-list";
 	}
