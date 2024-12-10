@@ -15,12 +15,13 @@
             <a class="nav-link" href="${pageContext.request.contextPath}/custom-login">Login</a>
         </li>
             <li class="logged-in-user spaced-text" id="usernameText">Logged in as ${username}</li>
-            <li class="nav-item logged-in-user"><a class="nav-link"
-                                               href="${pageContext.request.contextPath}/logout">Logout</a>
+            <li class="nav-item logged-in-user">
+                <a class="nav-link" href="${pageContext.request.contextPath}/logout">Logout</a>
         </li>
     </ul>
 </nav>
 <script>
+    <%--TODO: Find out why this is not loaded correctly--%>
     onload = function () {
         const list = document.getElementById("menuBarList");
         const loginElement = document.getElementById("loginNavBarElement");
