@@ -35,6 +35,7 @@ public class SensorController
 	{
 		log.debug("registerSensor() called");
 
+		requestDto.setDataDelay(requestDto.getDataDelay() == null ? null : requestDto.getDataDelay() / 1000);
 		sensorService.saveSensor(request.getRemoteAddr(), requestDto);
 	}
 }

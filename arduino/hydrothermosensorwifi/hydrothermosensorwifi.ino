@@ -23,7 +23,7 @@
 #define HUMIDITY_SENSOR_NAME "Humidity-sensor-name"
 #define HUMIDITY_SENSOR_DESCRIPTION "Humidity-Description"
 #define HUMIDITY_UNIT "%"
-#define DELAY 300000
+#define DELAY 600000000
 
 // Set sensor to pin
 DHT dht(DHTPIN, DHTTYPE);
@@ -37,8 +37,6 @@ String serverUrl = "http://";
 //Setup
 void setup()
 {
-  Serial.begin(9600);
-  
   serverUrl.concat(SERVER_IP);
   serverUrl.concat(":");
   serverUrl.concat(SERVER_PORT);
@@ -57,7 +55,7 @@ void setup()
   requestJson.concat(TEMPERATURE_SENSOR_DESCRIPTION);
   requestJson.concat("\",\"unit\":\"");
   requestJson.concat(TEMPERATURE_UNIT);
-  requestJson.concat("\",\"type\":\"Temperature\",\"tags\":[\"Temperature\"],\"dataDelay\":\"");
+  requestJson.concat("\",\"type\":\"Temperature\",\"tags\":[\"Temperature\",\"Test\"],\"dataDelay\":\"");
   requestJson.concat(DELAY);
   requestJson.concat("\"}");
   statusCode = -1;
@@ -85,7 +83,9 @@ void setup()
   requestJson.concat(HUMIDITY_SENSOR_DESCRIPTION);
   requestJson.concat("\",\"unit\":\"");
   requestJson.concat(HUMIDITY_UNIT);
-  requestJson.concat("\",\"type\":\"Humidity\",\"tags\":[\"Humidity\"]}");
+  requestJson.concat("\",\"type\":\"Humidity\",\"tags\":[\"Humidity\",\"Test\"],\"dataDelay\":\"");
+  requestJson.concat(DELAY);
+  requestJson.concat("\"}");
   statusCode = -1;
   while(statusCode != 200)
   {
@@ -103,19 +103,14 @@ void setup()
     }
   }
 
-  // Start sensor (TODO: Put this in the loop and power the sensor with an output pin only when the sensor is needed)
   dht.begin();
-}
-
-//Loop
-void loop()
-{
+  
   // Variables for temperature and humidity
   float temperature = dht.readTemperature();
   float humidity = dht.readHumidity();
 
   // Upload temperature-data
-  String requestJson = "{\"sensorName\":\"";
+  requestJson = "{\"sensorName\":\"";
   requestJson.concat(TEMPERATURE_SENSOR_NAME);
   requestJson.concat("\",\"value\":");
   requestJson.concat(temperature);
@@ -160,5 +155,10 @@ void loop()
     }
   }
 
-  delay(DELAY);
+  ESP.deepSleep(DELAY);
+}
+
+//Loop
+void loop()
+{
 }
