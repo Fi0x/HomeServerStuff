@@ -32,7 +32,7 @@ function updateFilterState() {
         }
     }
 
-    let rows = table.getElementsByTagName('tr');
+    let rows = table.getElementsByClassName('clickable-row');
     for (let rowIdx = 0; rowIdx < rows.length; rowIdx++) {
         if (validFilters.length < 1) {
             rows[rowIdx].style.display = "";
