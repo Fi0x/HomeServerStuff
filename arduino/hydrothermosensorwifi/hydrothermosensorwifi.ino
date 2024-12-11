@@ -19,11 +19,14 @@
 // Sensor settings
 #define TEMPERATURE_SENSOR_NAME "Temperature-sensor-name"
 #define TEMPERATURE_SENSOR_DESCRIPTION "Temperature-Description"
+#define TEMPERATURE_TAG "Test"
 #define TEMPERATURE_UNIT "°C"
 #define HUMIDITY_SENSOR_NAME "Humidity-sensor-name"
 #define HUMIDITY_SENSOR_DESCRIPTION "Humidity-Description"
+#define HUMIDITY_TAG "Test"
 #define HUMIDITY_UNIT "%"
-#define DELAY 600000000
+#define MS_DELAY 600000
+#define DEEP_SLEEP_DELAY 600e6
 
 // Set sensor to pin
 DHT dht(DHTPIN, DHTTYPE);
@@ -40,7 +43,12 @@ void setup()
   serverUrl.concat(SERVER_IP);
   serverUrl.concat(":");
   serverUrl.concat(SERVER_PORT);
-  
+
+  // Start and read sensor data
+  dht.begin();
+  float temperature = dht.readTemperature();
+  float humidity = dht.readHumidity();
+
   // Open wifi connection
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   while (WiFi.status() != WL_CONNECTED)
@@ -48,23 +56,29 @@ void setup()
     delay(500);
   }
 
-  // Register temperature-sensor at server
+  // Build body for temperature-request
   String requestJson = "{\"name\":\"";
   requestJson.concat(TEMPERATURE_SENSOR_NAME);
   requestJson.concat("\",\"description\":\"");
   requestJson.concat(TEMPERATURE_SENSOR_DESCRIPTION);
   requestJson.concat("\",\"unit\":\"");
   requestJson.concat(TEMPERATURE_UNIT);
-  requestJson.concat("\",\"type\":\"Temperature\",\"tags\":[\"Temperature\",\"Test\"],\"dataDelay\":\"");
-  requestJson.concat(DELAY);
-  requestJson.concat("\"}");
+  requestJson.concat("\",\"type\":\"Temperature\",\"tags\":[\"Temperature\",\"");
+  requestJson.concat(TEMPERATURE_TAG);
+  requestJson.concat("\"],\"dataDelay\":\"");
+  requestJson.concat(MS_DELAY);
+  requestJson.concat("\",\"value\":");
+  requestJson.concat(temperature);
+  requestJson.concat("}");
+
+  // Register temperature sensor and send data so server
   statusCode = -1;
   while(statusCode != 200)
   {
     if(WiFi.status() == WL_CONNECTED)
     {
-      // Send request to register endpoint
-      http.begin(client, serverUrl + "/api/register");
+      // Send request to new-data endpoint
+      http.begin(client, serverUrl + "/api/new-data");
       http.addHeader("content-type", "application/json");
       
       statusCode = http.POST(requestJson);
@@ -76,75 +90,28 @@ void setup()
     }
   }
 
-  // Register humidity-sensor at server
+  // Build body for humidity-request
   requestJson = "{\"name\":\"";
   requestJson.concat(HUMIDITY_SENSOR_NAME);
   requestJson.concat("\",\"description\":\"");
   requestJson.concat(HUMIDITY_SENSOR_DESCRIPTION);
   requestJson.concat("\",\"unit\":\"");
   requestJson.concat(HUMIDITY_UNIT);
-  requestJson.concat("\",\"type\":\"Humidity\",\"tags\":[\"Humidity\",\"Test\"],\"dataDelay\":\"");
-  requestJson.concat(DELAY);
-  requestJson.concat("\"}");
-  statusCode = -1;
-  while(statusCode != 200)
-  {
-    if(WiFi.status() == WL_CONNECTED)
-    {
-      // Send request to register endpoint
-      http.begin(client, serverUrl + "/api/register");
-      http.addHeader("content-type", "application/json");
-      statusCode = http.POST(requestJson);
-      http.end();
-    }
-    else
-    {
-      delay(500);
-    }
-  }
-
-  dht.begin();
-  
-  // Variables for temperature and humidity
-  float temperature = dht.readTemperature();
-  float humidity = dht.readHumidity();
-
-  // Upload temperature-data
-  requestJson = "{\"sensorName\":\"";
-  requestJson.concat(TEMPERATURE_SENSOR_NAME);
-  requestJson.concat("\",\"value\":");
-  requestJson.concat(temperature);
-  requestJson.concat("}");
-  statusCode = -1;
-  while(statusCode != 200)
-  {
-    if(WiFi.status() == WL_CONNECTED)
-    {
-      // Send request to data-endpoint for temperature
-      http.begin(client, serverUrl + "/api/upload");
-      http.addHeader("content-type", "application/json");
-      statusCode = http.POST(requestJson);
-      http.end();
-    }
-    else
-    {
-      delay(500);
-    }
-  }
-
-  // Upload humidity-data
-  requestJson = "{\"sensorName\":\"";
-  requestJson.concat(HUMIDITY_SENSOR_NAME);
+  requestJson.concat("\",\"type\":\"Humidity\",\"tags\":[\"Humidity\",\"");
+  requestJson.concat(HUMIDITY_TAG);
+  requestJson.concat("\"],\"dataDelay\":\"");
+  requestJson.concat(MS_DELAY);
   requestJson.concat("\",\"value\":");
   requestJson.concat(humidity);
   requestJson.concat("}");
+
   statusCode = -1;
   while(statusCode != 200)
   {
     if(WiFi.status() == WL_CONNECTED)
     {
-      // Send request to data-endpoint for temperature
-      http.begin(client, serverUrl + "/api/upload");
+      // Send request to new-data endpoint
+      http.begin(client, serverUrl + "/api/new-data");
       http.addHeader("content-type", "application/json");
       statusCode = http.POST(requestJson);
       http.end();
@@ -155,10 +122,11 @@ void setup()
     }
   }
 
-  ESP.deepSleep(DELAY);
+  // Put esp to deep-sleep to save energy
+  ESP.deepSleep(DEEP_SLEEP_DELAY);
 }
 
-//Loop
+// Loop (Not used, since deep-sleep will re-do the setup)
 void loop()
 {
 }

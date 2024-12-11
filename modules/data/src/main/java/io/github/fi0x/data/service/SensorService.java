@@ -9,6 +9,7 @@ import io.github.fi0x.data.db.entities.SensorId;
 import io.github.fi0x.data.db.entities.TagEntity;
 import io.github.fi0x.data.logic.converter.SensorConverter;
 import io.github.fi0x.data.logic.dto.ExpandedSensorDto;
+import io.github.fi0x.data.logic.dto.SensorDataDto;
 import io.github.fi0x.data.logic.dto.SensorDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,30 +31,20 @@ public class SensorService
 	private final TagRepo tagRepo;
 	private final DataRepo dataRepo;
 
+	public void saveSensorAndData(String address, SensorDataDto sensorWithData)
+	{
+		saveSensorEntity(address, sensorWithData.getName(), sensorWithData.getDescription(), sensorWithData.getUnit(),
+						 sensorWithData.getType(), sensorWithData.getDataDelay());
+		saveTags(sensorWithData.getName(), sensorWithData.getTags());
+
+		saveData(address, sensorWithData.getName(), sensorWithData.getValue());
+	}
+
 	public void saveSensor(String address, SensorDto sensor)
 	{
-		SensorId id = new SensorId(address, sensor.getName());
-		SensorEntity sensorEntity = sensorRepo.findById(id)
-											  .orElse(SensorEntity.builder().address(address).name(sensor.getName())
-																  .build());
-
-		sensorEntity.setLastUpdate(System.currentTimeMillis());
-		sensorEntity.setDescription(sensor.getDescription());
-		sensorEntity.setUnit(sensor.getUnit());
-		sensorEntity.setType(sensor.getType());
-		sensorEntity.setDataDelay(sensor.getDataDelay());
-		sensorRepo.save(sensorEntity);
-
-		List<TagEntity> existingTags = tagRepo.findAllBySensorName(sensor.getName());
-		existingTags.forEach(tag -> {
-			if (!sensor.getTags().contains(tag.getTag()))
-				tagRepo.delete(tag);
-		});
-		sensor.getTags().forEach(tag -> {
-			TagEntity tagEntity = new TagEntity(sensor.getName(), tag);
-			if (!existingTags.contains(tagEntity))
-				tagRepo.save(tagEntity);
-		});
+		saveSensorEntity(address, sensor.getName(), sensor.getDescription(), sensor.getUnit(), sensor.getType(),
+						 sensor.getDataDelay());
+		saveTags(sensor.getName(), sensor.getTags());
 	}
 
 	public List<ExpandedSensorDto> getAllDetailedSensors()
@@ -96,5 +87,45 @@ public class SensorService
 		Set<String> results = sensorRepo.findAll().stream().map(SensorEntity::getType).collect(Collectors.toSet());
 		results.addAll(tagRepo.findAll().stream().map(TagEntity::getTag).collect(Collectors.toSet()));
 		return results;
+	}
+
+	private SensorEntity getSensorEntity(String address, String name)
+	{
+		SensorId id = new SensorId(address, name);
+		return sensorRepo.findById(id).orElse(SensorEntity.builder().address(address).name(name).build());
+	}
+
+	private void saveSensorEntity(String address, String name, String description, String unit, String type,
+								  Long dataDelay)
+	{
+		SensorEntity sensorEntity = getSensorEntity(address, name);
+
+		sensorEntity.setLastUpdate(System.currentTimeMillis());
+		sensorEntity.setDescription(description);
+		sensorEntity.setUnit(unit);
+		sensorEntity.setType(type);
+		sensorEntity.setDataDelay(dataDelay);
+		sensorRepo.save(sensorEntity);
+	}
+
+	private void saveTags(String sensorName, List<String> tags)
+	{
+		List<TagEntity> existingTags = tagRepo.findAllBySensorName(sensorName);
+		existingTags.forEach(tag -> {
+			if (!tags.contains(tag.getTag()))
+				tagRepo.delete(tag);
+		});
+		tags.forEach(tag -> {
+			TagEntity tagEntity = new TagEntity(sensorName, tag);
+			if (!existingTags.contains(tagEntity))
+				tagRepo.save(tagEntity);
+		});
+	}
+
+	private void saveData(String address, String sensorName, Double value)
+	{
+		DataEntity dataEntity = DataEntity.builder().address(address).sensor(sensorName)
+										  .timestamp(System.currentTimeMillis()).value(value).build();
+		dataRepo.save(dataEntity);
 	}
 }
