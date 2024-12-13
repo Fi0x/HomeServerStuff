@@ -26,7 +26,6 @@
 #define HUMIDITY_TAG "Test"
 #define HUMIDITY_UNIT "%"
 #define MS_DELAY 600000
-#define DEEP_SLEEP_DELAY 600e6
 
 // Set sensor to pin
 DHT dht(DHTPIN, DHTTYPE);
@@ -38,14 +37,18 @@ HTTPClient http;
 //Setup
 void setup()
 {
+  dht.begin();
+}
+
+// Loop
+void loop()
+{
   String serverUrl = "http://";
   serverUrl.concat(SERVER_IP);
   serverUrl.concat(":");
   serverUrl.concat(SERVER_PORT);
 
-  // Start and read sensor data
-  dht.begin();
-  delay(100);
+  // Read sensor data
   float temperature = dht.readTemperature();
   float humidity = dht.readHumidity();
   delay(100);
@@ -126,11 +129,5 @@ void setup()
     }
   }
 
-  // Put esp to deep-sleep to save energy
-  ESP.deepSleep(DEEP_SLEEP_DELAY);
-}
-
-// Loop (Not used, since deep-sleep will re-do the setup)
-void loop()
-{
+  delay(MS_DELAY);
 }
