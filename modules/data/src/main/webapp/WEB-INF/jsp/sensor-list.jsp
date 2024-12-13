@@ -19,36 +19,35 @@
             </label>
         </c:forEach>
     </div>
-    <%--TODO: Make the table sortable--%>
     <table id="searchableTable" class="table sortable">
         <thead>
         <tr class="underlined-row">
             <th class="clickable">Name</th>
-            <th class="clickable">Type</th>
+            <%--            <th class="clickable">Type</th>--%>
             <th class="clickable">Address</th>
             <th class="clickable">Value</th>
             <th class="clickable">Last Update</th>
-            <%--            <th class="clickable">Tags</th>--%>
+            <th class="clickable">Tags</th>
         </tr>
         </thead>
         <tbody>
         <c:forEach items="${sensorList}" var="sensor">
-            <%--TODO: Make line yellow, when data is outside of a user-specified range--%>
+            <%--TODO: Make line red, when data is outside of a user-specified range--%>
             <tr class="clickable-row ${sensor.offline ? 'yellow' : ''}"
                 title="${sensor.offline ? 'OFFLINE' : sensor.description}"
                 onclick="window.location='${pageContext.request.contextPath}/sensor/${sensor.address}/${sensor.name}'">
                 <td>${sensor.name}</td>
-                <td class="filter-tag">${sensor.type}</td>
+                    <%--                <td class="filter-tag">${sensor.type}</td>--%>
                 <td>${sensor.address}</td>
                 <td>${sensor.value}${sensor.unit}</td>
                 <td>
                     <fmt:formatDate value="${sensor.lastUpdate}" pattern="dd.MM HH:mm:ss"/>
                 </td>
-                    <%--                <td class="filter-tag">--%>
-                    <%--                    <c:forEach items="${sensor.tags}" var="tag" varStatus="loop">--%>
-                    <%--                        ${tag}${loop.last ? '': ','}--%>
-                    <%--                    </c:forEach>--%>
-                    <%--                </td>--%>
+                <td class="filter-tag">
+                    <c:forEach items="${sensor.tags}" var="tag" varStatus="loop">
+                        ${tag}${loop.last ? '': ','}
+                    </c:forEach>
+                </td>
             </tr>
         </c:forEach>
         </tbody>

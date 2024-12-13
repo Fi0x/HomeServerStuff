@@ -70,5 +70,10 @@
     <a href="custom-login" class="btn">Login with an existing account</a>
 </div>
 <%@include file="../common/scripts.jspf" %>
+<script>
+    onload = function () {
+        loadNavBar();
+    }
+</script>
 </body>
 </html>

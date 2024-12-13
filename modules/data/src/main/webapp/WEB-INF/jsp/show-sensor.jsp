@@ -18,6 +18,7 @@
         </tr>
         </thead>
         <tbody>
+        <%--TODO: Make lines, after which a long gap occurs, yellow--%>
         <c:forEach items="${data}" var="datapoint">
             <tr>
                 <td>${datapoint.value}${sensor.unit}</td>

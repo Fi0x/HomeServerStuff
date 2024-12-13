@@ -248,12 +248,10 @@ input {
 
 .yellow {
     background-color: var(--custom-yellow);
-    font-weight: bold;
     color: var(--custom-black);
 }
 
 .yellow:hover {
     background-color: var(--custom-light-yellow);
-    font-weight: bold;
     color: var(--custom-black);
 }
