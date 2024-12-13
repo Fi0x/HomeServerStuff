@@ -50,5 +50,10 @@
 </div>
 <%@include file="../common/scripts.jspf" %>
 <script src="${pageContext.request.contextPath}/js/data-functions.js"></script>
+<script>
+    onload = function () {
+        loadNavBar();
+    }
+</script>
 </body>
 </html>

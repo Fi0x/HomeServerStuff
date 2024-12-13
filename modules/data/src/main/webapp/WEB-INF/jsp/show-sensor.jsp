@@ -51,5 +51,10 @@
 
 <script src="${pageContext.request.contextPath}/js/data-functions.js"></script>
 <script src="${pageContext.request.contextPath}/js/data-chart.js" type="module"></script>
+<script>
+    onload = function () {
+        loadNavBar();
+    }
+</script>
 </body>
 </html>
