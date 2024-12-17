@@ -56,9 +56,9 @@ void loop()
   // Open wifi connection
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   int connectionAttempts = 0;
-  while (WiFi.status() != WL_CONNECTED && connectionAttempts < 60)
+  while (WiFi.status() != WL_CONNECTED && connectionAttempts < 10)
   {
-    delay(500);
+    delay(1000);
   }
 
   // Build body for temperature-request
@@ -79,7 +79,7 @@ void loop()
   // Register temperature sensor and send data so server
   int statusCode = -1;
   connectionAttempts = 0;
-  while(statusCode != 200 && connectionAttempts < 60)
+  while(statusCode != 200 && connectionAttempts < 10)
   {
     if(WiFi.status() == WL_CONNECTED)
     {
@@ -92,7 +92,7 @@ void loop()
     }
     else
     {
-      delay(500);
+      delay(1000);
     }
   }
 
@@ -113,7 +113,7 @@ void loop()
 
   statusCode = -1;
   connectionAttempts = 0;
-  while(statusCode != 200 && connectionAttempts < 60)
+  while(statusCode != 200 && connectionAttempts < 10)
   {
     if(WiFi.status() == WL_CONNECTED)
     {
@@ -125,9 +125,11 @@ void loop()
     }
     else
     {
-      delay(500);
+      delay(1000);
     }
   }
+
+// TODO: Close wifi connection to save energy
 
   delay(MS_DELAY);
 }

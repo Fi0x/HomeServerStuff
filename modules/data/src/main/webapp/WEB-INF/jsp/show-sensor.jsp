@@ -2,6 +2,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
+<%--TODO: Add the option to adjust all shown values by a constant to correct wrong calibration--%>
 <html>
 <%@include file="../common/head.jspf" %>
 <body>

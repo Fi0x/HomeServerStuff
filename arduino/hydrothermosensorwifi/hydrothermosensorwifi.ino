@@ -76,7 +76,7 @@ void setup()
   // Register temperature sensor and send data so server
   int statusCode = -1;
   connectionAttempts = 0;
-  while(statusCode != 200 && connectionAttempts < 60)
+  while(statusCode != 200 && connectionAttempts < 10)
   {
     if(WiFi.status() == WL_CONNECTED)
     {
@@ -89,7 +89,7 @@ void setup()
     }
     else
     {
-      delay(500);
+      delay(1000);
     }
   }
 
@@ -110,7 +110,7 @@ void setup()
 
   statusCode = -1;
   connectionAttempts = 0;
-  while(statusCode != 200 && connectionAttempts < 60)
+  while(statusCode != 200 && connectionAttempts < 10)
   {
     if(WiFi.status() == WL_CONNECTED)
     {
@@ -122,7 +122,7 @@ void setup()
     }
     else
     {
-      delay(500);
+      delay(1000);
     }
   }
 
