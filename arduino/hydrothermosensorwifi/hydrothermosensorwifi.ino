@@ -38,6 +38,7 @@ HTTPClient http;
 //Setup
 void setup()
 {
+  delay(100);
   String serverUrl = "http://";
   serverUrl.concat(SERVER_IP);
   serverUrl.concat(":");
@@ -128,6 +129,7 @@ void setup()
 
   // Put esp to deep-sleep to save energy
   ESP.deepSleep(DEEP_SLEEP_DELAY);
+  delay(100);
 }
 
 // Loop (Not used, since deep-sleep will re-do the setup)
