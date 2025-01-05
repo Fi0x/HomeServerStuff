@@ -46,18 +46,12 @@ void setup()
 
   // Start and read sensor data
   dht.begin();
-  delay(100);
+  delay(2500);
   float temperature = dht.readTemperature();
   float humidity = dht.readHumidity();
-  delay(100);
 
   // Open wifi connection
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-  int connectionAttempts = 0;
-  while (WiFi.status() != WL_CONNECTED && connectionAttempts < 60)
-  {
-    delay(500);
-  }
 
   // Build body for temperature-request
   String requestJson = "{\"name\":\"";
@@ -76,8 +70,8 @@ void setup()
 
   // Register temperature sensor and send data so server
   int statusCode = -1;
-  connectionAttempts = 0;
-  while(statusCode != 200 && connectionAttempts < 60)
+  int connectionAttempts = 0;
+  while(statusCode != 200 && connectionAttempts < 10)
   {
     if(WiFi.status() == WL_CONNECTED)
     {
@@ -111,7 +105,7 @@ void setup()
 
   statusCode = -1;
   connectionAttempts = 0;
-  while(statusCode != 200 && connectionAttempts < 60)
+  while(statusCode != 200 && connectionAttempts < 10)
   {
     if(WiFi.status() == WL_CONNECTED)
     {
