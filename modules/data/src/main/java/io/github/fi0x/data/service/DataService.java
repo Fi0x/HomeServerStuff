@@ -28,6 +28,12 @@ public class DataService
 	{
 		log.trace("addData() called from address {}", address);
 
+		if (sensor.wasRecentlyUpdated(address, data.getSensorName()))
+		{
+			log.debug("Ignored sensor update, since last update was too recently");
+			return;
+		}
+
 		sensor.updateSensorTimestamp(address, data.getSensorName());
 
 		DataEntity dataEntity = DataEntity.builder().address(address).sensor(data.getSensorName())

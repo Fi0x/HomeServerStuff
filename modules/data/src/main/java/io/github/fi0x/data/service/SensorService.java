@@ -1,5 +1,6 @@
 package io.github.fi0x.data.service;
 
+import io.github.fi0x.data.components.Sensor;
 import io.github.fi0x.data.db.DataRepo;
 import io.github.fi0x.data.db.SensorRepo;
 import io.github.fi0x.data.db.TagRepo;
@@ -10,7 +11,6 @@ import io.github.fi0x.data.db.entities.TagEntity;
 import io.github.fi0x.data.logic.converter.SensorConverter;
 import io.github.fi0x.data.logic.dto.ExpandedSensorDto;
 import io.github.fi0x.data.logic.dto.SensorDataDto;
-import io.github.fi0x.data.logic.dto.SensorDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatusCode;
@@ -31,20 +31,21 @@ public class SensorService
 	private final TagRepo tagRepo;
 	private final DataRepo dataRepo;
 
+	private final Sensor sensor;
+
 	public void saveSensorAndData(String address, SensorDataDto sensorWithData)
 	{
+		if (sensor.wasRecentlyUpdated(address, sensorWithData.getName()))
+		{
+			log.debug("Ignored sensor update, since last update was too recently");
+			return;
+		}
+
 		saveSensorEntity(address, sensorWithData.getName(), sensorWithData.getDescription(), sensorWithData.getUnit(),
 						 sensorWithData.getType(), sensorWithData.getDataDelay());
 		saveTags(sensorWithData.getName(), sensorWithData.getTags());
 
 		saveData(address, sensorWithData.getName(), sensorWithData.getValue());
-	}
-
-	public void saveSensor(String address, SensorDto sensor)
-	{
-		saveSensorEntity(address, sensor.getName(), sensor.getDescription(), sensor.getUnit(), sensor.getType(),
-						 sensor.getDataDelay());
-		saveTags(sensor.getName(), sensor.getTags());
 	}
 
 	public List<ExpandedSensorDto> getAllDetailedSensors()

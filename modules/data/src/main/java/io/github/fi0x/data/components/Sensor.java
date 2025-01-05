@@ -20,9 +20,17 @@ public class Sensor
 		SensorEntity entity = sensorRepo.findByAddressAndName(address, name).orElseThrow(() -> {
 			log.warn("No sensor registered under ip '{}'", address);
 			return new ResponseStatusException(HttpStatusCode.valueOf(404),
-											   "The sensor at ip " + address + " is not registered and can therefore not be updated with a new timestamp");
+											   "The sensor at ip " + address + " is not registered and can therefore " + "not be updated with a new timestamp");
 		});
 		entity.setLastUpdate(System.currentTimeMillis());
 		sensorRepo.save(entity);
+	}
+
+	public boolean wasRecentlyUpdated(String address, String name)
+	{
+		SensorEntity existingSensor = sensorRepo.findByAddressAndName(address, name).orElseGet(
+				() -> SensorEntity.builder().lastUpdate(0L).dataDelay(0L).build());
+		long timeSinceLastUpdate = System.currentTimeMillis() - existingSensor.getLastUpdate();
+		return timeSinceLastUpdate < existingSensor.getDataDelay() / 10;
 	}
 }
