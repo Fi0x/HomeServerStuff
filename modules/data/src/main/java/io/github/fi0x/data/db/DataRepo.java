@@ -15,5 +15,7 @@ public interface DataRepo extends JpaRepository<DataEntity, DataId>
 
 	Optional<DataEntity> findFirstByAddressAndSensorOrderByTimestampDesc(String address, String sensor);
 
+	Optional<DataEntity> findFirstByAddressAndSensorOrderByTimestampAsc(String address, String sensor);
+
 	List<DataEntity> findAllByAddressAndSensorOrderByTimestampAsc(String address, String sensor);
 }

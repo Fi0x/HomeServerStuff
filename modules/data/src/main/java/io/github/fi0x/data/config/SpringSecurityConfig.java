@@ -2,6 +2,7 @@ package io.github.fi0x.data.config;
 
 import io.github.fi0x.data.components.DatabaseCleanup;
 import io.github.fi0x.data.db.DataRepo;
+import io.github.fi0x.data.db.SensorRepo;
 import io.github.fi0x.util.config.HomeServerUtilConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
@@ -31,8 +32,8 @@ public class SpringSecurityConfig
 	}
 
 	@Bean
-	public DatabaseCleanup databaseCleanup(DataRepo dataRepo)
+	public DatabaseCleanup databaseCleanup(DataRepo dataRepo, SensorRepo sensorRepo)
 	{
-		return new DatabaseCleanup(dataRepo);
+		return new DatabaseCleanup(dataRepo, sensorRepo);
 	}
 }
