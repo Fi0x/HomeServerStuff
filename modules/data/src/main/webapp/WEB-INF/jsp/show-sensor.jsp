@@ -35,11 +35,15 @@
     let sensorData = [
         <c:forEach items="${data}" var="entry" varStatus="loop">
         {
-            x: "${entry.key}",
+            x: "<fmt:formatDate value="${entry.key}" pattern="yyyy-MM-dd HH:mm:ss"/>",
             y: ${entry.value}
         }${not loop.last ? ',' : ''}
         </c:forEach>
-    ]
+    ].sort((first, second) => {
+        let firstDate = new Date(first.x);
+        let secondDate = new Date(second.x);
+        return firstDate.getTime() - secondDate.getTime();
+    })
 </script>
 <script>
     let dataList = [
