@@ -11,6 +11,11 @@
     <h1>${sensor.name} (${sensor.address})</h1>
     <p>${sensor.description}</p>
     <canvas id="dataChart"></canvas>
+    <div class="filter-option">
+        <p>Current value adjustment: sensor.adjustment</p>
+        <a class="btn-edit">Increase value-adjustment</a>
+        <a class="btn-edit">Decrease value-adjustment</a>
+    </div>
     <table id="searchableTable" class="table sortable">
         <thead>
         <tr class="underlined-row">
@@ -29,6 +34,7 @@
         </c:forEach>
         </tbody>
     </table>
+    <a class="btn-danger">Delete All Data</a>
 </div>
 <%@include file="../common/scripts.jspf" %>
 <script>
@@ -44,14 +50,6 @@
         let secondDate = new Date(second.x);
         return firstDate.getTime() - secondDate.getTime();
     })
-</script>
-<script>
-    let dataList = [
-        <c:forEach items="${data}" var="entry" varStatus="loop">
-        "<fmt:formatDate value="${entry.key}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-        ${not loop.last ? ',' : ''}
-        </c:forEach>
-    ]
 </script>
 <script>
     let sensorInformation = {
