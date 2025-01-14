@@ -7,18 +7,20 @@
 // https://github.com/chartjs/Chart.js/blob/master/docs/scripts/utils.js
 //TODO: Make the axes use regular steps for irregular values
 
+const cssWhite = getComputedStyle(document.body).getPropertyValue('--custom-white');
+const cssBlack = getComputedStyle(document.body).getPropertyValue('--custom-black');
+
 const javaData = {
-    label: 'Data-Name',
+    // label: 'Data-Name',
     data: sensorData,
-    backgroundColor: "rgb(255,255,255)",
-    borderColor: "rgb(255,255,255)",
+    backgroundColor: cssWhite,
+    borderColor: cssWhite,
     fill: false,
     borderWidth: 1,
     pointRadius: 0.5,
     lineTension: 0.5
 };
 
-let valueUnit = "%";
 const dateFormat = {
     day: "numeric",
     month: "numeric",
@@ -36,14 +38,18 @@ new Chart(document.getElementById("dataChart"), {
                     tooltipFormat: 'DD T'
                 },
                 // distribution: 'linear',
-                title: {
-                    display: true,
-                    text: 'Date'
-                },
+                // title: {
+                //     display: true,
+                //     text: 'Date'
+                // },
                 ticks: {
+                    color: cssWhite,
                     callback: function (value, index, values) {
                         return new Date(sensorData[index].x).toLocaleDateString(undefined, dateFormat);
                     }
+                },
+                grid: {
+                    color: cssBlack
                 }
                 // adapters: {
                 //     date: {
@@ -52,20 +58,31 @@ new Chart(document.getElementById("dataChart"), {
                 // }
             },
             y: {
-                title: {
-                    display: true,
-                    text: 'Value'
-                },
+                // title: {
+                //     display: true,
+                //     text: 'Value'
+                // },
                 ticks: {
+                    color: cssWhite,
                     callback: function (value, index, values) {
-                        return value + valueUnit;
+                        return value + sensorInformation.unit;
                     }
+                },
+                grid: {
+                    color: cssBlack
                 }
             }
         },
         plugins: {
             legend: {
                 display: false
+            },
+            tooltip: {
+                callbacks: {
+                    label: function (context) {
+                        return context.parsed.y + sensorInformation.unit
+                    }
+                }
             }
         }
     },

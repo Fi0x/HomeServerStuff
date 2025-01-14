@@ -54,7 +54,11 @@
     ]
 </script>
 <script>
-    let sensorDelay = ${sensor.dataDelay};
+    let sensorInformation = {
+        delay: ${sensor.dataDelay},
+        name: "${sensor.name}",
+        unit: "${sensor.unit}"
+    };
 </script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <%--<script src="${pageContext.request.contextPath}/webjars/chart.js/4.4.6/dist/chart.js"></script>--%>
