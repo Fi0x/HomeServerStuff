@@ -58,32 +58,72 @@ const javaData = {
 //     }
 // })
 
-new Chart("dataChart", {
-    type: "line",
-    data: javaData,
+// new Chart("dataChart", {
+//     type: "line",
+//     data: javaData,
+//     options: {
+//         scales: {
+//             x: {
+//                 type: "time",
+//                 time: {
+//                     tooltipFormat: 'DD T'
+//                 },
+//                 title: {
+//                     display: true,
+//                     text: 'Date'
+//                 },
+//                 adapters: {
+//                     date: {
+//                         locale: luxon
+//                     }
+//                 }
+//             },
+//             y: {
+//                 title: {
+//                     display: true,
+//                     text: 'value'
+//                 }
+//             }
+//         }
+//     }
+// })
+
+new Chart(document.getElementById("dataChart"), {
+    type: 'line',
     options: {
         scales: {
             x: {
-                type: "time",
-                time: {
-                    tooltipFormat: 'DD T'
-                },
+                // type: 'time',
+                // distribution: 'linear',
                 title: {
                     display: true,
                     text: 'Date'
-                },
-                adapters: {
-                    date: {
-                        locale: luxon
-                    }
                 }
             },
             y: {
                 title: {
                     display: true,
-                    text: 'value'
+                    text: 'Value'
                 }
             }
+        },
+        plugins: {
+            legend: {
+                display: false
+            }
         }
+    },
+    data: {
+        datasets: [{
+            data: sensorData,
+            backgroundColor: [
+                'rgba(255,255,255)'
+            ],
+            borderColor: [
+                'rgb(255,255,255)'
+            ],
+            borderWidth: 1,
+            pointRadius: 0.5
+        }]
     }
 })
