@@ -61,13 +61,11 @@
     };
 </script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<%--<script src="${pageContext.request.contextPath}/webjars/chart.js/4.4.6/dist/chart.js"></script>--%>
-<%--<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.min.js"></script>--%>
 
 <script src="https://cdn.jsdelivr.net/npm/luxon@1.25.0/build/global/luxon.js"></script>
-<%--<script src="${pageContext.request.contextPath}/webjars/luxon/3.5.0/src/luxon.js" type="module">--%>
-<%--    luxon.Settings.defaultLocale = 'de';--%>
-<%--</script>--%>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1.1.1/dist/chartjs-plugin-zoom.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-adapter-moment/1.0.0/chartjs-adapter-moment.js"></script>
 
 <script src="${pageContext.request.contextPath}/js/data-functions.js"></script>
 <script src="${pageContext.request.contextPath}/js/data-chart.js" type="module"></script>

@@ -1,12 +1,3 @@
-// import {de} from '/date-fns/locale';
-// import {de} from 'chartjs-adapter-luxon';
-// import {de} from 'luxon';
-
-// Further reading: https://www.w3schools.com/js/js_graphics_chartjs.asp
-// https://www.chartjs.org/docs/latest/samples/scales/time-line.html
-// https://github.com/chartjs/Chart.js/blob/master/docs/scripts/utils.js
-//TODO: Make the axes use regular steps for irregular values
-
 const cssWhite = getComputedStyle(document.body).getPropertyValue('--custom-white');
 const cssBlack = getComputedStyle(document.body).getPropertyValue('--custom-black');
 
@@ -33,29 +24,26 @@ new Chart(document.getElementById("dataChart"), {
     options: {
         scales: {
             x: {
-                // type: 'time',
-                time: {
-                    tooltipFormat: 'DD T'
-                },
-                // distribution: 'linear',
                 // title: {
                 //     display: true,
                 //     text: 'Date'
                 // },
+                type: 'time',
+                time: {
+                    tooltipFormat: 'DD.MM hh:mm:ss',
+                    displayFormats: {
+                        day: 'MMM DD YY'
+                    }
+                },
                 ticks: {
                     color: cssWhite,
-                    callback: function (value, index, values) {
-                        return new Date(sensorData[index].x).toLocaleDateString(undefined, dateFormat);
+                    callback: function (value) {
+                        return new Date(value).toLocaleDateString(undefined, dateFormat);
                     }
                 },
                 grid: {
                     color: cssBlack
                 }
-                // adapters: {
-                //     date: {
-                //         locale: luxon
-                //     }
-                // }
             },
             y: {
                 // title: {
@@ -64,7 +52,7 @@ new Chart(document.getElementById("dataChart"), {
                 // },
                 ticks: {
                     color: cssWhite,
-                    callback: function (value, index, values) {
+                    callback: function (value) {
                         return value + sensorInformation.unit;
                     }
                 },
@@ -81,6 +69,29 @@ new Chart(document.getElementById("dataChart"), {
                 callbacks: {
                     label: function (context) {
                         return context.parsed.y + sensorInformation.unit
+                    }
+                }
+            },
+            zoom: {
+                pan: {
+                    enabled: true,
+                    mode: 'x',
+                    modifierKey: 'ctrl',
+                    scaleMode: 'x'
+                },
+                zoom: {
+                    mode: 'x',
+                    wheel: {
+                        enabled: true
+                    },
+                    pinch: {
+                        enabled: true
+                    },
+                    limits: {
+                        x: {
+                            min: sensorData[0],
+                            max: sensorData[sensorData.length - 1]
+                        }
                     }
                 }
             }
