@@ -19,9 +19,8 @@
         </tr>
         </thead>
         <tbody>
-        <%--TODO: Make lines, after which a long gap occurs, yellow--%>
-        <c:forEach items="${data}" var="datapoint">
-            <tr>
+        <c:forEach items="${data}" var="datapoint" varStatus="loop">
+            <tr id="dataEntry${loop.index}">
                 <td>${datapoint.value}${sensor.unit}</td>
                 <td>
                     <fmt:formatDate value="${datapoint.key}" pattern="dd.MM HH:mm:ss"/>
@@ -42,6 +41,17 @@
         </c:forEach>
     ]
 </script>
+<script>
+    let dataList = [
+        <c:forEach items="${data}" var="entry" varStatus="loop">
+        "<fmt:formatDate value="${entry.key}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+        ${not loop.last ? ',' : ''}
+        </c:forEach>
+    ]
+</script>
+<script>
+    let sensorDelay = ${sensor.dataDelay};
+</script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <%--<script src="${pageContext.request.contextPath}/webjars/chart.js/4.4.6/dist/chart.js"></script>--%>
 <%--<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.min.js"></script>--%>
@@ -53,9 +63,11 @@
 
 <script src="${pageContext.request.contextPath}/js/data-functions.js"></script>
 <script src="${pageContext.request.contextPath}/js/data-chart.js" type="module"></script>
+<script src="${pageContext.request.contextPath}/js/data-line-color.js"></script>
 <script>
     onload = function () {
         loadNavBar();
+        colorDataLines();
     }
 </script>
 </body>
