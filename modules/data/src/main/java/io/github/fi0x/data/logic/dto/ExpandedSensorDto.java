@@ -24,4 +24,7 @@ public class ExpandedSensorDto
 	private Long dataDelay;
 	private Boolean offline;
 	private Date lastUpdate;
+	private Double valueAdjustment;
+	private Double minValue;
+	private Double maxValue;
 }

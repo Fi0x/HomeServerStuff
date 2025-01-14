@@ -42,7 +42,8 @@ public class SensorService
 		}
 
 		saveSensorEntity(address, sensorWithData.getName(), sensorWithData.getDescription(), sensorWithData.getUnit(),
-						 sensorWithData.getType(), sensorWithData.getDataDelay());
+						 sensorWithData.getType(), sensorWithData.getDataDelay(), sensorWithData.getValueAdjustment(),
+						 sensorWithData.getMinValue(), sensorWithData.getMaxValue());
 		saveTags(sensorWithData.getName(), sensorWithData.getTags());
 
 		saveData(address, sensorWithData.getName(), sensorWithData.getValue());
@@ -97,7 +98,7 @@ public class SensorService
 	}
 
 	private void saveSensorEntity(String address, String name, String description, String unit, String type,
-								  Long dataDelay)
+								  Long dataDelay, Double valueAdjustment, Double minValue, Double maxValue)
 	{
 		SensorEntity sensorEntity = getSensorEntity(address, name);
 
@@ -106,6 +107,9 @@ public class SensorService
 		sensorEntity.setUnit(unit);
 		sensorEntity.setType(type);
 		sensorEntity.setDataDelay(dataDelay);
+		sensorEntity.setValueAdjustment(valueAdjustment);
+		sensorEntity.setMinValue(minValue);
+		sensorEntity.setMaxValue(maxValue);
 		sensorRepo.save(sensorEntity);
 	}
 

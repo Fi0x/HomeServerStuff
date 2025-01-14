@@ -21,5 +21,8 @@ public class SensorDataDto
 	private String type;
 	private List<String> tags;
 	private Long dataDelay;
+	private Double valueAdjustment;
+	private Double minValue;
+	private Double maxValue;
 	private Double value;
 }

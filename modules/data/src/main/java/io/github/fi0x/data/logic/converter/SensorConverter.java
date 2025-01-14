@@ -14,6 +14,8 @@ public class SensorConverter
 
 		return ExpandedSensorDto.builder().address(source.getAddress()).name(source.getName())
 								.description(source.getDescription()).unit(source.getUnit()).type(source.getType())
-								.dataDelay(source.getDataDelay()).offline(isOffline).lastUpdate(lastUpdated).build();
+								.dataDelay(source.getDataDelay()).offline(isOffline).lastUpdate(lastUpdated)
+								.valueAdjustment(source.getValueAdjustment()).minValue(source.getMinValue())
+								.maxValue(source.getMaxValue()).build();
 	}
 }

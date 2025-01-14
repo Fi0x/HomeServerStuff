@@ -29,4 +29,7 @@ public class SensorEntity
 	private String unit;
 	private String type;
 	private Long dataDelay;
+	private Double valueAdjustment;
+	private Double minValue;
+	private Double maxValue;
 }
