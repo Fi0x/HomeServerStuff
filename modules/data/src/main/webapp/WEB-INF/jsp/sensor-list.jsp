@@ -32,8 +32,7 @@
         </thead>
         <tbody>
         <c:forEach items="${sensorList}" var="sensor">
-            <%--TODO: Make line red, when data is outside of a user-specified range--%>
-            <tr class="clickable-row ${sensor.offline ? 'yellow' : ''}"
+            <tr class="clickable-row ${sensor.offline ? 'yellow' : (sensor.minValue > sensor.value || sensor.maxValue < sensor.value ? 'red' : '')}"
                 title="${sensor.offline ? 'OFFLINE' : sensor.description}"
                 onclick="window.location='${pageContext.request.contextPath}/sensor/${sensor.address}/${sensor.name}'">
                 <td>${sensor.name}</td>
