@@ -2,16 +2,16 @@ package io.github.fi0x.data.rest;
 
 import io.github.fi0x.data.logic.dto.DataDto;
 import io.github.fi0x.data.logic.dto.SensorDataDto;
+import io.github.fi0x.data.logic.dto.SensorDto;
 import io.github.fi0x.data.service.DataService;
 import io.github.fi0x.data.service.SensorService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -36,5 +36,13 @@ public class SensorController
 		log.debug("uploadDataForNewSensor() called from {} with dto: {}", request.getRemoteAddr(), requestDto);
 
 		sensorService.saveSensorAndData(request.getRemoteAddr(), requestDto);
+	}
+
+	@GetMapping("/sensors")
+	public List<SensorDto> listSensors(HttpServletRequest request)
+	{
+		log.debug("listSensors() called from {}", request.getRemoteAddr());
+
+		return sensorService.getAllSensors();
 	}
 }

@@ -2,6 +2,7 @@ package io.github.fi0x.data.logic.converter;
 
 import io.github.fi0x.data.db.entities.SensorEntity;
 import io.github.fi0x.data.logic.dto.ExpandedSensorDto;
+import io.github.fi0x.data.logic.dto.SensorDto;
 
 import java.util.Date;
 
@@ -17,5 +18,11 @@ public class SensorConverter
 								.dataDelay(source.getDataDelay()).offline(isOffline).lastUpdate(lastUpdated)
 								.valueAdjustment(source.getValueAdjustment()).minValue(source.getMinValue())
 								.maxValue(source.getMaxValue()).build();
+	}
+
+	public static SensorDto toDto(SensorEntity source)
+	{
+		return SensorDto.builder().name(source.getName()).description(source.getDescription()).unit(source.getUnit())
+						.type(source.getType()).dataDelay(source.getDataDelay()).build();
 	}
 }

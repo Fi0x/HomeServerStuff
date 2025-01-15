@@ -11,6 +11,7 @@ import io.github.fi0x.data.db.entities.TagEntity;
 import io.github.fi0x.data.logic.converter.SensorConverter;
 import io.github.fi0x.data.logic.dto.ExpandedSensorDto;
 import io.github.fi0x.data.logic.dto.SensorDataDto;
+import io.github.fi0x.data.logic.dto.SensorDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatusCode;
@@ -47,6 +48,18 @@ public class SensorService
 		saveTags(sensorWithData.getName(), sensorWithData.getTags());
 
 		saveData(address, sensorWithData.getName(), sensorWithData.getValue());
+	}
+
+	public List<SensorDto> getAllSensors()
+	{
+		List<SensorDto> sensorDtos = sensorRepo.findAll().stream().map(SensorConverter::toDto).toList();
+
+		sensorDtos.forEach(dto -> {
+			List<TagEntity> tags = tagRepo.findAllBySensorName(dto.getName());
+			dto.setTags(tags.stream().map(TagEntity::getTag).toList());
+		});
+
+		return sensorDtos;
 	}
 
 	public List<ExpandedSensorDto> getAllDetailedSensors()

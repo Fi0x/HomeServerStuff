@@ -2,7 +2,6 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<%--TODO: Add the option to adjust all shown values by a constant to correct wrong calibration--%>
 <html>
 <%@include file="../common/head.jspf" %>
 <body>
@@ -11,10 +10,10 @@
     <h1>${sensor.name} (${sensor.address})</h1>
     <p>${sensor.description}</p>
     <canvas id="dataChart"></canvas>
+    <%--    TODO: Create new css-class for this design--%>
     <div class="filter-option">
-        <p>Current value adjustment: sensor.adjustment</p>
-        <a class="btn-edit">Increase value-adjustment</a>
-        <a class="btn-edit">Decrease value-adjustment</a>
+        <a href="${pageContext.request.contextPath}/sensor/${sensor.address}/${sensor.name}/edit" class="btn-edit">Edit
+            Sensor details</a>
     </div>
     <table id="searchableTable" class="table sortable">
         <thead>
@@ -34,7 +33,6 @@
         </c:forEach>
         </tbody>
     </table>
-    <a class="btn-danger">Delete All Data</a>
 </div>
 <%@include file="../common/scripts.jspf" %>
 <script>

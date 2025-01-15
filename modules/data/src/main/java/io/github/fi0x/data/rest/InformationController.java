@@ -38,4 +38,14 @@ public class InformationController
 
 		return "show-sensor";
 	}
+
+	@GetMapping("/sensor/{address}/{name}/edit")
+	public String editSensor(ModelMap model, @PathVariable String address, @PathVariable String name)
+	{
+		log.info("editSensor() called");
+
+		model.put("sensor", sensorService.getDetailedSensor(address, name));
+
+		return "edit-sensor";
+	}
 }
