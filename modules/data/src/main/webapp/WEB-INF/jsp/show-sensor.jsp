@@ -54,8 +54,8 @@
         delay: ${sensor.dataDelay},
         name: "${sensor.name}",
         unit: "${sensor.unit}",
-        min: ${sensor.minValue},
-        max: ${sensor.maxValue}
+        min: ${sensor.minValue != null ? sensor.minValue : 0},
+        max: ${sensor.maxValue != null ? sensor.maxValue : 100}
     };
 </script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

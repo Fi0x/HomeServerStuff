@@ -126,13 +126,20 @@ public class SensorService
 		SensorEntity sensorEntity = getSensorEntity(address, name);
 
 		sensorEntity.setLastUpdate(System.currentTimeMillis());
-		sensorEntity.setDescription(description);
-		sensorEntity.setUnit(unit);
-		sensorEntity.setType(type);
-		sensorEntity.setDataDelay(dataDelay);
-		sensorEntity.setValueAdjustment(valueAdjustment);
-		sensorEntity.setMinValue(minValue);
-		sensorEntity.setMaxValue(maxValue);
+		if(description != null)
+			sensorEntity.setDescription(description);
+		if(unit != null)
+			sensorEntity.setUnit(unit);
+		if(type != null)
+			sensorEntity.setType(type);
+		if(dataDelay != null)
+			sensorEntity.setDataDelay(dataDelay);
+		if(valueAdjustment != null)
+			sensorEntity.setValueAdjustment(valueAdjustment);
+		if(minValue != null)
+			sensorEntity.setMinValue(minValue);
+		if(maxValue != null)
+			sensorEntity.setMaxValue(maxValue);
 		sensorRepo.save(sensorEntity);
 	}
 
