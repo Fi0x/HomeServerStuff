@@ -10,13 +10,19 @@
     <h1>${sensor.name} (${sensor.address})</h1>
     <p>${sensor.description}</p>
     <div>
-        <%--TODO: Make value adjustment editable and save data on button press--%>
-        <p>Current value adjustment: ${sensor.valueAdjustment}</p>
-        <a class="btn-success">Save value adjustment</a>
+        <p>Current value adjustment:</p>
+        <p>
+            <%--TODO: Save data on button press and adjust on button press--%>
+            <a class="btn round-button">-</a>
+            ${sensor.valueAdjustment != null ? sensor.valueAdjustment : 0}
+            <a class="btn round-button">+</a>
+        </p>
+        <a href="${pageContext.request.contextPath}/sensor/${sensor.address}/${sensor.name}/update?valueAdjustment=1"
+           class="btn btn-success">Save value adjustment</a>
     </div>
     <%--TODO: Make data deletion work--%>
-    <a class="btn-danger">Delete all Data with value 0</a>
-    <a class="btn-danger">Delete All Data</a>
+    <a class="btn btn-danger">Delete all Data with value 0</a>
+    <a class="btn btn-danger">Delete All Data</a>
 </div>
 <%@include file="../common/scripts.jspf" %>
 

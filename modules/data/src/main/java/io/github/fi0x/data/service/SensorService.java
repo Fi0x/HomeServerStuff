@@ -36,7 +36,7 @@ public class SensorService
 
 	public void saveSensorAndData(String address, SensorDataDto sensorWithData)
 	{
-		if (sensor.wasRecentlyUpdated(address, sensorWithData.getName()))
+		if(sensor.wasRecentlyUpdated(address, sensorWithData.getName()))
 		{
 			log.debug("Ignored sensor update, since last update was too recently");
 			return;
@@ -48,6 +48,17 @@ public class SensorService
 		saveTags(sensorWithData.getName(), sensorWithData.getTags());
 
 		saveData(address, sensorWithData.getName(), sensorWithData.getValue());
+	}
+
+	public void saveSensorValueAdjustment(String address, String name, double valueAdjustment)
+	{
+		SensorEntity entity = sensorRepo.findByAddressAndName(address, name).orElseThrow(
+				() -> new ResponseStatusException(HttpStatusCode.valueOf(404),
+												  "Requested sensor to update does not exist in the database"));
+
+		entity.setValueAdjustment(valueAdjustment);
+
+		sensorRepo.save(entity);
 	}
 
 	public List<SensorDto> getAllSensors()
@@ -64,17 +75,16 @@ public class SensorService
 
 	public List<ExpandedSensorDto> getAllDetailedSensors()
 	{
-		List<ExpandedSensorDto> sensorDtos =
-				sensorRepo.findAll().stream().map(SensorConverter::toExpandedDto).toList();
+		List<ExpandedSensorDto> sensorDtos = sensorRepo.findAll().stream().map(SensorConverter::toExpandedDto).toList();
 
 		sensorDtos.forEach(dto -> {
 			List<TagEntity> tags = tagRepo.findAllBySensorName(dto.getName());
 			dto.setTags(tags.stream().map(TagEntity::getTag).toList());
 		});
 		sensorDtos.forEach(dto -> {
-			Optional<DataEntity> mostRecentValue = dataRepo.findFirstByAddressAndSensorOrderByTimestampDesc(
-					dto.getAddress(), dto.getName());
-			if (mostRecentValue.isPresent())
+			Optional<DataEntity> mostRecentValue =
+					dataRepo.findFirstByAddressAndSensorOrderByTimestampDesc(dto.getAddress(), dto.getName());
+			if(mostRecentValue.isPresent())
 				dto.setValue(mostRecentValue.get().getValue());
 			else
 				dto.setValue(0D);
@@ -84,8 +94,8 @@ public class SensorService
 
 	public ExpandedSensorDto getDetailedSensor(String address, String name) throws ResponseStatusException
 	{
-		Optional<ExpandedSensorDto> optionalSensorDto = sensorRepo.findById(new SensorId(address, name))
-																  .map(SensorConverter::toExpandedDto);
+		Optional<ExpandedSensorDto> optionalSensorDto =
+				sensorRepo.findById(new SensorId(address, name)).map(SensorConverter::toExpandedDto);
 		ExpandedSensorDto sensorDto = optionalSensorDto.orElseThrow(
 				() -> new ResponseStatusException(HttpStatusCode.valueOf(404),
 												  "The requested sensor is not registered in the database"));
@@ -130,20 +140,21 @@ public class SensorService
 	{
 		List<TagEntity> existingTags = tagRepo.findAllBySensorName(sensorName);
 		existingTags.forEach(tag -> {
-			if (!tags.contains(tag.getTag()))
+			if(!tags.contains(tag.getTag()))
 				tagRepo.delete(tag);
 		});
 		tags.forEach(tag -> {
 			TagEntity tagEntity = new TagEntity(sensorName, tag);
-			if (!existingTags.contains(tagEntity))
+			if(!existingTags.contains(tagEntity))
 				tagRepo.save(tagEntity);
 		});
 	}
 
 	private void saveData(String address, String sensorName, Double value)
 	{
-		DataEntity dataEntity = DataEntity.builder().address(address).sensor(sensorName)
-										  .timestamp(System.currentTimeMillis()).value(value).build();
+		DataEntity dataEntity =
+				DataEntity.builder().address(address).sensor(sensorName).timestamp(System.currentTimeMillis())
+						  .value(value).build();
 		dataRepo.save(dataEntity);
 	}
 }
