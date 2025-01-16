@@ -12,13 +12,11 @@
     <div>
         <p>Current value adjustment:</p>
         <p>
-            <%--TODO: Save data on button press and adjust on button press--%>
-            <a class="btn round-button">-</a>
-            ${sensor.valueAdjustment != null ? sensor.valueAdjustment : 0}
-            <a class="btn round-button">+</a>
+            <a onclick="changeValue(-0.1)" class="btn round-button">-</a>
+            <span id="valueAdjustment">${sensor.valueAdjustment != null ? sensor.valueAdjustment : 0}</span>
+            <a onclick="changeValue(0.1)" class="btn round-button">+</a>
         </p>
-        <a href="${pageContext.request.contextPath}/sensor/${sensor.address}/${sensor.name}/update?valueAdjustment=1"
-           class="btn btn-success">Save value adjustment</a>
+        <a href="javascript:call();" class="btn btn-success">Save value adjustment</a>
     </div>
     <a href="${pageContext.request.contextPath}/sensor/${sensor.address}/${sensor.name}/update?deleteValues=0"
        class="btn btn-danger">Delete all Data with value 0</a>
@@ -27,6 +25,19 @@
 </div>
 <%@include file="../common/scripts.jspf" %>
 
+<script>
+    const valueElement = document.getElementById('valueAdjustment');
+
+    function call() {
+        let adjustment = valueElement.innerText;
+        window.location = '${pageContext.request.contextPath}/sensor/${sensor.address}/${sensor.name}/update?valueAdjustment=' + adjustment;
+    }
+
+    function changeValue(adjustment) {
+        let current = Number(valueElement.innerText);
+        valueElement.innerText = (current + adjustment).toFixed(1);
+    }
+</script>
 <script>
     onload = function () {
         loadNavBar();
