@@ -57,6 +57,7 @@
 <script>
     onload = function () {
         loadNavBar();
+        // TODO: Display a graph with all the currently displayed datasets (load the data async and push it into the graph)
     }
 </script>
 </body>

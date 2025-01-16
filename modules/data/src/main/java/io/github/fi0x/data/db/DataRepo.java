@@ -18,4 +18,8 @@ public interface DataRepo extends JpaRepository<DataEntity, DataId>
 	Optional<DataEntity> findFirstByAddressAndSensorOrderByTimestampAsc(String address, String sensor);
 
 	List<DataEntity> findAllByAddressAndSensorOrderByTimestampAsc(String address, String sensor);
+
+	void deleteAllByAddressAndSensor(String address, String sensor);
+
+	void deleteAllByAddressAndSensorAndValue(String address, String sensor, Double value);
 }

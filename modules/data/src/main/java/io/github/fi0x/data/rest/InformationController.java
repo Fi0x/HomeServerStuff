@@ -1,9 +1,11 @@
 package io.github.fi0x.data.rest;
 
+import io.github.fi0x.data.logic.dto.ExpandedSensorDto;
 import io.github.fi0x.data.service.DataService;
 import io.github.fi0x.data.service.SensorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,12 +36,14 @@ public class InformationController
 	{
 		log.info("showSensor() called");
 
-		model.put("sensor", sensorService.getDetailedSensor(address, name));
-		model.put("data", dataService.getAllData(address, name));
+		ExpandedSensorDto sensorDto = sensorService.getDetailedSensor(address, name);
+		model.put("sensor", sensorDto);
+		model.put("data", dataService.getAllData(address, name, sensorDto.getValueAdjustment()));
 
 		return "show-sensor";
 	}
 
+	//	TODO: Only show this page to logged in users
 	@GetMapping("/sensor/{address}/{name}/edit")
 	public String editSensor(ModelMap model, @PathVariable String address, @PathVariable String name)
 	{
@@ -50,17 +54,27 @@ public class InformationController
 		return "edit-sensor";
 	}
 
+	//	TODO: Verify user is logged in before updating any data
 	@GetMapping("/sensor/{address}/{name}/update")
 	public String updateSensor(ModelMap model, @PathVariable String address, @PathVariable String name,
-							   @RequestParam(value = "valueAdjustment", required = false) Double valueAdjustment)
+							   @RequestParam(value = "valueAdjustment", required = false) Double valueAdjustment,
+							   @RequestParam(value = "deleteValues", required = false) String valueDeletion)
 	{
 		log.info("updateSensor() called");
 
-		if(valueAdjustment != null)
+		if (valueAdjustment != null)
 			sensorService.saveSensorValueAdjustment(address, name, valueAdjustment);
+
+		if (valueDeletion != null)
+		{
+			if (valueDeletion.equals("ALL"))
+				dataService.deleteForSensor(address, name, null);
+			else if (NumberUtils.isCreatable(valueDeletion))
+				dataService.deleteForSensor(address, name, Double.parseDouble(valueDeletion));
+		}
 
 		model.put("sensor", sensorService.getDetailedSensor(address, name));
 
-		return "redirect:/sensor/" + address + "/" + name;
+		return showSensor(model, address, name);
 	}
 }

@@ -7,6 +7,7 @@ import io.github.fi0x.data.logic.dto.DataDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
@@ -41,13 +42,24 @@ public class DataService
 		dataRepo.save(dataEntity);
 	}
 
-	public SortedMap<Date, Double> getAllData(String address, String sensorName)
+	public SortedMap<Date, Double> getAllData(String address, String sensorName, Double valueAdjustment)
 	{
 		List<DataEntity> entities = dataRepo.findAllByAddressAndSensorOrderByTimestampAsc(address, sensorName);
+		if (valueAdjustment != null)
+			entities.forEach(entity -> entity.setValue(entity.getValue() + valueAdjustment));
 
 		TreeMap<Date, Double> map = new TreeMap<>(entities.stream().collect(
 				Collectors.toMap(entity -> new Date(entity.getTimestamp()), DataEntity::getValue)));
 
 		return map.descendingMap();
+	}
+
+	@Transactional
+	public void deleteForSensor(String address, String sensorName, Double value)
+	{
+		if (value == null)
+			dataRepo.deleteAllByAddressAndSensor(address, sensorName);
+		else
+			dataRepo.deleteAllByAddressAndSensorAndValue(address, sensorName, value);
 	}
 }

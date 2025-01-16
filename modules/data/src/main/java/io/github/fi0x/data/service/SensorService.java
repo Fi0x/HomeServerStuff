@@ -36,7 +36,7 @@ public class SensorService
 
 	public void saveSensorAndData(String address, SensorDataDto sensorWithData)
 	{
-		if(sensor.wasRecentlyUpdated(address, sensorWithData.getName()))
+		if (sensor.wasRecentlyUpdated(address, sensorWithData.getName()))
 		{
 			log.debug("Ignored sensor update, since last update was too recently");
 			return;
@@ -75,17 +75,20 @@ public class SensorService
 
 	public List<ExpandedSensorDto> getAllDetailedSensors()
 	{
-		List<ExpandedSensorDto> sensorDtos = sensorRepo.findAll().stream().map(SensorConverter::toExpandedDto).toList();
+		List<ExpandedSensorDto> sensorDtos =
+				sensorRepo.findAll().stream().map(SensorConverter::toExpandedDto).toList();
 
 		sensorDtos.forEach(dto -> {
 			List<TagEntity> tags = tagRepo.findAllBySensorName(dto.getName());
 			dto.setTags(tags.stream().map(TagEntity::getTag).toList());
+			if (dto.getValueAdjustment() == null)
+				dto.setValueAdjustment(0.0);
 		});
 		sensorDtos.forEach(dto -> {
-			Optional<DataEntity> mostRecentValue =
-					dataRepo.findFirstByAddressAndSensorOrderByTimestampDesc(dto.getAddress(), dto.getName());
-			if(mostRecentValue.isPresent())
-				dto.setValue(mostRecentValue.get().getValue());
+			Optional<DataEntity> mostRecentValue = dataRepo.findFirstByAddressAndSensorOrderByTimestampDesc(
+					dto.getAddress(), dto.getName());
+			if (mostRecentValue.isPresent())
+				dto.setValue(mostRecentValue.get().getValue() + dto.getValueAdjustment());
 			else
 				dto.setValue(0D);
 		});
@@ -94,15 +97,19 @@ public class SensorService
 
 	public ExpandedSensorDto getDetailedSensor(String address, String name) throws ResponseStatusException
 	{
-		Optional<ExpandedSensorDto> optionalSensorDto =
-				sensorRepo.findById(new SensorId(address, name)).map(SensorConverter::toExpandedDto);
+		Optional<ExpandedSensorDto> optionalSensorDto = sensorRepo.findById(new SensorId(address, name))
+																  .map(SensorConverter::toExpandedDto);
 		ExpandedSensorDto sensorDto = optionalSensorDto.orElseThrow(
 				() -> new ResponseStatusException(HttpStatusCode.valueOf(404),
 												  "The requested sensor is not registered in the database"));
 
 		sensorDto.setTags(tagRepo.findAllBySensorName(name).stream().map(TagEntity::getTag).toList());
+		if (sensorDto.getValueAdjustment() == null)
+			sensorDto.setValueAdjustment(0.0);
+
 		Optional<DataEntity> mostRecentValue = dataRepo.findFirstByAddressAndSensorOrderByTimestampDesc(address, name);
-		mostRecentValue.ifPresent(dataEntity -> sensorDto.setValue(dataEntity.getValue()));
+		mostRecentValue.ifPresent(
+				dataEntity -> sensorDto.setValue(dataEntity.getValue() + sensorDto.getValueAdjustment()));
 
 		return sensorDto;
 	}
@@ -126,19 +133,19 @@ public class SensorService
 		SensorEntity sensorEntity = getSensorEntity(address, name);
 
 		sensorEntity.setLastUpdate(System.currentTimeMillis());
-		if(description != null)
+		if (description != null)
 			sensorEntity.setDescription(description);
-		if(unit != null)
+		if (unit != null)
 			sensorEntity.setUnit(unit);
-		if(type != null)
+		if (type != null)
 			sensorEntity.setType(type);
-		if(dataDelay != null)
+		if (dataDelay != null)
 			sensorEntity.setDataDelay(dataDelay);
-		if(valueAdjustment != null)
+		if (valueAdjustment != null)
 			sensorEntity.setValueAdjustment(valueAdjustment);
-		if(minValue != null)
+		if (minValue != null)
 			sensorEntity.setMinValue(minValue);
-		if(maxValue != null)
+		if (maxValue != null)
 			sensorEntity.setMaxValue(maxValue);
 		sensorRepo.save(sensorEntity);
 	}
@@ -147,21 +154,20 @@ public class SensorService
 	{
 		List<TagEntity> existingTags = tagRepo.findAllBySensorName(sensorName);
 		existingTags.forEach(tag -> {
-			if(!tags.contains(tag.getTag()))
+			if (!tags.contains(tag.getTag()))
 				tagRepo.delete(tag);
 		});
 		tags.forEach(tag -> {
 			TagEntity tagEntity = new TagEntity(sensorName, tag);
-			if(!existingTags.contains(tagEntity))
+			if (!existingTags.contains(tagEntity))
 				tagRepo.save(tagEntity);
 		});
 	}
 
 	private void saveData(String address, String sensorName, Double value)
 	{
-		DataEntity dataEntity =
-				DataEntity.builder().address(address).sensor(sensorName).timestamp(System.currentTimeMillis())
-						  .value(value).build();
+		DataEntity dataEntity = DataEntity.builder().address(address).sensor(sensorName)
+										  .timestamp(System.currentTimeMillis()).value(value).build();
 		dataRepo.save(dataEntity);
 	}
 }

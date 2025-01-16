@@ -12,6 +12,7 @@
     <canvas id="dataChart"></canvas>
     <%--    TODO: Create new css-class for this design--%>
     <div class="filter-option">
+        <%--        TODO: Only show this button to logged in users--%>
         <a href="${pageContext.request.contextPath}/sensor/${sensor.address}/${sensor.name}/edit" class="btn-edit">Edit
             Sensor details</a>
     </div>
