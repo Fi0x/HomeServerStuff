@@ -51,13 +51,21 @@
         </c:forEach>
         </tbody>
     </table>
+    <%--    TODO: Add clickable labels to show/hide individual sensors--%>
+    <canvas id="dataChart"></canvas>
 </div>
 <%@include file="../common/scripts.jspf" %>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1.1.1/dist/chartjs-plugin-zoom.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-adapter-moment/1.0.0/chartjs-adapter-moment.js"></script>
 <script src="${pageContext.request.contextPath}/js/data-functions.js"></script>
+<script src="${pageContext.request.contextPath}/js/combined-data-chart.js"></script>
+<%%>
 <script>
     onload = function () {
         loadNavBar();
-        // TODO: Display a graph with all the currently displayed datasets (load the data async and push it into the graph)
+        loadChartData(${sensorList});
     }
 </script>
 </body>
