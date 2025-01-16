@@ -61,11 +61,24 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-adapter-moment/1.0.0/chartjs-adapter-moment.js"></script>
 <script src="${pageContext.request.contextPath}/js/data-functions.js"></script>
 <script src="${pageContext.request.contextPath}/js/combined-data-chart.js"></script>
-<%%>
+<script>
+    let sensorNames = [
+        <c:forEach items="${sensorList}" var="sensor" varStatus="loop">
+        {
+            address: ${sensor.address},
+            name: ${sensor.value}
+        }${not loop.last ? ',' : ''}
+        </c:forEach>
+    ].sort((first, second) => {
+        let firstDate = new Date(first.x);
+        let secondDate = new Date(second.x);
+        return firstDate.getTime() - secondDate.getTime();
+    })
+</script>
 <script>
     onload = function () {
         loadNavBar();
-        loadChartData(${sensorList});
+        loadChartData(`${sensorList}`);
     }
 </script>
 </body>

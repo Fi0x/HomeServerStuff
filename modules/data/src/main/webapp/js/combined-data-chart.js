@@ -31,12 +31,12 @@ new Chart(document.getElementById("dataChart"), {
                 }
             },
             y: {
-                ticks: {
-                    color: cssWhite,
-                    callback: function (value) {
-                        return value + sensorInformation.unit;
-                    }
-                },
+                // ticks: {
+                //     color: cssWhite,
+                //     callback: function (value) {
+                //         return value + sensorInformation.unit;
+                //     }
+                // },
                 grid: {
                     color: cssBlack
                 }
@@ -46,13 +46,13 @@ new Chart(document.getElementById("dataChart"), {
             legend: {
                 display: false
             },
-            tooltip: {
-                callbacks: {
-                    label: function (context) {
-                        return context.parsed.y + sensorInformation.unit
-                    }
-                }
-            },
+            // tooltip: {
+            //     callbacks: {
+            //         label: function (context) {
+            //             return context.parsed.y + sensorInformation.unit
+            //         }
+            //     }
+            // },
             zoom: {
                 pan: {
                     enabled: true,
@@ -68,12 +68,12 @@ new Chart(document.getElementById("dataChart"), {
                     pinch: {
                         enabled: true
                     },
-                    limits: {
-                        x: {
-                            min: sensorData[0],
-                            max: sensorData[sensorData.length - 1]
-                        }
-                    }
+                    // limits: {
+                    //     x: {
+                    //         min: sensorData[0],
+                    //         max: sensorData[sensorData.length - 1]
+                    //     }
+                    // }
                 }
             }
         }
