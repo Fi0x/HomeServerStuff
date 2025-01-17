@@ -65,20 +65,20 @@
     let sensorNames = [
         <c:forEach items="${sensorList}" var="sensor" varStatus="loop">
         {
-            address: ${sensor.address},
-            name: ${sensor.value}
+            address: "${sensor.address}",
+            name: "${sensor.name}",
+            tags: "${sensor.tags}"
         }${not loop.last ? ',' : ''}
         </c:forEach>
-    ].sort((first, second) => {
-        let firstDate = new Date(first.x);
-        let secondDate = new Date(second.x);
-        return firstDate.getTime() - secondDate.getTime();
-    })
+    ]
+</script>
+<script>
+    let baseUrl = "${pageContext.request.contextPath}/api/data"
 </script>
 <script>
     onload = function () {
         loadNavBar();
-        loadChartData(`${sensorList}`);
+        loadChartData(sensorNames);
     }
 </script>
 </body>

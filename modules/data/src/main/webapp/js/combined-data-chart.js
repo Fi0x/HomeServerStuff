@@ -8,7 +8,9 @@ const dateFormat = {
     minute: "numeric"
 };
 
-new Chart(document.getElementById("dataChart"), {
+const datasets = [];
+
+let chart = new Chart(document.getElementById("dataChart"), {
     type: 'line',
     options: {
         scales: {
@@ -31,16 +33,38 @@ new Chart(document.getElementById("dataChart"), {
                 }
             },
             y: {
-                // ticks: {
-                //     color: cssWhite,
-                //     callback: function (value) {
-                //         return value + sensorInformation.unit;
-                //     }
-                // },
+                ticks: {
+                    color: cssWhite,
+                    callback: function (value) {
+                        return value;
+                    }
+                },
                 grid: {
                     color: cssBlack
                 }
-            }
+            },
+            // Humid: {
+            //     ticks: {
+            //         color: cssWhite,
+            //         callback: function (value) {
+            //             return value + '%';
+            //         }
+            //     },
+            //     grid: {
+            //         color: cssBlack
+            //     }
+            // },
+            // Temp: {
+            //     ticks: {
+            //         color: cssWhite,
+            //         callback: function (value) {
+            //             return value + '°';
+            //         }
+            //     },
+            //     grid: {
+            //         color: cssBlack
+            //     }
+            // }
         },
         plugins: {
             legend: {
@@ -79,21 +103,64 @@ new Chart(document.getElementById("dataChart"), {
         }
     },
     data: {
-        datasets: []
+        datasets: datasets
     }
 });
 
 function loadChartData(sensorList) {
-    for (let sensorElement in sensorList) {
+    sensorList.forEach((sensorElement) => {
         $.ajax({
-            // TODO: Ensure this string converts correctly to a valid url
-            url: `$\{pageContext.request.contextPath\}/api/data/$\{sensorElement.address\}/$\{sensorElement.name\}`,
+            url: `${baseUrl}/${sensorElement.address}/${sensorElement.name}`,
             type: 'GET',
             dataType: 'json',
             success: function (res) {
                 // TODO: Convert result to sensorData and put it into dataset
 
-                console.log("Result fetched successfully: " + res);
+                let resultList = Object.keys(res).map((key) => {
+                    return {
+                        timestamp: key,
+                        value: res[key]
+                    }
+                });
+
+                let sensorUnit = sensorElement.tags.toLowerCase().includes('temp')
+                    ? 'Temp'
+                    : sensorElement.tags.toLowerCase().includes('humid') || sensorElement.tags.toLowerCase().includes('feucht')
+                        ? 'Humid'
+                        : 'y';
+
+                let sensorData = [];
+                Array.from(resultList).forEach((set) => {
+                    let entry = {
+                        x: `${set.timestamp}`//TODO: Convert timestamp to date-format with pattern yyyy-MM-dd HH:mm:ss
+                    };
+                    entry['y'] = set.value;//TODO: Use sensorUnit as key
+                    sensorData.push(entry);
+
+                    // sensorData.push({
+                    //     x: `${set.timestamp}`,//TODO: Convert timestamp to date-format with pattern yyyy-MM-dd HH:mm:ss
+                    //     temp: `${set.value}`
+                    // })
+                });
+
+
+                let dataset = {
+                    label: 'Data-Name',
+                    data: sensorData,
+                    backgroundColor: cssWhite,
+                    borderColor: cssWhite,
+                    fill: false,
+                    borderWidth: 1,
+                    pointRadius: 0.5,
+                    lineTension: 0.5,
+                    yAxisId: sensorUnit
+                };
+
+                console.log(dataset);
+
+                datasets.push(dataset);
+                chart.update();
+
                 // res.sort((a, b) => {
                 //     b.name.localeCompare(a.name);
                 // });
@@ -105,5 +172,5 @@ function loadChartData(sensorList) {
                 // });
             }
         });
-    }
+    });
 }
