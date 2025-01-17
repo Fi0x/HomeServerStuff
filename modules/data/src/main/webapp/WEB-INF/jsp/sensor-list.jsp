@@ -51,7 +51,6 @@
         </c:forEach>
         </tbody>
     </table>
-    <%--    TODO: Add clickable labels to show/hide individual sensors--%>
     <canvas id="dataChart"></canvas>
 </div>
 <%@include file="../common/scripts.jspf" %>

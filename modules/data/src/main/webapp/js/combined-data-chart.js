@@ -46,6 +46,9 @@ let chart = new Chart(document.getElementById("dataChart"), {
                 }
             },
             y: {
+                type: 'linear',
+                display: false,
+                position: 'left',
                 ticks: {
                     color: cssWhite,
                     callback: function (value) {
@@ -53,31 +56,39 @@ let chart = new Chart(document.getElementById("dataChart"), {
                     }
                 },
                 grid: {
+                    drawOnChartArea: false,
                     color: cssBlack
                 }
             },
-            // Humid: {
-            //     ticks: {
-            //         color: cssWhite,
-            //         callback: function (value) {
-            //             return value + '%';
-            //         }
-            //     },
-            //     grid: {
-            //         color: cssBlack
-            //     }
-            // },
-            // Temp: {
-            //     ticks: {
-            //         color: cssWhite,
-            //         callback: function (value) {
-            //             return value + '°';
-            //         }
-            //     },
-            //     grid: {
-            //         color: cssBlack
-            //     }
-            // }
+            Humid: {
+                type: 'linear',
+                display: true,
+                position: 'right',
+                grid: {
+                    color: cssBlack
+                },
+                ticks: {
+                    color: cssWhite,
+                    callback: function (value) {
+                        return value + '%';
+                    }
+                }
+            },
+            Temp: {
+                type: 'linear',
+                display: true,
+                position: 'left',
+                ticks: {
+                    color: cssWhite,
+                    callback: function (value) {
+                        return value + '°C';
+                    }
+                },
+                grid: {
+                    drawOnChartArea: false,
+                    color: cssBlack
+                }
+            }
         },
         plugins: {
             legend: {
@@ -127,8 +138,6 @@ function loadChartData(sensorList) {
             type: 'GET',
             dataType: 'json',
             success: function (res) {
-                // TODO: Convert result to sensorData and put it into dataset
-
                 let resultList = Object.keys(res).map((key) => {
                     return {
                         timestamp: key,
@@ -148,9 +157,9 @@ function loadChartData(sensorList) {
                 let sensorData = [];
                 Array.from(resultList).forEach((set) => {
                     let entry = {
-                        x: `${set.timestamp}`
+                        x: `${set.timestamp}`,
+                        y: set.value
                     };
-                    entry['y'] = set.value;//TODO: Use sensorUnit as key
                     sensorData.push(entry);
                 });
 
@@ -164,8 +173,11 @@ function loadChartData(sensorList) {
                     borderWidth: 1,
                     pointRadius: 1,
                     lineTension: 0.5,
-                    yAxisId: sensorUnit
+                    yAxisID: sensorUnit,
+                    hidden: true
                 };
+
+                console.log(dataset);
 
                 datasets.push(dataset);
                 chart.update();

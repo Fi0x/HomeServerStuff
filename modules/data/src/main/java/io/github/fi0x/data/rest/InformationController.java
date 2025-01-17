@@ -3,6 +3,7 @@ package io.github.fi0x.data.rest;
 import io.github.fi0x.data.logic.dto.ExpandedSensorDto;
 import io.github.fi0x.data.service.DataService;
 import io.github.fi0x.data.service.SensorService;
+import io.github.fi0x.util.components.Authenticator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -19,6 +20,7 @@ public class InformationController
 {
 	private final SensorService sensorService;
 	private final DataService dataService;
+	private final Authenticator authenticator;
 
 	@GetMapping("/")
 	public String showSensorList(ModelMap model)
@@ -39,6 +41,7 @@ public class InformationController
 		ExpandedSensorDto sensorDto = sensorService.getDetailedSensor(address, name);
 		model.put("sensor", sensorDto);
 		model.put("data", dataService.getAllData(address, name, sensorDto.getValueAdjustment()));
+		model.put("username", authenticator.getAuthenticatedUsername());
 
 		return "show-sensor";
 	}
