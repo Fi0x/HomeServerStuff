@@ -20,7 +20,7 @@ public class SpringSecurityConfig
 {
 	private static final String[] PUBLIC_URLS = new String[]{"/"};
 	private static final String[] ANONYMOUS_URLS = new String[]{};
-	private static final String[] PRIVATE_URLS = new String[]{};
+	private static final String[] PRIVATE_URLS = new String[]{"/sensor/*/*/edit", "/sensor/*/*/update"};
 
 	@Bean
 	@Order(SecurityProperties.BASIC_AUTH_ORDER)

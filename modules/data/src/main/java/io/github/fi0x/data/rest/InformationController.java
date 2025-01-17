@@ -46,7 +46,6 @@ public class InformationController
 		return "show-sensor";
 	}
 
-	//	TODO: Only show this page to logged in users
 	@GetMapping("/sensor/{address}/{name}/edit")
 	public String editSensor(ModelMap model, @PathVariable String address, @PathVariable String name)
 	{
@@ -57,7 +56,6 @@ public class InformationController
 		return "edit-sensor";
 	}
 
-	//	TODO: Verify user is logged in before updating any data
 	@GetMapping("/sensor/{address}/{name}/update")
 	public String updateSensor(ModelMap model, @PathVariable String address, @PathVariable String name,
 							   @RequestParam(value = "valueAdjustment", required = false) Double valueAdjustment,
@@ -65,14 +63,14 @@ public class InformationController
 	{
 		log.info("updateSensor() called");
 
-		if (valueAdjustment != null)
+		if(valueAdjustment != null)
 			sensorService.saveSensorValueAdjustment(address, name, valueAdjustment);
 
-		if (valueDeletion != null)
+		if(valueDeletion != null)
 		{
-			if (valueDeletion.equals("ALL"))
+			if(valueDeletion.equals("ALL"))
 				dataService.deleteForSensor(address, name, null);
-			else if (NumberUtils.isCreatable(valueDeletion))
+			else if(NumberUtils.isCreatable(valueDeletion))
 				dataService.deleteForSensor(address, name, Double.parseDouble(valueDeletion));
 		}
 

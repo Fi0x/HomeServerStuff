@@ -1,7 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
-<%--TODO: Improve the css of this page--%>
 <html>
 <%@include file="../common/head.jspf" %>
 <body>
@@ -9,7 +8,7 @@
 <div class="container">
     <h1>${sensor.name} (${sensor.address})</h1>
     <p>${sensor.description}</p>
-    <div>
+    <div class="section">
         <p>Current value adjustment:</p>
         <p>
             <a onclick="changeValue(-0.1)" class="btn round-button">-</a>
@@ -18,10 +17,13 @@
         </p>
         <a href="javascript:call();" class="btn btn-success">Save value adjustment</a>
     </div>
-    <a href="${pageContext.request.contextPath}/sensor/${sensor.address}/${sensor.name}/update?deleteValues=0"
-       class="btn btn-danger">Delete all Data with value 0</a>
-    <a href="${pageContext.request.contextPath}/sensor/${sensor.address}/${sensor.name}/update?deleteValues=ALL"
-       class="btn btn-danger">Delete All Data</a>
+    <div class="section">
+        <h3>Danger Zone</h3>
+        <a href="${pageContext.request.contextPath}/sensor/${sensor.address}/${sensor.name}/update?deleteValues=0"
+           class="btn btn-danger">Delete all Data with value 0</a>
+        <a href="${pageContext.request.contextPath}/sensor/${sensor.address}/${sensor.name}/update?deleteValues=ALL"
+           class="btn btn-danger">Delete All Data</a>
+    </div>
 </div>
 <%@include file="../common/scripts.jspf" %>
 

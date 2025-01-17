@@ -233,6 +233,14 @@ input {
     background-color: var(--dark-accent2);
 }
 
+.section {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    padding: 1rem;
+    background-color: var(--dark-accent);
+    border-radius: 0.3rem;
+}
+
 #dataChart {
     width: 100%;
 }

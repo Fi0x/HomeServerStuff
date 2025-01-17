@@ -10,12 +10,15 @@
     <h1>${sensor.name} (${sensor.address})</h1>
     <p>${sensor.description}</p>
     <canvas id="dataChart"></canvas>
-    <%--    TODO: Create new css-class for this design--%>
-    <div class="filter-option">
-        <%--        TODO: Only show this button to logged in users--%>
-        <a href="${pageContext.request.contextPath}/sensor/${sensor.address}/${sensor.name}/edit" class="btn-edit">Edit
-            Sensor details</a>
-    </div>
+    <c:choose>
+        <c:when test="${username.toLowerCase() != 'anonymoususer'}">
+            <div class="section">
+                <a href="${pageContext.request.contextPath}/sensor/${sensor.address}/${sensor.name}/edit"
+                   class="btn-edit">Edit
+                    Sensor details</a>
+            </div>
+        </c:when>
+    </c:choose>
     <table id="searchableTable" class="table sortable">
         <thead>
         <tr class="underlined-row">
