@@ -45,7 +45,6 @@ body {
     padding: 0.3rem;
     text-decoration: none;
     border-width: 0;
-    cursor: pointer;
 }
 
 .btn-success:hover {
@@ -105,8 +104,6 @@ body {
     border-radius: 2rem;
     width: 2rem;
     height: 2rem;
-    cursor: pointer;
-    padding: 0.3rem 0.6rem;
 }
 
 .menu-bar-image {
@@ -141,13 +138,17 @@ td {
     padding: 0.5rem;
 }
 
+tr {
+    color: var(--custom-white);
+}
+
 .nav-link:hover {
     color: var(--custom-black);
     background-color: var(--light-accent);
 }
 
 .table > :not(caption) > * > * {
-    color: var(--custom-white);
+    color: inherit;
     background-color: transparent;
 }
 
@@ -230,4 +231,27 @@ input {
 
 .filter-option:hover {
     background-color: var(--dark-accent2);
+}
+
+#dataChart {
+    width: 100%;
+    max-width: 700px;
+}
+
+.red {
+    background-color: var(--custom-red);
+}
+
+.red:hover {
+    background-color: var(--custom-light-red);
+}
+
+.yellow {
+    background-color: var(--custom-yellow);
+    color: var(--custom-black);
+}
+
+.yellow:hover {
+    background-color: var(--custom-light-yellow);
+    color: var(--custom-black);
 }

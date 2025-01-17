@@ -38,5 +38,10 @@
     <a href="register" class="btn">Register a new account</a>
 </div>
 <%@include file="../common/scripts.jspf" %>
+<script>
+    onload = function () {
+        loadNavBar();
+    }
+</script>
 </body>
 </html>

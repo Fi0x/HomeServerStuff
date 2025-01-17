@@ -138,13 +138,17 @@ td {
     padding: 0.5rem;
 }
 
+tr {
+    color: var(--custom-white);
+}
+
 .nav-link:hover {
     color: var(--custom-black);
     background-color: var(--light-accent);
 }
 
 .table > :not(caption) > * > * {
-    color: var(--custom-white);
+    color: inherit;
     background-color: transparent;
 }
 
@@ -227,4 +231,34 @@ input {
 
 .filter-option:hover {
     background-color: var(--dark-accent2);
+}
+
+.section {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    padding: 1rem;
+    background-color: var(--dark-accent);
+    border-radius: 0.3rem;
+}
+
+#dataChart {
+    width: 100%;
+}
+
+.red {
+    background-color: var(--custom-red);
+}
+
+.red:hover {
+    background-color: var(--custom-light-red);
+}
+
+.yellow {
+    background-color: var(--custom-yellow);
+    color: var(--custom-black);
+}
+
+.yellow:hover {
+    background-color: var(--custom-light-yellow);
+    color: var(--custom-black);
 }

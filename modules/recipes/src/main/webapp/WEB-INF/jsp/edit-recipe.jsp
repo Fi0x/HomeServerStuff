@@ -105,5 +105,10 @@
         document.getElementById('ratingText').innerText = slider.value;
     }
 </script>
+<script>
+    onload = function () {
+        loadNavBar();
+    }
+</script>
 </body>
 </html>
