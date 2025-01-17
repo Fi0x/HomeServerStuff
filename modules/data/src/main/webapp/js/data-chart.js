@@ -2,13 +2,12 @@ const cssWhite = getComputedStyle(document.body).getPropertyValue('--custom-whit
 const cssBlack = getComputedStyle(document.body).getPropertyValue('--custom-black');
 
 const javaData = {
-    // label: 'Data-Name',
     data: sensorData,
     backgroundColor: cssWhite,
     borderColor: cssWhite,
     fill: false,
     borderWidth: 1,
-    pointRadius: 0.5,
+    pointRadius: 1,
     lineTension: 0.5
 };
 
@@ -24,10 +23,6 @@ new Chart(document.getElementById("dataChart"), {
     options: {
         scales: {
             x: {
-                // title: {
-                //     display: true,
-                //     text: 'Date'
-                // },
                 type: 'time',
                 time: {
                     tooltipFormat: 'DD.MM hh:mm:ss',
@@ -46,10 +41,6 @@ new Chart(document.getElementById("dataChart"), {
                 }
             },
             y: {
-                // title: {
-                //     display: true,
-                //     text: 'Value'
-                // },
                 ticks: {
                     color: cssWhite,
                     callback: function (value) {

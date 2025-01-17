@@ -67,7 +67,9 @@
         {
             address: "${sensor.address}",
             name: "${sensor.name}",
-            tags: "${sensor.tags}"
+            tags: "${sensor.tags}",
+            id: "${sensor.address} ${sensor.name}",
+            unit: "${sensor.unit}"
         }${not loop.last ? ',' : ''}
         </c:forEach>
     ]
