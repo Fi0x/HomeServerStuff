@@ -29,7 +29,7 @@ public class DataService
 	{
 		log.trace("addData() called from address {}", address);
 
-		if (sensor.wasRecentlyUpdated(address, data.getSensorName()))
+		if(sensor.wasRecentlyUpdated(address, data.getSensorName()))
 		{
 			log.debug("Ignored sensor update, since last update was too recently");
 			return;
@@ -37,29 +37,46 @@ public class DataService
 
 		sensor.updateSensorTimestamp(address, data.getSensorName());
 
-		DataEntity dataEntity = DataEntity.builder().address(address).sensor(data.getSensorName())
-										  .timestamp(System.currentTimeMillis()).value(data.getValue()).build();
+		DataEntity dataEntity =
+				DataEntity.builder().address(address).sensor(data.getSensorName()).timestamp(System.currentTimeMillis())
+						  .value(data.getValue()).build();
 		dataRepo.save(dataEntity);
 	}
 
 	public SortedMap<Date, Double> getAllData(String address, String sensorName, Double valueAdjustment)
 	{
 		List<DataEntity> entities = dataRepo.findAllByAddressAndSensorOrderByTimestampAsc(address, sensorName);
-		if (valueAdjustment != null)
-			entities.forEach(entity -> entity.setValue(entity.getValue() + valueAdjustment));
+		return getDateValueTreeMap(entities, valueAdjustment).descendingMap();
+	}
 
-		TreeMap<Date, Double> map = new TreeMap<>(entities.stream().collect(
-				Collectors.toMap(entity -> new Date(entity.getTimestamp()), DataEntity::getValue)));
+	public SortedMap<Date, Double> getData(String address, String sensorName, Double valueAdjustment, Integer amount)
+	{
+		List<DataEntity> entities = dataRepo.findLastXFromSensor(address, sensorName, amount);
+		return getDateValueTreeMap(entities, valueAdjustment);
+	}
 
-		return map.descendingMap();
+	public SortedMap<Date, Double> getData(String address, String sensorName, Double valueAdjustment, Long oldest)
+	{
+		List<DataEntity> entities = dataRepo.findFromSensorYoungerThan(address, sensorName, oldest);
+		return getDateValueTreeMap(entities, valueAdjustment);
 	}
 
 	@Transactional
 	public void deleteForSensor(String address, String sensorName, Double value)
 	{
-		if (value == null)
+		if(value == null)
 			dataRepo.deleteAllByAddressAndSensor(address, sensorName);
 		else
 			dataRepo.deleteAllByAddressAndSensorAndValue(address, sensorName, value);
+	}
+
+	private TreeMap<Date, Double> getDateValueTreeMap(List<DataEntity> entities, Double valueAdjustment)
+	{
+		if(valueAdjustment != null)
+			entities.forEach(entity -> entity.setValue(entity.getValue() + valueAdjustment));
+
+		return new TreeMap<>(entities.stream().collect(
+				Collectors.toMap(entity -> new Date(entity.getTimestamp()), DataEntity::getValue)));
+
 	}
 }
