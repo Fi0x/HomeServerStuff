@@ -4,6 +4,7 @@ import io.github.fi0x.data.service.DataService;
 import io.github.fi0x.data.service.SensorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -17,6 +18,9 @@ import java.util.SortedMap;
 @RequiredArgsConstructor
 public class DataController
 {
+	@Value("${homeserver.data.overview.data-age}")
+	private Integer dataAge;
+
 	private final DataService dataService;
 	private final SensorService sensorService;
 
@@ -39,5 +43,16 @@ public class DataController
 			return dataService.getData(address, name, adjustment, oldest);
 		else
 			return dataService.getAllData(address, name, adjustment);
+	}
+
+	@GetMapping("/data/{address}/{name}/last-timeframe")
+	public SortedMap<Date, Double> getLimitedSensorData(@PathVariable String address, @PathVariable String name)
+	{
+		log.debug("getLimitedSensorData() called");
+
+		Double adjustment = sensorService.getDetailedSensor(address, name).getValueAdjustment();
+		Long timestamp = System.currentTimeMillis() - dataAge;
+
+		return dataService.getData(address, name, adjustment, timestamp);
 	}
 }

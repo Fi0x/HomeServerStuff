@@ -93,7 +93,15 @@ let chart = new Chart(document.getElementById("dataChart"), {
         plugins: {
             legend: {
                 labels: {
-                    color: cssWhite
+                    color: cssWhite,
+                    boxWidth: 30,
+                    boxHeight: 30,
+                    useBorderRadius: true,
+                    borderRadius: 15,
+                    font: {
+                        size: 15,
+                        weight: "bold"
+                    }
                 }
             },
             tooltip: {
@@ -134,7 +142,7 @@ let chart = new Chart(document.getElementById("dataChart"), {
 function loadChartData(sensorList) {
     sensorList.forEach((sensorElement) => {
         $.ajax({
-            url: `${baseUrl}/${sensorElement.address}/${sensorElement.name}`,
+            url: `${baseUrl}/${sensorElement.address}/${sensorElement.name}/last-timeframe`,
             type: 'GET',
             dataType: 'json',
             success: function (res) {
@@ -176,8 +184,6 @@ function loadChartData(sensorList) {
                     yAxisID: sensorUnit,
                     hidden: true
                 };
-
-                console.log(dataset);
 
                 datasets.push(dataset);
                 chart.update();
