@@ -46,7 +46,6 @@
                     </label>
                 </td>
                 <td>${sensor.name}</td>
-                    <%--                <td class="filter-tag">${sensor.type}</td>--%>
                 <td>${sensor.address}</td>
                 <td>${sensor.value}${sensor.unit}</td>
                 <td>

@@ -1,4 +1,3 @@
-//TODO: When row changes visibility, also change chart if checkbox is checked
 function updateFilterState() {
     let table = document.getElementById("searchableTable");
     let allOptions = document.getElementsByClassName("filter-option");
@@ -17,14 +16,14 @@ function updateFilterState() {
 }
 
 function filterRow(validFilters, row, stringFilter) {
-    let visible = true;
+    let visible = "";
 
     let td = row.getElementsByTagName("td")[1];
     if (td) {
         let txtValue = td.textContent || td.innerText;
         if (txtValue.toUpperCase().indexOf(stringFilter) > -1) {
         } else {
-            visible = false;
+            visible = "none";
         }
     }
     if (validFilters.length > 0) {
@@ -45,13 +44,26 @@ function filterRow(validFilters, row, stringFilter) {
                 break;
         }
         if (!valid)
-            visible = false;
+            visible = "none";
     }
 
-    if (visible)
-        row.style.display = "";
-    else
-        row.style.display = "none";
+    if (row.style.display === visible)
+        return;
+
+    row.style.display = visible;
+
+    let checkbox = row.getElementsByClassName('chart-view-checkbox')[0];
+    if (!checkbox.checked)
+        return;
+
+    let columns = row.getElementsByTagName('td');
+    let id = columns[2].innerText + " " + columns[1].innerText;
+    let dataset = datasets.find((object) => object.id === id);
+    if (!dataset)
+        return;
+
+    dataset.hidden = visible !== "";
+    chart.update();
 }
 
 function selectAllCheckboxes(mainCheckbox) {
@@ -72,7 +84,6 @@ function selectCheckbox(label, e, id) {
         return;
 
     let row = label.parentNode.parentNode;
-    console.log(row.style.display)
     dataset.hidden = !checkbox.checked || row.style.display === 'none';
     chart.update();
 }
