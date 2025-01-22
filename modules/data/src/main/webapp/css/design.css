@@ -208,6 +208,12 @@ input {
     border-radius: 0.1rem;
 }
 
+/*TODO: Improve design*/
+input[type="checkbox"] {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
 .align-top {
     align-content: start;
 }

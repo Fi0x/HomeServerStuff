@@ -92,6 +92,7 @@ let chart = new Chart(document.getElementById("dataChart"), {
         },
         plugins: {
             legend: {
+                display: false,
                 labels: {
                     color: cssWhite,
                     boxWidth: 30,
