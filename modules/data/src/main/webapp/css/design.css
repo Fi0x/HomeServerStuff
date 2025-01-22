@@ -12,6 +12,7 @@
     --custom-light-red: #e50000;
     --custom-yellow: #cba000;
     --custom-light-yellow: #e0bf47;
+    --custom-light-blue: #0073e3;
 }
 
 body {
@@ -208,10 +209,16 @@ input {
     border-radius: 0.1rem;
 }
 
-/*TODO: Improve design*/
 input[type="checkbox"] {
     width: 1.5rem;
     height: 1.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+    appearance: none;
+}
+
+input[type="checkbox"]:checked {
+    background-color: var(--custom-black);
 }
 
 .align-top {
@@ -233,6 +240,11 @@ input[type="checkbox"] {
     padding: 0.3rem;
     background-color: var(--dark-accent);
     border-radius: 0.3rem;
+    display: inline-flex;
+}
+
+.filter-checkbox {
+    margin-left: 0.5rem;
 }
 
 .filter-option:hover {

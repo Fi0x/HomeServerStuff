@@ -1,5 +1,7 @@
 const cssWhite = getComputedStyle(document.body).getPropertyValue('--custom-white');
 const cssBlack = getComputedStyle(document.body).getPropertyValue('--custom-black');
+const cssRed = getComputedStyle(document.body).getPropertyValue('--custom-light-red');
+const cssBlue = getComputedStyle(document.body).getPropertyValue('--custom-light-blue');
 
 const dateFormat = {
     day: "numeric",
@@ -65,7 +67,7 @@ let chart = new Chart(document.getElementById("dataChart"), {
                 display: true,
                 position: 'right',
                 grid: {
-                    color: cssBlack
+                    color: cssBlue
                 },
                 ticks: {
                     color: cssWhite,
@@ -85,20 +87,16 @@ let chart = new Chart(document.getElementById("dataChart"), {
                     }
                 },
                 grid: {
-                    drawOnChartArea: false,
-                    color: cssBlack
+                    // drawOnChartArea: false,
+                    color: cssRed
                 }
             }
         },
         plugins: {
             legend: {
-                display: false,
+                position: 'bottom',
                 labels: {
                     color: cssWhite,
-                    boxWidth: 30,
-                    boxHeight: 30,
-                    useBorderRadius: true,
-                    borderRadius: 15,
                     font: {
                         size: 15,
                         weight: "bold"

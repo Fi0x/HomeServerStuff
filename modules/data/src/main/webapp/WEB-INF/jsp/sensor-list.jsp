@@ -14,8 +14,8 @@
     <div>
         <c:forEach items="${tagList}" var="tag">
             <label class="filter-option" title="Will include sensors with tag '${tag}'">
-                    ${tag}
-                <input type="checkbox" onclick="updateFilterState()">
+                <span class="align-content-center">${tag}</span>
+                <input class="filter-checkbox" type="checkbox" onclick="updateFilterState()">
             </label>
         </c:forEach>
     </div>
