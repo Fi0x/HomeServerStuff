@@ -28,11 +28,11 @@
                 </label>
             </th>
             <th class="clickable">Name</th>
-            <%--            <th class="clickable">Type</th>--%>
             <th class="clickable">Address</th>
             <th class="clickable">Value</th>
             <th class="clickable">Last Update</th>
             <th class="clickable">Tags</th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
@@ -55,6 +55,9 @@
                     <c:forEach items="${sensor.tags}" var="tag" varStatus="loop">
                         ${tag}${loop.last ? '': ','}
                     </c:forEach>
+                </td>
+                <td>
+                    <span class="color-tag" id="color-span${sensor.address} ${sensor.name}"></span>
                 </td>
             </tr>
         </c:forEach>

@@ -263,6 +263,13 @@ input[type="checkbox"]:checked {
     width: 100%;
 }
 
+.color-tag {
+    display: inline-block;
+    width: 1.5rem;
+    height: 1.5rem;
+    background-color: transparent;
+}
+
 .red {
     background-color: var(--custom-red);
 }

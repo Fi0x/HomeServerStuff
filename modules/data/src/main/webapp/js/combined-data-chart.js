@@ -13,14 +13,12 @@ const dateFormat = {
 const lineColors = [
     "#5bff00",
     "#00ffd9",
-    "#0048ff",
-    "#a100ff",
-    "#ff0008",
+    "#b9ffef",
+    "#ff000f",
     "#ffea00",
-    "#00912f",
     "#00bbff",
     "#ff00dd",
-    "#880000"
+    "#b5ff8d",
 ];
 
 const datasets = [];
@@ -94,6 +92,7 @@ let chart = new Chart(document.getElementById("dataChart"), {
         },
         plugins: {
             legend: {
+                display: false,
                 position: 'bottom',
                 labels: {
                     color: cssWhite,
@@ -105,6 +104,9 @@ let chart = new Chart(document.getElementById("dataChart"), {
             },
             tooltip: {
                 callbacks: {
+                    beforeTitle: function (context) {
+                        return context[0].dataset.label;
+                    },
                     label: function (context) {
                         let sensorElement = sensorNames.filter(sensor => sensor.id === context.dataset.id);
                         if (sensorElement?.length > 0)
@@ -170,12 +172,14 @@ function loadChartData(sensorList) {
                     sensorData.push(entry);
                 });
 
+                let datasetColor = lineColors[datasets.length % lineColors.length];
+
                 let dataset = {
                     id: sensorElement.id,
                     label: sensorElement.name,
                     data: sensorData,
-                    backgroundColor: lineColors[datasets.length % lineColors.length],
-                    borderColor: lineColors[datasets.length % lineColors.length],
+                    backgroundColor: datasetColor,
+                    borderColor: datasetColor,
                     fill: false,
                     borderWidth: 1,
                     pointRadius: 1,
@@ -186,7 +190,14 @@ function loadChartData(sensorList) {
 
                 datasets.push(dataset);
                 chart.update();
+
+                loadChartColor(sensorElement.id, datasetColor);
             }
         });
     });
+}
+
+function loadChartColor(sensorId, color) {
+    let colorElement = document.getElementById(`color-span${sensorId}`);
+    colorElement.style.background = color;
 }
