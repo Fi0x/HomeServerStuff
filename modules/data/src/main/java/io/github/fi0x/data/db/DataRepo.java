@@ -10,14 +10,14 @@ import java.util.Optional;
 
 public interface DataRepo extends JpaRepository<DataEntity, DataId>
 {
-	@Query(value = "SELECT * FROM dtdata WHERE TIMESTAMP < ?1", nativeQuery = true)
-	List<DataEntity> findAllValuesOlderThan(Long time);
-
 	Optional<DataEntity> findFirstByAddressAndSensorOrderByTimestampDesc(String address, String sensor);
 
 	Optional<DataEntity> findFirstByAddressAndSensorOrderByTimestampAsc(String address, String sensor);
 
 	List<DataEntity> findAllByAddressAndSensorOrderByTimestampAsc(String address, String sensor);
+
+	@Query(value = "SELECT * FROM dtdata WHERE ADDRESS = ?1 AND SENSOR = ?2 AND TIMESTAMP < ?3", nativeQuery = true)
+	List<DataEntity> findFromSensorOlderThan(String address, String sensor, Long timestamp);
 
 	@Query(value = "SELECT * FROM dtdata WHERE ADDRESS = ?1 AND SENSOR = ?2 AND TIMESTAMP >= ?3", nativeQuery = true)
 	List<DataEntity> findFromSensorYoungerThan(String address, String sensor, Long timestamp);

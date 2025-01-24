@@ -33,16 +33,15 @@ public class DatabaseCleanup
 
 		List<SensorEntity> sensorEntities = sensorRepo.findAll();
 		long oldestAllowedTime = System.currentTimeMillis() - (maxValueTime * 1000);
-		sensorEntities.forEach(sensorEntity -> {
-			cleanSensor(sensorEntity.getAddress(), sensorEntity.getName(), oldestAllowedTime);
-		});
+		sensorEntities.forEach(
+				sensorEntity -> cleanSensor(sensorEntity.getAddress(), sensorEntity.getName(), oldestAllowedTime));
 	}
 
 	private void cleanSensor(String address, String name, long oldestAllowedTime)
 	{
 		Optional<DataEntity> oldestDataEntity = dataRepo.findFirstByAddressAndSensorOrderByTimestampAsc(address, name);
 		oldestDataEntity.ifPresent(entity -> {
-			List<DataEntity> possibleEntities = dataRepo.findAllValuesOlderThan(oldestAllowedTime);
+			List<DataEntity> possibleEntities = dataRepo.findFromSensorOlderThan(address, name, oldestAllowedTime);
 
 			averageDays(possibleEntities);
 		});
