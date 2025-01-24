@@ -35,6 +35,8 @@ public class DatabaseCleanup
 		long oldestAllowedTime = System.currentTimeMillis() - (maxValueTime * 1000);
 		sensorEntities.forEach(
 				sensorEntity -> cleanSensor(sensorEntity.getAddress(), sensorEntity.getName(), oldestAllowedTime));
+
+		cleanSensorlessData(sensorEntities);
 	}
 
 	private void cleanSensor(String address, String name, long oldestAllowedTime)
@@ -49,7 +51,7 @@ public class DatabaseCleanup
 
 	private void averageDays(List<DataEntity> entities)
 	{
-		if (entities.isEmpty())
+		if(entities.isEmpty())
 			return;
 
 		entities.sort((e1, e2) -> Math.toIntExact((e2.getTimestamp() - e1.getTimestamp())));
@@ -61,7 +63,7 @@ public class DatabaseCleanup
 																					 new Date(entity.getTimestamp())))
 																			 .toList());
 
-		while (!workingEntities.isEmpty())
+		while(!workingEntities.isEmpty())
 		{
 			final Date youngestEntryDate = new Date(workingEntities.get(0).getTimestamp());
 			List<DataEntity> currentEntities = workingEntities.stream()
@@ -70,7 +72,7 @@ public class DatabaseCleanup
 																											entity.getTimestamp())))
 															  .toList();
 
-			if (currentEntities.size() > 1)
+			if(currentEntities.size() > 1)
 				saveAverage(currentEntities, youngestEntryDate);
 
 			workingEntities.removeAll(currentEntities);
@@ -79,21 +81,37 @@ public class DatabaseCleanup
 
 	private void saveAverage(List<DataEntity> entities, Date desiredDate)
 	{
-		if (entities.isEmpty())
+		if(entities.isEmpty())
 			return;
 
 		int count = 0;
 		double total = 0;
-		for (DataEntity entity : entities)
+		for(DataEntity entity : entities)
 		{
 			count++;
 			total += entity.getValue();
 		}
 
-		DataEntity averageEntity = new DataEntity(entities.get(0).getAddress(), entities.get(0).getSensor(),
-												  desiredDate.getTime(), total / count);
+		DataEntity averageEntity =
+				new DataEntity(entities.get(0).getAddress(), entities.get(0).getSensor(), desiredDate.getTime(),
+							   total / count);
 
 		dataRepo.deleteAll(entities);
 		dataRepo.save(averageEntity);
+	}
+
+	private void cleanSensorlessData(List<SensorEntity> sensorEntities)
+	{
+		List<DataEntity> dataEntities = dataRepo.findAll();
+
+		for(SensorEntity sensorEntity : sensorEntities)
+			dataEntities = dataEntities.stream().filter(dataEntity -> !isSameSensor(sensorEntity, dataEntity)).toList();
+
+		dataRepo.deleteAll(dataEntities);
+	}
+
+	private boolean isSameSensor(SensorEntity sensor, DataEntity data)
+	{
+		return sensor.getAddress().equals(data.getAddress()) && sensor.getName().equals(data.getSensor());
 	}
 }
