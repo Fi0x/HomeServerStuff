@@ -87,3 +87,37 @@ function selectCheckbox(label, e, id) {
     dataset.hidden = !checkbox.checked || row.style.display === 'none';
     chart.update();
 }
+
+function nextChartColor(colorElement, e) {
+    e.stopPropagation();
+    let sensorId = colorElement.id.replace("color-span", "");
+    let currentBackground = rgbToHex(colorElement.style.background);
+    let newColorIdx = (lineColors.indexOf(currentBackground) + 1) % lineColors.length;
+
+    if (newColorIdx < 0)
+        return;
+
+    let dataset = datasets.find((object) => object.id === sensorId);
+
+    if (!dataset)
+        return;
+
+    let newColor = lineColors[newColorIdx];
+    colorElement.style.background = newColor;
+    dataset.backgroundColor = newColor;
+    dataset.borderColor = newColor;
+    chart.update();
+}
+
+function rgbToHex(rgb) {
+    if (/^#[0-9A-F]{6}$/i.test(rgb))
+        return rgb;
+
+    rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+
+    function hex(x) {
+        return ("0" + parseInt(x).toString(16)).slice(-2);
+    }
+
+    return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
+}

@@ -57,7 +57,8 @@
                     </c:forEach>
                 </td>
                 <td>
-                    <span class="color-tag" id="color-span${sensor.address} ${sensor.name}"></span>
+                    <span onclick="nextChartColor(this, event)" class="color-tag"
+                          id="color-span${sensor.address} ${sensor.name}"></span>
                 </td>
             </tr>
         </c:forEach>
