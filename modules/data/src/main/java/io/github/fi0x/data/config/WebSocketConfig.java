@@ -11,6 +11,7 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 public class WebSocketConfig implements WebSocketConfigurer
 {
 
+	//TODO: Find out if this is working when no browser is open: https://dev.to/marcushellberg/how-to-send-web-push-notifications-in-java-21lo
 	@Override
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry)
 	{
