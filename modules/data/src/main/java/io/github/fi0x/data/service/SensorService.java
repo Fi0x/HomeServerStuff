@@ -121,6 +121,15 @@ public class SensorService
 		return results;
 	}
 
+	public void deleteSensor(String address, String name)
+	{
+		SensorEntity entity = sensorRepo.findByAddressAndName(address, name).orElseThrow(
+				() -> new ResponseStatusException(HttpStatusCode.valueOf(404),
+												  "Could not find requested sensor to delete"));
+
+		sensorRepo.delete(entity);
+	}
+
 	private SensorEntity getSensorEntity(String address, String name)
 	{
 		SensorId id = new SensorId(address, name);

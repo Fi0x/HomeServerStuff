@@ -78,4 +78,14 @@ public class InformationController
 
 		return showSensor(model, address, name);
 	}
+
+	@GetMapping("/sensor/{address}/{name}/delete")
+	public String deleteSensor(ModelMap model, @PathVariable String address, @PathVariable String name)
+	{
+		log.info("deleteSensor() called");
+
+		sensorService.deleteSensor(address, name);
+
+		return showSensorList(model);
+	}
 }

@@ -23,6 +23,8 @@
            class="btn btn-danger">Delete all Data with value 0</a>
         <a href="${pageContext.request.contextPath}/sensor/${sensor.address}/${sensor.name}/update?deleteValues=ALL"
            class="btn btn-danger">Delete All Data</a>
+        <a href="${pageContext.request.contextPath}/sensor/${sensor.address}/${sensor.name}/delete"
+           class="btn btn-danger">Delete the sensor and all Data</a>
     </div>
 </div>
 <%@include file="../common/scripts.jspf" %>
