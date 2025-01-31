@@ -33,6 +33,14 @@
                 <td>
                     <fmt:formatDate value="${datapoint.key}" pattern="dd.MM HH:mm:ss"/>
                 </td>
+                <c:choose>
+                    <c:when test="${username.toLowerCase() != 'anonymoususer'}">
+                        <td>
+                            <a class="btn btn-danger"
+                               href="${pageContext.request.contextPath}/data/${sensor.address}/${sensor.name}/${datapoint.key.time}/delete">Delete</a>
+                        </td>
+                    </c:when>
+                </c:choose>
             </tr>
         </c:forEach>
         </tbody>

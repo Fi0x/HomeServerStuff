@@ -16,6 +16,8 @@
             <a onclick="changeValue(0.1)" class="btn round-button">+</a>
         </p>
         <a href="javascript:call();" class="btn btn-success">Save value adjustment</a>
+        <%--        TODO: Add options to change min and max values--%>
+        <%--        TODO: Add an option to change sensor tags and create custom ones--%>
     </div>
     <div class="section">
         <h3>Danger Zone</h3>

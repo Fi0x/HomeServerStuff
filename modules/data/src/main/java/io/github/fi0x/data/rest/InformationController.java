@@ -12,10 +12,12 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 @Slf4j
 @Controller
 @RequiredArgsConstructor
+@SessionAttributes({"sensor", "data", "username"})
 public class InformationController
 {
 	private final SensorService sensorService;
@@ -69,9 +71,9 @@ public class InformationController
 		if(valueDeletion != null)
 		{
 			if(valueDeletion.equals("ALL"))
-				dataService.deleteForSensor(address, name, null);
+				dataService.deleteForSensor(address, name, null, null);
 			else if(NumberUtils.isCreatable(valueDeletion))
-				dataService.deleteForSensor(address, name, Double.parseDouble(valueDeletion));
+				dataService.deleteForSensor(address, name, null, Double.parseDouble(valueDeletion));
 		}
 
 		model.put("sensor", sensorService.getDetailedSensor(address, name));
@@ -84,8 +86,20 @@ public class InformationController
 	{
 		log.info("deleteSensor() called");
 
+		dataService.deleteForSensor(address, name, null, null);
 		sensorService.deleteSensor(address, name);
 
 		return showSensorList(model);
+	}
+
+	@GetMapping("/data/{address}/{name}/{timestamp}/delete")
+	public String deleteData(ModelMap model, @PathVariable String address, @PathVariable String name,
+							 @PathVariable Long timestamp)
+	{
+		log.debug("deleteData() called");
+
+		dataService.deleteForSensor(address, name, timestamp, null);
+
+		return showSensor(model, address, name);
 	}
 }

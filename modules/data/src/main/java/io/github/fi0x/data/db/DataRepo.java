@@ -28,4 +28,8 @@ public interface DataRepo extends JpaRepository<DataEntity, DataId>
 	void deleteAllByAddressAndSensor(String address, String sensor);
 
 	void deleteAllByAddressAndSensorAndValue(String address, String sensor, Double value);
+
+	void deleteAllByAddressAndSensorAndTimestamp(String address, String sensor, Long timestamp);
+
+	void deleteAllByAddressAndSensorAndTimestampAndValue(String address, String sensor, Long timestamp, Double value);
 }

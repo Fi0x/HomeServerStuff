@@ -22,7 +22,8 @@ const lineColors = [
 ];
 
 const datasets = [];
-
+// TODO: Convert time correctly in tooltip
+// TODO: Allow data deletion in tooltip
 let chart = new Chart(document.getElementById("dataChart"), {
     type: 'line',
     options: {

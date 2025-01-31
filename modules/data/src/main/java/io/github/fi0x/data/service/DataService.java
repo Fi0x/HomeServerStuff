@@ -62,12 +62,16 @@ public class DataService
 	}
 
 	@Transactional
-	public void deleteForSensor(String address, String sensorName, Double value)
+	public void deleteForSensor(String address, String sensorName, Long timestamp, Double value)
 	{
-		if(value == null)
+		if (value == null && timestamp == null)
 			dataRepo.deleteAllByAddressAndSensor(address, sensorName);
-		else
+		else if (value == null)
+			dataRepo.deleteAllByAddressAndSensorAndTimestamp(address, sensorName, timestamp);
+		else if (timestamp == null)
 			dataRepo.deleteAllByAddressAndSensorAndValue(address, sensorName, value);
+		else
+			dataRepo.deleteAllByAddressAndSensorAndTimestampAndValue(address, sensorName, timestamp, value);
 	}
 
 	private TreeMap<Date, Double> getDateValueTreeMap(List<DataEntity> entities, Double valueAdjustment)
