@@ -7,6 +7,7 @@ import io.github.fi0x.util.components.Authenticator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,6 +32,8 @@ public class InformationController
 
 		model.put("sensorList", sensorService.getAllDetailedSensors());
 		model.put("tagList", sensorService.getAllSensorTags());
+
+		log.info(SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString());
 
 		return "sensor-list";
 	}
