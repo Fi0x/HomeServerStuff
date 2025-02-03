@@ -18,16 +18,15 @@ const dateFormat = {
     minute: "numeric"
 };
 
-// TODO: Convert time correctly in tooltip
 // TODO: Allow data deletion in tooltip
-new Chart(document.getElementById("dataChart"), {
+let chart = new Chart(document.getElementById("dataChart"), {
     type: 'line',
     options: {
         scales: {
             x: {
                 type: 'time',
                 time: {
-                    tooltipFormat: 'DD.MM hh:mm:ss',
+                    tooltipFormat: 'DD.MM HH:mm:ss',
                     displayFormats: {
                         day: 'MMM DD YY'
                     }
