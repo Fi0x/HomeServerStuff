@@ -105,4 +105,10 @@ public class InformationController
 
 		return showSensor(model, address, name);
 	}
+
+	@GetMapping("/test")
+	public String test()
+	{
+		return "webSocketTest2";
+	}
 }
