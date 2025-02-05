@@ -1,6 +1,7 @@
 package io.github.fi0x.data.service;
 
-import org.springframework.scheduling.annotation.Async;
+import io.github.fi0x.data.logic.dto.ExpandedDataDto;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -9,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 public class NotificationService
 {
@@ -25,20 +27,29 @@ public class NotificationService
 		emitters.remove(emitter);
 	}
 
-	@Async
-	@Scheduled(fixedRate = 5000)
-	public void notifyAllEmitters()
+	public void notifyDataUpdate(ExpandedDataDto dataDto)
 	{
 		List<SseEmitter> deadEmitters = new ArrayList<>();
 		emitters.forEach(emitter -> {
 			try
 			{
-				emitter.send(SseEmitter.event().data("This is my test message"));
+				//				TODO: Find out why this IOException gets printed in console
+				emitter.send(SseEmitter.event().data(dataDto));
+				log.info("sent data update to emitter");
 			} catch (IOException e)
 			{
 				deadEmitters.add(emitter);
+				log.info("lost connection to emitter");
 			}
 		});
 		emitters.removeAll(deadEmitters);
+	}
+
+
+	@Scheduled(fixedRate = 5000)
+	public void scheduledUpdate()
+	{
+		//TODO: Remove this scheduled event after testing
+		notifyDataUpdate(new ExpandedDataDto("123", "Testsensor", System.currentTimeMillis(), Math.random()));
 	}
 }

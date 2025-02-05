@@ -84,6 +84,7 @@
     onload = function () {
         loadNavBar();
         colorDataLines();
+        subscribeToDataUpdates(newDataForSingleSensor);
     }
 </script>
 </body>

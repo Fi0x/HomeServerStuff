@@ -25,22 +25,25 @@ public class DataService
 
 	private final Sensor sensor;
 
-	public void addData(String address, DataDto data) throws ResponseStatusException
+	public Long addData(String address, DataDto data) throws ResponseStatusException
 	{
 		log.trace("addData() called from address {}", address);
 
 		if(sensor.wasRecentlyUpdated(address, data.getSensorName()))
 		{
 			log.debug("Ignored sensor update, since last update was too recently");
-			return;
+			return -1L;
 		}
 
-		sensor.updateSensorTimestamp(address, data.getSensorName());
+		long currentTimestamp = System.currentTimeMillis();
+		sensor.updateSensorTimestamp(address, data.getSensorName(), currentTimestamp);
 
-		DataEntity dataEntity =
-				DataEntity.builder().address(address).sensor(data.getSensorName()).timestamp(System.currentTimeMillis())
+		DataEntity dataEntity = DataEntity.builder().address(address).sensor(data.getSensorName())
+										  .timestamp(currentTimestamp)
 						  .value(data.getValue()).build();
 		dataRepo.save(dataEntity);
+
+		return currentTimestamp;
 	}
 
 	public SortedMap<Date, Double> getAllData(String address, String sensorName, Double valueAdjustment)

@@ -121,3 +121,33 @@ function rgbToHex(rgb) {
 
     return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
 }
+
+function subscribeToDataUpdates(functionToRun) {
+    const eventSource = new EventSource(`${baseUrl}/subscribe`);
+    eventSource.onmessage = e => {
+        console.log('message received');
+        functionToRun(JSON.parse(e.data));
+    };
+    eventSource.onopen = () => {
+    };
+    eventSource.onerror = e => {
+        if (e.readyState === EventSource.CLOSED) {
+            console.log('live-connection to server lost');
+        } else {
+            console.log(e);
+        }
+    };
+}
+
+function newDataForSingleSensor(extendedDataDto) {
+    console.log(extendedDataDto);
+    // TODO: Update chart for sensor
+    //  Update table for sensor (Add new line at top; set correct color for new line; update color of last line if necessary)
+}
+
+function newDataForSensorList(extendedDataDto) {
+    console.log(extendedDataDto);
+//     TODO: Update chart for specific sensor
+//      Update value and last update for specific sensor in table
+//      Update color for specific sensor line if required
+}

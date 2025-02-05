@@ -93,6 +93,7 @@
     onload = function () {
         loadNavBar();
         loadChartData(sensorNames);
+        subscribeToDataUpdates(newDataForSensorList);
     }
 </script>
 </body>

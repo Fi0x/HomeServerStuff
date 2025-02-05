@@ -34,20 +34,23 @@ public class SensorService
 
 	private final Sensor sensor;
 
-	public void saveSensorAndData(String address, SensorDataDto sensorWithData)
+	public long saveSensorAndData(String address, SensorDataDto sensorWithData)
 	{
 		if (sensor.wasRecentlyUpdated(address, sensorWithData.getName()))
 		{
 			log.debug("Ignored sensor update, since last update was too recently");
-			return;
+			return -1;
 		}
 
-		saveSensorEntity(address, sensorWithData.getName(), sensorWithData.getDescription(), sensorWithData.getUnit(),
+		long timestamp = saveSensorEntity(address, sensorWithData.getName(), sensorWithData.getDescription(),
+										  sensorWithData.getUnit(),
 						 sensorWithData.getType(), sensorWithData.getDataDelay(), sensorWithData.getValueAdjustment(),
 						 sensorWithData.getMinValue(), sensorWithData.getMaxValue());
 		saveTags(sensorWithData.getName(), sensorWithData.getTags());
 
-		saveData(address, sensorWithData.getName(), sensorWithData.getValue());
+		saveData(address, sensorWithData.getName(), sensorWithData.getValue(), timestamp);
+
+		return timestamp;
 	}
 
 	public void saveSensorValueAdjustment(String address, String name, double valueAdjustment)
@@ -136,12 +139,14 @@ public class SensorService
 		return sensorRepo.findById(id).orElse(SensorEntity.builder().address(address).name(name).build());
 	}
 
-	private void saveSensorEntity(String address, String name, String description, String unit, String type,
+	private long saveSensorEntity(String address, String name, String description, String unit, String type,
 								  Long dataDelay, Double valueAdjustment, Double minValue, Double maxValue)
 	{
 		SensorEntity sensorEntity = getSensorEntity(address, name);
 
-		sensorEntity.setLastUpdate(System.currentTimeMillis());
+		long timestamp = System.currentTimeMillis();
+		sensorEntity.setLastUpdate(timestamp);
+
 		if (description != null)
 			sensorEntity.setDescription(description);
 		if (unit != null)
@@ -157,6 +162,8 @@ public class SensorService
 		if (maxValue != null)
 			sensorEntity.setMaxValue(maxValue);
 		sensorRepo.save(sensorEntity);
+
+		return timestamp;
 	}
 
 	private void saveTags(String sensorName, List<String> tags)
@@ -173,10 +180,10 @@ public class SensorService
 		});
 	}
 
-	private void saveData(String address, String sensorName, Double value)
+	private void saveData(String address, String sensorName, Double value, Long timestamp)
 	{
-		DataEntity dataEntity = DataEntity.builder().address(address).sensor(sensorName)
-										  .timestamp(System.currentTimeMillis()).value(value).build();
+		DataEntity dataEntity = DataEntity.builder().address(address).sensor(sensorName).timestamp(timestamp)
+										  .value(value).build();
 		dataRepo.save(dataEntity);
 	}
 }

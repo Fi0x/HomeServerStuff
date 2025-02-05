@@ -1,13 +1,17 @@
 package io.github.fi0x.data.rest;
 
 import io.github.fi0x.data.service.DataService;
+import io.github.fi0x.data.service.NotificationService;
 import io.github.fi0x.data.service.SensorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.Date;
 import java.util.SortedMap;
@@ -23,6 +27,7 @@ public class DataController
 
 	private final DataService dataService;
 	private final SensorService sensorService;
+	private final NotificationService notificationService;
 
 	@GetMapping("/data/{address}/{name}")
 	public SortedMap<Date, Double> getSensorData(@PathVariable String address, @PathVariable String name,
@@ -54,5 +59,18 @@ public class DataController
 		Long timestamp = System.currentTimeMillis() - dataAge;
 
 		return dataService.getData(address, name, adjustment, timestamp);
+	}
+
+	@GetMapping("/data/subscribe")
+	public ResponseEntity<SseEmitter> addSubscriber()
+	{
+		log.debug("addSubscriber() called");
+
+		SseEmitter emitter = new SseEmitter();
+		emitter.onCompletion(() -> notificationService.removeEmitter(emitter));
+		emitter.onTimeout(() -> notificationService.removeEmitter(emitter));
+		notificationService.addEmitter(emitter);
+
+		return new ResponseEntity<>(emitter, HttpStatus.OK);
 	}
 }
