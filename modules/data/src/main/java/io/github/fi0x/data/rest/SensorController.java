@@ -56,15 +56,4 @@ public class SensorController
 
 		return sensorService.getAllSensors();
 	}
-
-	@GetMapping("/test")
-	public String test()
-	{
-		//TODO: Remove this method when testing is done
-		notificationService.notifyDataUpdate(
-				new ExpandedDataDto("123", "Testsensor", System.currentTimeMillis(), Math.random(), 0.2, 0.8,
-									(long) (Math.random() * 5000), "~X"));
-
-		return "It probably worked";
-	}
 }

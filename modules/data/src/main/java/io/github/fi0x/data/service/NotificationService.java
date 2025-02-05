@@ -2,7 +2,6 @@ package io.github.fi0x.data.service;
 
 import io.github.fi0x.data.logic.dto.ExpandedDataDto;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -42,14 +41,5 @@ public class NotificationService
 			}
 		});
 		emitters.removeAll(deadEmitters);
-	}
-
-	@Scheduled(fixedRate = 5000)
-	public void scheduledUpdate()
-	{
-		//TODO: Remove this scheduled event after testing, or change it to heartbeat if it needs to exist to avoid
-		// connection closing
-		notifyDataUpdate(new ExpandedDataDto("123", "Testsensor", System.currentTimeMillis(), Math.random(), 0.2, 0.8,
-											 (long) (Math.random() * 5000), "~X"));
 	}
 }
