@@ -35,7 +35,6 @@ public class NotificationService
 			{
 				//				TODO: Find out why this IOException gets printed in console
 				emitter.send(SseEmitter.event().data(dataDto));
-				log.info("sent data update to emitter");
 			} catch (IOException e)
 			{
 				deadEmitters.add(emitter);
@@ -45,11 +44,12 @@ public class NotificationService
 		emitters.removeAll(deadEmitters);
 	}
 
-
 	@Scheduled(fixedRate = 5000)
 	public void scheduledUpdate()
 	{
-		//TODO: Remove this scheduled event after testing
-		notifyDataUpdate(new ExpandedDataDto("123", "Testsensor", System.currentTimeMillis(), Math.random()));
+		//TODO: Remove this scheduled event after testing, or change it to heartbeat if it needs to exist to avoid
+		// connection closing
+		notifyDataUpdate(new ExpandedDataDto("123", "Testsensor", System.currentTimeMillis(), Math.random(), 0.2, 0.8,
+											 (long) (Math.random() * 5000)));
 	}
 }

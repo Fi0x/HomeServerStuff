@@ -31,7 +31,7 @@
             <tr id="dataEntry${loop.index}">
                 <td>${datapoint.value}${sensor.unit}</td>
                 <td>
-                    <fmt:formatDate value="${datapoint.key}" pattern="dd.MM HH:mm:ss"/>
+                    <fmt:formatDate value="${datapoint.key}" pattern="dd.MM., HH:mm:ss"/>
                 </td>
                 <c:choose>
                     <c:when test="${username.toLowerCase() != 'anonymoususer'}">

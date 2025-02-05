@@ -15,4 +15,7 @@ public class ExpandedDataDto
 	private String sensorName;
 	private Long timestamp;
 	private Double value;
+	private Double min;
+	private Double max;
+	private Long delay;
 }

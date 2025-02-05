@@ -35,9 +35,10 @@
             <th></th>
         </tr>
         </thead>
-        <tbody>
+        <tbody id="sensorTableBody">
         <c:forEach items="${sensorList}" var="sensor">
-            <tr class="clickable-row ${sensor.offline ? 'yellow' : (sensor.minValue > sensor.value || sensor.maxValue < sensor.value ? 'red' : '')}"
+            <tr id="sensorRow${sensor.address}${sensor.name}"
+                class="clickable-row ${sensor.offline ? 'yellow' : (sensor.minValue > sensor.value || sensor.maxValue < sensor.value ? 'red' : '')}"
                 title="${sensor.offline ? 'OFFLINE' : sensor.description}"
                 onclick="window.location='${pageContext.request.contextPath}/sensor/${sensor.address}/${sensor.name}'">
                 <td>
@@ -49,7 +50,7 @@
                 <td>${sensor.address}</td>
                 <td>${sensor.value}${sensor.unit}</td>
                 <td>
-                    <fmt:formatDate value="${sensor.lastUpdate}" pattern="dd.MM HH:mm:ss"/>
+                    <fmt:formatDate value="${sensor.lastUpdate}" pattern="dd.MM., HH:mm:ss"/>
                 </td>
                 <td class="filter-tag">
                     <c:forEach items="${sensor.tags}" var="tag" varStatus="loop">

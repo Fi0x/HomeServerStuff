@@ -129,7 +129,5 @@ void loop()
     }
   }
 
-// TODO: Close wifi connection to save energy
-
   delay(MS_DELAY);
 }

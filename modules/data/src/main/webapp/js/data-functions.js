@@ -1,3 +1,5 @@
+const dateOptions = {day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}
+
 function updateFilterState() {
     let table = document.getElementById("searchableTable");
     let allOptions = document.getElementsByClassName("filter-option");
@@ -125,7 +127,6 @@ function rgbToHex(rgb) {
 function subscribeToDataUpdates(functionToRun) {
     const eventSource = new EventSource(`${baseUrl}/subscribe`);
     eventSource.onmessage = e => {
-        console.log('message received');
         functionToRun(JSON.parse(e.data));
     };
     eventSource.onopen = () => {
@@ -146,8 +147,27 @@ function newDataForSingleSensor(extendedDataDto) {
 }
 
 function newDataForSensorList(extendedDataDto) {
-    console.log(extendedDataDto);
-//     TODO: Update chart for specific sensor
-//      Update value and last update for specific sensor in table
-//      Update color for specific sensor line if required
+    let correctRow = document.getElementById(`sensorRow${extendedDataDto.address}${extendedDataDto.sensorName}`)
+    if (correctRow) {
+        let entries = correctRow.children;
+        entries[3].innerText = extendedDataDto.value;
+        entries[4].innerText = new Date(extendedDataDto.timestamp).toLocaleDateString('de-DE', dateOptions);
+        correctRow.classList.remove('yellow', 'red');
+        if (Date.now() - extendedDataDto.timestamp > extendedDataDto.delay * 2) {
+            correctRow.classList.add('yellow');
+        } else if (extendedDataDto.value < extendedDataDto.min || extendedDataDto.value > extendedDataDto.max) {
+            correctRow.classList.add('red');
+        }
+        let dataset = datasets.find((set) => set.id === extendedDataDto.address + " " + extendedDataDto.sensorName);
+        let timestampedDate = new Date(extendedDataDto.timestamp).toISOString();
+        if (dataset) {
+            dataset.data.push({
+                x: `${timestampedDate}`,
+                y: extendedDataDto.value
+            });
+        }
+        chart.update();
+    } else {
+        console.log("Could not find sensor in list");
+    }
 }

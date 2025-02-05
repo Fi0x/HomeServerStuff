@@ -44,7 +44,8 @@ public class SensorController
 		long timestamp = sensorService.saveSensorAndData(request.getRemoteAddr(), requestDto);
 		notificationService.notifyDataUpdate(
 				ExpandedDataDto.builder().address(request.getRemoteAddr()).sensorName(requestDto.getName())
-							   .timestamp(timestamp).value(requestDto.getValue()).build());
+							   .timestamp(timestamp).value(requestDto.getValue()).min(requestDto.getMinValue())
+							   .max(requestDto.getMaxValue()).delay(requestDto.getDataDelay()).build());
 	}
 
 	@GetMapping("/sensors")
@@ -53,5 +54,16 @@ public class SensorController
 		log.debug("listSensors() called from {}", request.getRemoteAddr());
 
 		return sensorService.getAllSensors();
+	}
+
+	@GetMapping("/test")
+	public String test()
+	{
+		//TODO: Remove this method when testing is done
+		notificationService.notifyDataUpdate(
+				new ExpandedDataDto("123", "Testsensor", System.currentTimeMillis(), Math.random(), 0.2, 0.8,
+									(long) (Math.random() * 5000)));
+
+		return "It probably worked";
 	}
 }
