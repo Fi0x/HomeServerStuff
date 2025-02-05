@@ -147,7 +147,7 @@ function newDataForSingleSensor(extendedDataDto) {
     time.innerText = new Date(extendedDataDto.timestamp).toLocaleDateString('de-DE', dateOptions);
 
     let newRow = document.createElement('tr');
-    if (extendedDataDto.value < extendedDataDto.min || extendedDataDto.value > extendedDataDto.max) {
+    if (extendedDataDto.min && extendedDataDto.value < extendedDataDto.min || extendedDataDto.max && extendedDataDto.value > extendedDataDto.max) {
         newRow.classList.add('red');
     }
     newRow.append(measurement, time);
@@ -173,7 +173,7 @@ function newDataForSensorList(extendedDataDto) {
         correctRow.classList.remove('yellow', 'red');
         if (Date.now() - extendedDataDto.timestamp > extendedDataDto.delay * 2) {
             correctRow.classList.add('yellow');
-        } else if (extendedDataDto.value < extendedDataDto.min || extendedDataDto.value > extendedDataDto.max) {
+        } else if (extendedDataDto.min && extendedDataDto.value < extendedDataDto.min || extendedDataDto.max && extendedDataDto.value > extendedDataDto.max) {
             correctRow.classList.add('red');
         }
 
