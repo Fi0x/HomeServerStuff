@@ -26,7 +26,7 @@
             <th class="clickable">Time</th>
         </tr>
         </thead>
-        <tbody>
+        <tbody id="sensorDataTable">
         <c:forEach items="${data}" var="datapoint" varStatus="loop">
             <tr id="dataEntry${loop.index}">
                 <td>${datapoint.value}${sensor.unit}</td>
@@ -70,6 +70,9 @@
         max: ${sensor.maxValue != null ? sensor.maxValue : 100}
     };
 </script>
+<script>
+    let baseUrl = "${pageContext.request.contextPath}/api/data"
+</script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/luxon@1.25.0/build/global/luxon.js"></script>
@@ -77,8 +80,8 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1.1.1/dist/chartjs-plugin-zoom.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-adapter-moment/1.0.0/chartjs-adapter-moment.js"></script>
 
+<script src="${pageContext.request.contextPath}/js/data-chart.js"></script>
 <script src="${pageContext.request.contextPath}/js/data-functions.js"></script>
-<script src="${pageContext.request.contextPath}/js/data-chart.js" type="module"></script>
 <script src="${pageContext.request.contextPath}/js/data-line-color.js"></script>
 <script>
     onload = function () {

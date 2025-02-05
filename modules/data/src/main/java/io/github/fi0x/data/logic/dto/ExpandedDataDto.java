@@ -18,4 +18,5 @@ public class ExpandedDataDto
 	private Double min;
 	private Double max;
 	private Long delay;
+	private String unit;
 }

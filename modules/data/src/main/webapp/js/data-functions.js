@@ -141,9 +141,27 @@ function subscribeToDataUpdates(functionToRun) {
 }
 
 function newDataForSingleSensor(extendedDataDto) {
-    console.log(extendedDataDto);
-    // TODO: Update chart for sensor
-    //  Update table for sensor (Add new line at top; set correct color for new line; update color of last line if necessary)
+    let measurement = document.createElement('td');
+    measurement.innerText = extendedDataDto.value + extendedDataDto.unit;
+    let time = document.createElement('td');
+    time.innerText = new Date(extendedDataDto.timestamp).toLocaleDateString('de-DE', dateOptions);
+
+    let newRow = document.createElement('tr');
+    if (extendedDataDto.value < extendedDataDto.min || extendedDataDto.value > extendedDataDto.max) {
+        newRow.classList.add('red');
+    }
+    newRow.append(measurement, time);
+    document.getElementById('sensorDataTable').prepend(newRow);
+
+    let dataset = javaData;
+    if (dataset) {
+        let timestampedDate = new Date(extendedDataDto.timestamp).toISOString();
+        dataset.data.push({
+            x: `${timestampedDate}`,
+            y: extendedDataDto.value
+        });
+    }
+    chart.update();
 }
 
 function newDataForSensorList(extendedDataDto) {
@@ -158,9 +176,10 @@ function newDataForSensorList(extendedDataDto) {
         } else if (extendedDataDto.value < extendedDataDto.min || extendedDataDto.value > extendedDataDto.max) {
             correctRow.classList.add('red');
         }
+
         let dataset = datasets.find((set) => set.id === extendedDataDto.address + " " + extendedDataDto.sensorName);
-        let timestampedDate = new Date(extendedDataDto.timestamp).toISOString();
         if (dataset) {
+            let timestampedDate = new Date(extendedDataDto.timestamp).toISOString();
             dataset.data.push({
                 x: `${timestampedDate}`,
                 y: extendedDataDto.value

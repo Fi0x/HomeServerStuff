@@ -35,7 +35,7 @@
             <th></th>
         </tr>
         </thead>
-        <tbody id="sensorTableBody">
+        <tbody>
         <c:forEach items="${sensorList}" var="sensor">
             <tr id="sensorRow${sensor.address}${sensor.name}"
                 class="clickable-row ${sensor.offline ? 'yellow' : (sensor.minValue > sensor.value || sensor.maxValue < sensor.value ? 'red' : '')}"

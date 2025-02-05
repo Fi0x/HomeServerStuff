@@ -45,7 +45,8 @@ public class SensorController
 		notificationService.notifyDataUpdate(
 				ExpandedDataDto.builder().address(request.getRemoteAddr()).sensorName(requestDto.getName())
 							   .timestamp(timestamp).value(requestDto.getValue()).min(requestDto.getMinValue())
-							   .max(requestDto.getMaxValue()).delay(requestDto.getDataDelay()).build());
+							   .max(requestDto.getMaxValue()).delay(requestDto.getDataDelay())
+							   .unit(requestDto.getUnit()).build());
 	}
 
 	@GetMapping("/sensors")
@@ -62,7 +63,7 @@ public class SensorController
 		//TODO: Remove this method when testing is done
 		notificationService.notifyDataUpdate(
 				new ExpandedDataDto("123", "Testsensor", System.currentTimeMillis(), Math.random(), 0.2, 0.8,
-									(long) (Math.random() * 5000)));
+									(long) (Math.random() * 5000), "~X"));
 
 		return "It probably worked";
 	}

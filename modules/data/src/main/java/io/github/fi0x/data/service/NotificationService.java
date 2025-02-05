@@ -50,6 +50,6 @@ public class NotificationService
 		//TODO: Remove this scheduled event after testing, or change it to heartbeat if it needs to exist to avoid
 		// connection closing
 		notifyDataUpdate(new ExpandedDataDto("123", "Testsensor", System.currentTimeMillis(), Math.random(), 0.2, 0.8,
-											 (long) (Math.random() * 5000)));
+											 (long) (Math.random() * 5000), "~X"));
 	}
 }
