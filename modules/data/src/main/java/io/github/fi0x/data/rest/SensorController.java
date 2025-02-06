@@ -1,9 +1,6 @@
 package io.github.fi0x.data.rest;
 
-import io.github.fi0x.data.logic.dto.DataDto;
-import io.github.fi0x.data.logic.dto.ExpandedDataDto;
-import io.github.fi0x.data.logic.dto.SensorDataDto;
-import io.github.fi0x.data.logic.dto.SensorDto;
+import io.github.fi0x.data.logic.dto.*;
 import io.github.fi0x.data.service.DataService;
 import io.github.fi0x.data.service.NotificationService;
 import io.github.fi0x.data.service.SensorService;
@@ -31,9 +28,13 @@ public class SensorController
 		log.debug("uploadData() called from {} with dto: {}", request.getRemoteAddr(), requestDto);
 
 		long timestamp = dataService.addData(request.getRemoteAddr(), requestDto);
+		ExpandedSensorDto sensorDto =
+				sensorService.getDetailedSensor(request.getRemoteAddr(), requestDto.getSensorName());
 		notificationService.notifyDataUpdate(
 				ExpandedDataDto.builder().address(request.getRemoteAddr()).sensorName(requestDto.getSensorName())
-							   .timestamp(timestamp).value(requestDto.getValue()).build());
+							   .timestamp(timestamp).value(requestDto.getValue()).min(sensorDto.getMinValue())
+							   .max(sensorDto.getMaxValue()).delay(sensorDto.getDataDelay()).unit(sensorDto.getUnit())
+							   .build());
 	}
 
 	@PostMapping("/new-data")
@@ -42,10 +43,13 @@ public class SensorController
 		log.debug("uploadDataForNewSensor() called from {} with dto: {}", request.getRemoteAddr(), requestDto);
 
 		long timestamp = sensorService.saveSensorAndData(request.getRemoteAddr(), requestDto);
+		ExpandedSensorDto sensorDto = sensorService.getDetailedSensor(request.getRemoteAddr(), requestDto.getName());
 		notificationService.notifyDataUpdate(
 				ExpandedDataDto.builder().address(request.getRemoteAddr()).sensorName(requestDto.getName())
-							   .timestamp(timestamp).value(requestDto.getValue()).min(requestDto.getMinValue())
-							   .max(requestDto.getMaxValue()).delay(requestDto.getDataDelay())
+							   .timestamp(timestamp).value(requestDto.getValue())
+							   .min(requestDto.getMinValue() == null ? sensorDto.getMinValue() : requestDto.getMinValue())
+							   .max(requestDto.getMaxValue() == null ? sensorDto.getMaxValue() : requestDto.getMaxValue())
+							   .delay(requestDto.getDataDelay())
 							   .unit(requestDto.getUnit()).build());
 	}
 
