@@ -43,14 +43,15 @@ public class SensorController
 		log.debug("uploadDataForNewSensor() called from {} with dto: {}", request.getRemoteAddr(), requestDto);
 
 		long timestamp = sensorService.saveSensorAndData(request.getRemoteAddr(), requestDto);
+		if(timestamp < 0)
+			return;
+
 		ExpandedSensorDto sensorDto = sensorService.getDetailedSensor(request.getRemoteAddr(), requestDto.getName());
 		notificationService.notifyDataUpdate(
 				ExpandedDataDto.builder().address(request.getRemoteAddr()).sensorName(requestDto.getName())
-							   .timestamp(timestamp).value(requestDto.getValue())
-							   .min(requestDto.getMinValue() == null ? sensorDto.getMinValue() : requestDto.getMinValue())
-							   .max(requestDto.getMaxValue() == null ? sensorDto.getMaxValue() : requestDto.getMaxValue())
-							   .delay(requestDto.getDataDelay())
-							   .unit(requestDto.getUnit()).build());
+							   .timestamp(timestamp).value(requestDto.getValue() + sensorDto.getValueAdjustment())
+							   .min(sensorDto.getMinValue()).max(sensorDto.getMaxValue())
+							   .delay(requestDto.getDataDelay()).unit(requestDto.getUnit()).build());
 	}
 
 	@GetMapping("/sensors")

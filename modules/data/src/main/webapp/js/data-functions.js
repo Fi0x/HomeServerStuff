@@ -124,8 +124,8 @@ function rgbToHex(rgb) {
     return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
 }
 
-function subscribeToDataUpdates(functionToRun) {
-    const eventSource = new EventSource(`${baseUrl}/subscribe`);
+function subscribeToDataUpdates(functionToRun, endpoint) {
+    const eventSource = new EventSource(`${baseUrl}${endpoint}`);
     eventSource.onmessage = e => {
         functionToRun(JSON.parse(e.data));
     };
@@ -168,7 +168,7 @@ function newDataForSensorList(extendedDataDto) {
     let correctRow = document.getElementById(`sensorRow${extendedDataDto.address}${extendedDataDto.sensorName}`)
     if (correctRow) {
         let entries = correctRow.children;
-        entries[3].innerText = extendedDataDto.value;
+        entries[3].innerText = extendedDataDto.value + extendedDataDto.unit;
         entries[4].innerText = new Date(extendedDataDto.timestamp).toLocaleDateString('de-DE', dateOptions);
         correctRow.classList.remove('yellow', 'red');
         if (Date.now() - extendedDataDto.timestamp > extendedDataDto.delay * 2) {

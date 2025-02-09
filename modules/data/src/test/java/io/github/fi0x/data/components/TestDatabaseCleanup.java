@@ -65,6 +65,7 @@ public class TestDatabaseCleanup
 		verify(dataRepo, times(1)).findFirstByAddressAndSensorOrderByTimestampAsc(eq(SENSOR_ADDRESS2),
 																				  eq(SENSOR_NAME2));
 		verify(dataRepo, times(2)).findFromSensorOlderThan(any(), any(), any());
+		//		TODO: Get test working again
 		verify(dataRepo, times(0)).deleteAll(any());
 		verify(dataRepo, times(0)).save(any());
 	}

@@ -87,7 +87,7 @@
     onload = function () {
         loadNavBar();
         colorDataLines();
-        subscribeToDataUpdates(newDataForSingleSensor);
+        subscribeToDataUpdates(newDataForSingleSensor, `/subscribe?address=${sensor.address}&name=${sensor.name}`);
     }
 </script>
 </body>

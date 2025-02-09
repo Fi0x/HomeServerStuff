@@ -62,14 +62,14 @@ public class DataController
 	}
 
 	@GetMapping("/data/subscribe")
-	public ResponseEntity<SseEmitter> addSubscriber()
+	public ResponseEntity<SseEmitter> addSubscriber(@RequestParam String address, @RequestParam String name)
 	{
 		log.debug("addSubscriber() called");
 
 		SseEmitter emitter = new SseEmitter();
-		emitter.onCompletion(() -> notificationService.removeEmitter(emitter));
-		emitter.onTimeout(() -> notificationService.removeEmitter(emitter));
-		notificationService.addEmitter(emitter);
+		emitter.onCompletion(() -> notificationService.removeEmitter(emitter, address, name));
+		emitter.onTimeout(() -> notificationService.removeEmitter(emitter, address, name));
+		notificationService.addEmitter(emitter, address, name);
 
 		return new ResponseEntity<>(emitter, HttpStatus.OK);
 	}
