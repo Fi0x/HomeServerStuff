@@ -66,10 +66,10 @@ public class NotificationService
 				return true;
 			if(o == null || getClass() != o.getClass())
 				return false;
-			AddressedEmitter that = (AddressedEmitter) o;
-			return Objects.equals(emitter, that.emitter) && Objects.equals(sensorAddress,
-																		   that.sensorAddress) && Objects.equals(
-					sensorName, that.sensorName);
+			AddressedEmitter other = (AddressedEmitter) o;
+			return Objects.equals(emitter, other.emitter) && Objects.equals(sensorAddress,
+																			other.sensorAddress) && Objects.equals(
+					sensorName, other.sensorName);
 		}
 
 		@Override

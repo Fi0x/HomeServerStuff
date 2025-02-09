@@ -62,7 +62,8 @@ public class DataController
 	}
 
 	@GetMapping("/data/subscribe")
-	public ResponseEntity<SseEmitter> addSubscriber(@RequestParam String address, @RequestParam String name)
+	public ResponseEntity<SseEmitter> addSubscriber(@RequestParam(required = false) String address,
+													@RequestParam(required = false) String name)
 	{
 		log.debug("addSubscriber() called");
 
