@@ -42,7 +42,10 @@ public class InformationController
 
 		ExpandedSensorDto sensorDto = sensorService.getDetailedSensor(address, name);
 		model.put("sensor", sensorDto);
+		//TODO: Gather only data from the allowed data-storing timespan
 		model.put("data", dataService.getAllData(address, name, sensorDto.getValueAdjustment()));
+		//TODO: Fill statData with all min, max and avg values for this sensor
+		model.put("statData", null);
 		model.put("username", authenticator.getAuthenticatedUsername());
 
 		return "show-sensor";

@@ -2,6 +2,7 @@ package io.github.fi0x.data.components;
 
 import io.github.fi0x.data.db.DataRepo;
 import io.github.fi0x.data.db.SensorRepo;
+import io.github.fi0x.data.db.StatDataRepo;
 import io.github.fi0x.data.db.entities.DataEntity;
 import io.github.fi0x.data.db.entities.SensorEntity;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class DatabaseCleanup
 	private Long maxValueTime;
 
 	private final DataRepo dataRepo;
+	private final StatDataRepo statRepo;
 	private final SensorRepo sensorRepo;
 
 	@Scheduled(fixedRate = 3600000)
@@ -33,6 +35,11 @@ public class DatabaseCleanup
 
 		List<SensorEntity> sensorEntities = sensorRepo.findAll();
 		long oldestAllowedTime = System.currentTimeMillis() - (maxValueTime * 1000);
+
+		//TODO: Get min, max and avg and write them into statRepo
+		//TODO: Remove the calculated entries from dataRepo
+		//TODO: Copy older entries from dataRepo to statRepo
+
 		sensorEntities.forEach(
 				sensorEntity -> cleanSensor(sensorEntity.getAddress(), sensorEntity.getName(), oldestAllowedTime));
 

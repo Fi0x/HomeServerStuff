@@ -10,6 +10,7 @@
     <h1>${sensor.name} (${sensor.address})</h1>
     <p>${sensor.description}</p>
     <canvas id="dataChart"></canvas>
+    <%--    TODO: Add second graph that shows min, max and avg values--%>
     <c:choose>
         <c:when test="${username.toLowerCase() != 'anonymoususer'}">
             <div class="section">
