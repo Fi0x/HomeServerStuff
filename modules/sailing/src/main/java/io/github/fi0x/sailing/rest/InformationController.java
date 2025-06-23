@@ -25,8 +25,18 @@ public class InformationController
 	}
 
 	@GetMapping("/")
-	public String showMainPage(ModelMap model)
+	public String showMainPage()
 	{
+		log.info("showMainPage() called");
+
 		return "main";
+	}
+
+	@GetMapping("/race-results")
+	public String showRaceResults()
+	{
+		log.info("showRaceResults() called");
+
+		return "race-results";
 	}
 }

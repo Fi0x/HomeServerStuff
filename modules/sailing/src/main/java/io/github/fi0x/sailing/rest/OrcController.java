@@ -21,7 +21,7 @@ public class OrcController
 	@GetMapping("/orc/add/{certificateId}")
 	public CertificateEntity addOrcCertificate(@PathVariable String certificateId)
 	{
-		log.info("addOrcCertificate() called with id {}", certificateId);
+		log.debug("addOrcCertificate() called with id {}", certificateId);
 
 		return orcService.saveCertificate(certificateId);
 	}
