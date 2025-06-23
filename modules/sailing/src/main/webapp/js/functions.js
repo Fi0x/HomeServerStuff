@@ -21,30 +21,17 @@ function searchFunction() {
 function addCertificate() {
     let textField = document.getElementById("newCertificateText");
     let certificateId = textField.value;
-    const url = "https://data.orc.org/public/WPub.dll?action=activecerts";
+
+    console.log("addCertificate() called")
+
 
     $.ajax({
-        url: url,
         type: 'GET',
-        dataType: 'text/xml',
+        url: `${baseUrl}/orc/add/${certificateId}`,
+        dataType: 'json',
         success: function (res) {
-
+            //TODO: Maybe update the orc-certificate-list with the new data
             console.log(res);
-
-            let certificateData = {
-                id: certificateId,
-                shipName: "",
-                certificateType: "",
-                country: "",
-                shipClass: "",
-                singleNumber: 0.0,
-                tripleLongLow: 0.0,
-                tripleLongMid: 0.0,
-                tripleLongHigh: 0.0,
-                tripleUpDownLow: 0.0,
-                tripleUpDownMid: 0.0,
-                tripleUpDownHigh: 0.0
-            };
         }
     });
 }

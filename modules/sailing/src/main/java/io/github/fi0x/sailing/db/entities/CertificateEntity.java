@@ -24,6 +24,7 @@ public class CertificateEntity
 	private CertificateType certificateType;
 	private String country;
 	private String shipClass;
+	private String url;
 
 	private Double singleNumber;
 	private Double tripleLongLow;
