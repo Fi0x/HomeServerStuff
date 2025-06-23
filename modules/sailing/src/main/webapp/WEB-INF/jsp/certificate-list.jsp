@@ -34,7 +34,7 @@
         <tbody>
         <c:forEach items="${certificates}" var="certificate">
             <tr class="clickable-row"
-                onclick="window.location='${pageContext.request.contextPath}/orc/${certificate.id}'">
+                onclick="window.location='${certificate.url}'">
                 <td>${certificate.country}</td>
                 <td>${certificate.shipName}</td>
                 <td>${certificate.shipClass}</td>
