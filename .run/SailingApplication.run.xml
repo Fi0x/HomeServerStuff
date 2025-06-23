@@ -1,0 +1,12 @@
+<component name="ProjectRunConfigurationManager">
+    <configuration default="false" name="SailingApplication" type="SpringBootApplicationConfigurationType"
+                   factoryName="Spring Boot">
+        <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources"/>
+        <module name="HomeServerSailing"/>
+        <option name="SPRING_BOOT_MAIN_CLASS" value="io.github.fi0x.sailing.SailingApplication"/>
+        <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/modules/sailing"/>
+        <method v="2">
+            <option name="Make" enabled="true"/>
+        </method>
+    </configuration>
+</component>
