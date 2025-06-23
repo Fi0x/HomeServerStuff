@@ -13,6 +13,7 @@
         <module>modules/data</module>
         <module>modules/hub</module>
         <module>modules/recipes</module>
+        <module>modules/sailing</module>
         <module>modules/util</module>
     </modules>
 
