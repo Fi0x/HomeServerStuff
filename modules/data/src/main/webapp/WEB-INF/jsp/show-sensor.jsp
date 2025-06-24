@@ -10,7 +10,7 @@
     <h1>${sensor.name} (${sensor.address})</h1>
     <p>${sensor.description}</p>
     <canvas id="dataChart"></canvas>
-    <%--    TODO: Add second graph that shows min, max and avg values--%>
+    <canvas id="statChart"></canvas>
     <c:choose>
         <c:when test="${username.toLowerCase() != 'anonymoususer'}">
             <div class="section">
@@ -51,6 +51,48 @@
 <script>
     let sensorData = [
         <c:forEach items="${data}" var="entry" varStatus="loop">
+        {
+            x: "<fmt:formatDate value="${entry.key}" pattern="yyyy-MM-dd HH:mm:ss"/>",
+            y: ${entry.value}
+        }${not loop.last ? ',' : ''}
+        </c:forEach>
+    ].sort((first, second) => {
+        let firstDate = new Date(first.x);
+        let secondDate = new Date(second.x);
+        return firstDate.getTime() - secondDate.getTime();
+    })
+</script>
+<script>
+    let sensorMinData = [
+        <c:forEach items="${minData}" var="entry" varStatus="loop">
+        {
+            x: "<fmt:formatDate value="${entry.key}" pattern="yyyy-MM-dd HH:mm:ss"/>",
+            y: ${entry.value}
+        }${not loop.last ? ',' : ''}
+        </c:forEach>
+    ].sort((first, second) => {
+        let firstDate = new Date(first.x);
+        let secondDate = new Date(second.x);
+        return firstDate.getTime() - secondDate.getTime();
+    })
+</script>
+<script>
+    let sensorMaxData = [
+        <c:forEach items="${maxData}" var="entry" varStatus="loop">
+        {
+            x: "<fmt:formatDate value="${entry.key}" pattern="yyyy-MM-dd HH:mm:ss"/>",
+            y: ${entry.value}
+        }${not loop.last ? ',' : ''}
+        </c:forEach>
+    ].sort((first, second) => {
+        let firstDate = new Date(first.x);
+        let secondDate = new Date(second.x);
+        return firstDate.getTime() - secondDate.getTime();
+    })
+</script>
+<script>
+    let sensorAvgData = [
+        <c:forEach items="${avgData}" var="entry" varStatus="loop">
         {
             x: "<fmt:formatDate value="${entry.key}" pattern="yyyy-MM-dd HH:mm:ss"/>",
             y: ${entry.value}

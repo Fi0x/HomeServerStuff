@@ -2,7 +2,9 @@ package io.github.fi0x.data.service;
 
 import io.github.fi0x.data.components.Sensor;
 import io.github.fi0x.data.db.DataRepo;
+import io.github.fi0x.data.db.StatDataRepo;
 import io.github.fi0x.data.db.entities.DataEntity;
+import io.github.fi0x.data.db.entities.StatDataEntity;
 import io.github.fi0x.data.logic.dto.DataDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 public class DataService
 {
 	private final DataRepo dataRepo;
+	private final StatDataRepo statRepo;
 
 	private final Sensor sensor;
 
@@ -50,6 +53,24 @@ public class DataService
 	{
 		List<DataEntity> entities = dataRepo.findAllByAddressAndSensorOrderByTimestampAsc(address, sensorName);
 		return getDateValueTreeMap(entities, valueAdjustment).descendingMap();
+	}
+
+	public SortedMap<Date, Double> getMinData(String address, String sensorName, Double valueAdjustment)
+	{
+		List<StatDataEntity> entities = statRepo.findAllByAddressAndSensorOrderByTimestampAsc(address, sensorName);
+		return getDateValueTreeMap(entities, valueAdjustment, 0).descendingMap();
+	}
+
+	public SortedMap<Date, Double> getMaxData(String address, String sensorName, Double valueAdjustment)
+	{
+		List<StatDataEntity> entities = statRepo.findAllByAddressAndSensorOrderByTimestampAsc(address, sensorName);
+		return getDateValueTreeMap(entities, valueAdjustment, 1).descendingMap();
+	}
+
+	public SortedMap<Date, Double> getAvgData(String address, String sensorName, Double valueAdjustment)
+	{
+		List<StatDataEntity> entities = statRepo.findAllByAddressAndSensorOrderByTimestampAsc(address, sensorName);
+		return getDateValueTreeMap(entities, valueAdjustment, 2).descendingMap();
 	}
 
 	public SortedMap<Date, Double> getData(String address, String sensorName, Double valueAdjustment, Integer amount)
@@ -85,5 +106,27 @@ public class DataService
 		return new TreeMap<>(entities.stream().collect(
 				Collectors.toMap(entity -> new Date(entity.getTimestamp()), DataEntity::getValue)));
 
+	}
+
+	private TreeMap<Date, Double> getDateValueTreeMap(List<StatDataEntity> entities, Double valueAdjustment,
+													  Integer dataType)
+	{
+		if (valueAdjustment != null)
+			entities.forEach(entity -> {
+				entity.setMin(entity.getMax() + valueAdjustment);
+				entity.setMax(entity.getMax() + valueAdjustment);
+				entity.setAverage(entity.getAverage() + valueAdjustment);
+			});
+
+		return switch (dataType)
+		{
+			case 0 -> new TreeMap<>(entities.stream().collect(
+					Collectors.toMap(entity -> new Date(entity.getTimestamp()), StatDataEntity::getMin)));
+			case 1 -> new TreeMap<>(entities.stream().collect(
+					Collectors.toMap(entity -> new Date(entity.getTimestamp()), StatDataEntity::getMax)));
+			case 2 -> new TreeMap<>(entities.stream().collect(
+					Collectors.toMap(entity -> new Date(entity.getTimestamp()), StatDataEntity::getAverage)));
+			default -> throw new IllegalArgumentException("DataType '" + dataType + "' is not allowed");
+		};
 	}
 }

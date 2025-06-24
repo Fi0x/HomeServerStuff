@@ -5,6 +5,7 @@ import io.github.fi0x.data.db.SensorRepo;
 import io.github.fi0x.data.db.StatDataRepo;
 import io.github.fi0x.data.db.entities.DataEntity;
 import io.github.fi0x.data.db.entities.SensorEntity;
+import io.github.fi0x.data.db.entities.StatDataEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
@@ -36,10 +37,6 @@ public class DatabaseCleanup
 		List<SensorEntity> sensorEntities = sensorRepo.findAll();
 		long oldestAllowedTime = System.currentTimeMillis() - (maxValueTime * 1000);
 
-		//TODO: Get min, max and avg and write them into statRepo
-		//TODO: Remove the calculated entries from dataRepo
-		//TODO: Copy older entries from dataRepo to statRepo
-
 		sensorEntities.forEach(
 				sensorEntity -> cleanSensor(sensorEntity.getAddress(), sensorEntity.getName(), oldestAllowedTime));
 
@@ -51,7 +48,7 @@ public class DatabaseCleanup
 		Optional<DataEntity> oldestDataEntity = dataRepo.findFirstByAddressAndSensorOrderByTimestampAsc(address, name);
 		oldestDataEntity.ifPresent(entity -> {
 			List<DataEntity> possibleEntities = dataRepo.findFromSensorOlderThan(address, name, oldestAllowedTime);
-
+			//TODO: Average all days, except current one, but only delete data from outside of allowed times
 			averageDays(possibleEntities);
 		});
 	}
@@ -82,17 +79,26 @@ public class DatabaseCleanup
 																											entity.getTimestamp())))
 															  .toList();
 
-			if (currentEntities.size() > 1)
-				saveAverage(currentEntities, youngestEntryDate);
+			if (!currentEntities.isEmpty())
+			{
+				StatDataEntity statDataEntity = getAverage(currentEntities, youngestEntryDate);
+
+				if (statDataEntity != null)
+				{
+					addMinAndMaxValues(statDataEntity, currentEntities);
+					statRepo.save(statDataEntity);
+				}
+				dataRepo.deleteAll(entities);
+			}
 
 			workingEntities.removeAll(currentEntities);
 		}
 	}
 
-	private void saveAverage(List<DataEntity> entities, Date desiredDate)
+	private StatDataEntity getAverage(List<DataEntity> entities, Date desiredDate)
 	{
 		if (entities.isEmpty())
-			return;
+			return null;
 
 		int count = 0;
 		double total = 0;
@@ -105,8 +111,8 @@ public class DatabaseCleanup
 		DataEntity averageEntity = new DataEntity(entities.get(0).getAddress(), entities.get(0).getSensor(),
 												  desiredDate.getTime(), total / count);
 
-		dataRepo.deleteAll(entities);
-		dataRepo.save(averageEntity);
+		return StatDataEntity.builder().address(averageEntity.getAddress()).sensor(averageEntity.getSensor())
+							 .timestamp(averageEntity.getTimestamp()).average(averageEntity.getValue()).build();
 	}
 
 	private void cleanSensorlessData(List<SensorEntity> sensorEntities)
@@ -123,5 +129,24 @@ public class DatabaseCleanup
 	private boolean isSameSensor(SensorEntity sensor, DataEntity data)
 	{
 		return sensor.getAddress().equals(data.getAddress()) && sensor.getName().equals(data.getSensor());
+	}
+
+	private void addMinAndMaxValues(StatDataEntity statEntity, List<DataEntity> entities)
+	{
+		if (entities.isEmpty())
+			return;
+
+		Double min = entities.get(0).getValue();
+		Double max = entities.get(0).getValue();
+		for (DataEntity e : entities)
+		{
+			if (min > e.getValue())
+				min = e.getValue();
+			if (max < e.getValue())
+				max = e.getValue();
+		}
+
+		statEntity.setMin(min);
+		statEntity.setMax(max);
 	}
 }
