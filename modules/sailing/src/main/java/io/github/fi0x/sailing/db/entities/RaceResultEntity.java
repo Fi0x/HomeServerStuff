@@ -15,16 +15,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "SAILRESULTS")
-@IdClass(RaceId.class)
+@IdClass(RaceResultId.class)
 public class RaceResultEntity
 {
 	@Id
 	private String name;
 	@Id
 	private Long startDate;
-
-	private Integer position;
-	private String shipName;
+	@Id
+	private String raceGroup;
+	@Id
 	private String skipper;
+
+	private String shipName;
+	private Integer position;
 	private String shipClass;
 }

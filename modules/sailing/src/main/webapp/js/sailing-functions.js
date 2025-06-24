@@ -33,9 +33,6 @@ function addCertificate() {
     let textField = document.getElementById("newCertificateText");
     let certificateId = textField.value;
 
-    console.log("addCertificate() called")
-
-
     $.ajax({
         type: 'GET',
         url: `${baseUrl}/orc/add/${certificateId}`,
@@ -45,4 +42,20 @@ function addCertificate() {
             console.log(res);
         }
     });
+}
+
+function addRace() {
+    let textField = document.getElementById("newRaceUrl");
+    let url = textField.value;
+
+    $.post(`${baseUrl}/race/add`, url, function (res) {
+        //TODO: Maybe update the result-list with the new data
+        console.log(res);
+    });
+}
+
+function fillRaceResults() {
+    console.log(races);
+    console.log(raceResults);
+    //TODO: Fill data to race-results
 }

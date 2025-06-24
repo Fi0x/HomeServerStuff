@@ -8,5 +8,7 @@ import java.util.List;
 
 public interface RaceRepo extends JpaRepository<RaceEntity, RaceId>
 {
-	List<RaceEntity> findAllByOrcRaceOOrderByStartDateAsc(Boolean orcRace);
+	List<RaceEntity> findAllByOrcRaceOrderByStartDateAsc(Boolean orcRace);
+
+	List<RaceEntity> findAllByUrl(String url);
 }

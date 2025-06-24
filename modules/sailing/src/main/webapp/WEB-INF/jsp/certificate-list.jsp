@@ -52,7 +52,7 @@
     </table>
 </div>
 <%@include file="../common/scripts.jspf" %>
-<script src="../../js/functions.js"></script>
+<script src="../../js/sailing-functions.js"></script>
 <script>
     let baseUrl = "${pageContext.request.contextPath}/api"
 </script>

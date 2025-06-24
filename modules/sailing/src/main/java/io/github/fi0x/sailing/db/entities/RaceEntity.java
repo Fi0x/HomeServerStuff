@@ -22,10 +22,17 @@ public class RaceEntity
 	private String name;
 	@Id
 	private Long startDate;
+	@Id
+	private String raceGroup;
 
 	private Long endDate;
 	private Double scoreModifier;
 	private String url;
-	private boolean isOrcRace;
-	private boolean isBufferRace;
+	private Boolean orcRace;
+	private Boolean bufferRace;
+
+	public RaceId getId()
+	{
+		return new RaceId(name, startDate, raceGroup);
+	}
 }
