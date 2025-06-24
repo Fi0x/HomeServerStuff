@@ -1,6 +1,7 @@
 package io.github.fi0x.sailing.rest;
 
 import io.github.fi0x.sailing.service.OrcService;
+import io.github.fi0x.sailing.service.RaceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class InformationController
 {
 	private final OrcService orcService;
+	private final RaceService raceService;
 
 	@GetMapping("/orc")
 	public String showOrcCertificates(ModelMap model)
@@ -32,11 +34,14 @@ public class InformationController
 		return "main";
 	}
 
-	@GetMapping("/race-results")
-	public String showRaceResults()
+	@GetMapping("/orc-race-results")
+	public String showRaceResults(ModelMap model)
 	{
 		log.info("showRaceResults() called");
 
-		return "race-results";
+		model.put("races", raceService.getAllOrcRaces());
+		model.put("raceResults", raceService.getAllResults());
+
+		return "orc-race-results";
 	}
 }
