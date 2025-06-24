@@ -75,12 +75,20 @@ function fillRaceResults() {
         let positionElement = document.getElementById(`${combinedId}positionOverall`);
         scorePairs.push({
             score: totalPoints,
-            element: positionElement
+            element: positionElement,
+            rowElement: positionElement.parentElement
         });
+    }
+
+    let tableBody = document.getElementsByTagName("tbody").item(0);
+    while (tableBody.firstChild) {
+        tableBody.removeChild(tableBody.lastChild);
     }
 
     scorePairs.sort((a, b) => b.score - a.score);
     for (let i = 1; i < scorePairs.length; i++) {
         scorePairs[i - 1].element.innerText = i;
+        tableBody.appendChild(scorePairs[i - 1].rowElement);
     }
+
 }
