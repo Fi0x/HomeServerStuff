@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Slf4j
 @Controller
@@ -27,21 +28,34 @@ public class InformationController
 	}
 
 	@GetMapping("/")
-	public String showMainPage()
+	public String showMainPage(ModelMap model)
 	{
 		log.info("showMainPage() called");
+
+		model.put("raceGroups", raceService.getAllOrcRaceGroups());
 
 		return "main";
 	}
 
-	@GetMapping("/orc-race-results")
+	@GetMapping("/race-results/orc")
+	public String showOrcRaceResults(ModelMap model, @RequestParam(required = false) String group)
+	{
+		log.info("showOrcRaceResults() called");
+
+		model.put("races", raceService.getAllOrcRaces(group));
+		model.put("raceResults", raceService.getAllResults(group));
+
+		return "race-results";
+	}
+
+	@GetMapping("/race-results")
 	public String showRaceResults(ModelMap model)
 	{
 		log.info("showRaceResults() called");
 
-		model.put("races", raceService.getAllOrcRaces());
-		model.put("raceResults", raceService.getAllResults());
+		model.put("races", raceService.getAllRaces());
+		model.put("raceResults", raceService.getAllResults(null));
 
-		return "orc-race-results";
+		return "race-results";
 	}
 }

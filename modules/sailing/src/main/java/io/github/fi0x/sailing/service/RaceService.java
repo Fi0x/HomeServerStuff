@@ -50,21 +50,42 @@ public class RaceService
 	private final RaceRepo raceRepo;
 	private final RaceResultRepo resultRepo;
 
-	public List<RaceEntity> getAllOrcRaces()
+	public List<RaceEntity> getAllOrcRaces(String group)
 	{
-		return raceRepo.findAllByOrcRaceOrderByStartDateAsc(true);
+		List<RaceEntity> resultEntities = raceRepo.findAllByOrcRaceOrderByStartDateAsc(true);
+
+		if(group != null)
+			return resultEntities.stream().filter(result -> result.getRaceGroup().equals(group)).toList();
+
+		return resultEntities;
 	}
 
-	public List<ShipRaceResults> getAllResults()
+	public List<RaceEntity> getAllRaces()
+	{
+		List<RaceEntity> entities = raceRepo.findAll();
+		entities.sort(
+				(a, b) -> a.getStartDate() - b.getStartDate() > 0 ? 1 : a.getStartDate() - b.getStartDate() == 0 ? 0 : -1);
+		return entities;
+	}
+
+	public List<String> getAllOrcRaceGroups()
+	{
+		return raceRepo.findAll().stream().map(RaceEntity::getRaceGroup).distinct().toList();
+	}
+
+	public List<ShipRaceResults> getAllResults(String group)
 	{
 		List<ShipRaceResults> results = new ArrayList<>();
 
 		List<RaceResultEntity> entities = resultRepo.findAll(Sort.by("shipName", "skipper"));
+		if(group != null)
+			entities = entities.stream().filter(result -> result.getRaceGroup().equals(group)).toList();
+
 		ShipRaceResults current = null;
-		for (RaceResultEntity entity : entities)
+		for(RaceResultEntity entity : entities)
 		{
-			if (current == null || !current.getShipName().equals(entity.getShipName()) || !current.getSkipper()
-																								  .equals(entity.getSkipper()))
+			if(current == null || !current.getShipName().equals(entity.getShipName()) || !current.getSkipper()
+																								 .equals(entity.getSkipper()))
 			{
 				current = new ShipRaceResults(entity.getShipName(), entity.getSkipper(), entity.getShipClass(),
 											  new ArrayList<>());
@@ -80,9 +101,9 @@ public class RaceService
 	public List<RaceResultEntity> saveRace(String raceResultUrl)
 	{
 		List<RaceEntity> existingEntities = getRace(raceResultUrl);
-		if (!existingEntities.isEmpty())
+		if(!existingEntities.isEmpty())
 		{
-			if (existingEntities.size() > 1)
+			if(existingEntities.size() > 1)
 				throw new IllegalArgumentException(
 						"Multiple races with that url are already loaded. Url: " + raceResultUrl);
 			//TODO: Re-calculate scores if possible
@@ -95,7 +116,7 @@ public class RaceService
 		RestTemplate restTemplate = new RestTemplate();
 		M2sRaceResultJsonDto result = restTemplate.getForObject(url, M2sRaceResultJsonDto.class);
 
-		if (result == null)
+		if(result == null)
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Could not find any results for url: " + url);
 
 		Document page;
@@ -111,7 +132,7 @@ public class RaceService
 			raceName = eventName.getElementsByTag("h1").first().text();
 			String[] dates = eventName.getElementsByClass("eventDates").first().text().split(" - ");
 			SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
-			switch (dates.length)
+			switch(dates.length)
 			{
 				case 1:
 					startDate = dateFormatter.parse(dates[0]).getTime();
@@ -124,32 +145,31 @@ public class RaceService
 				default:
 					log.warn("Could not add a date to race with url: {}", url);
 			}
-			if (ORC_RACES.containsKey(raceName))
+			if(ORC_RACES.containsKey(raceName))
 			{
 				scoreModifier = ORC_RACES.get(raceName);
 				isOrcRace = true;
 			}
-		} catch (IOException | NullPointerException | ParseException e)
+		} catch(IOException | NullPointerException | ParseException e)
 		{
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Could not fetch race-details from manage2sail");
 		}
 
-		RaceEntity raceEntity = RaceEntity.builder().name(raceName).startDate(startDate)
-										  .raceGroup(result.getRaceGroup()).endDate(endDate)
-										  .scoreModifier(scoreModifier).url(raceResultUrl).orcRace(isOrcRace)
-										  .bufferRace(!raceName.contains(FINAL_RACE_NAME))
-										  .participants(result.getShipResults().size()).build();
+		RaceEntity raceEntity =
+				RaceEntity.builder().name(raceName).startDate(startDate).raceGroup(result.getRaceGroup())
+						  .endDate(endDate).scoreModifier(scoreModifier).url(raceResultUrl).orcRace(isOrcRace)
+						  .bufferRace(!raceName.contains(FINAL_RACE_NAME)).participants(result.getShipResults().size())
+						  .build();
 		raceRepo.save(raceEntity);
 
 		List<RaceResultEntity> raceResultEntities = new ArrayList<>();
-		for (M2sSingleResultJsonDto singleResult : result.getShipResults())
+		for(M2sSingleResultJsonDto singleResult : result.getShipResults())
 		{
-			RaceResultEntity resultEntity = RaceResultEntity.builder().name(raceName).startDate(startDate)
-															.raceGroup(result.getRaceGroup())
-															.skipper(singleResult.getSkipper())
-															.shipName(singleResult.getShipName())
-															.position(singleResult.getPosition())
-															.shipClass(singleResult.getShipClass()).build();
+			RaceResultEntity resultEntity =
+					RaceResultEntity.builder().name(raceName).startDate(startDate).raceGroup(result.getRaceGroup())
+									.skipper(singleResult.getSkipper()).shipName(singleResult.getShipName())
+									.position(singleResult.getPosition()).shipClass(singleResult.getShipClass())
+									.build();
 			raceResultEntities.add(resultEntity);
 			resultRepo.save(resultEntity);
 		}

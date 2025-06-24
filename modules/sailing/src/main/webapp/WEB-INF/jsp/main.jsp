@@ -8,7 +8,11 @@
 <%@include file="../common/navigation.jspf" %>
 <div class="container">
     <h1>Sailing</h1>
-    <a class="btn" href="${pageContext.request.contextPath}/orc-race-results">Show ORC race-results</a>
+    <a class="btn" href="${pageContext.request.contextPath}/race-results">Show all race-results</a>
+    <c:forEach items="${raceGroups}" var="group">
+        <a class="btn" href="${pageContext.request.contextPath}/race-results/orc?group=${group}">ORC ${group}
+            results</a>
+    </c:forEach>
     <a class="btn" href="${pageContext.request.contextPath}/orc">Show ORC certificates</a>
 </div>
 <%@include file="../common/scripts.jspf" %>
