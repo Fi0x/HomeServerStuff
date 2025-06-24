@@ -10,14 +10,22 @@ import io.github.fi0x.sailing.logic.dto.M2sSingleResultJsonDto;
 import io.github.fi0x.sailing.logic.dto.ShipRaceResults;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -25,6 +33,19 @@ import java.util.List;
 public class RaceService
 {
 	private static final String M2S_BASE_URL = "https://www.manage2sail.com/api/event";
+	private static final String M2S_UI_URL = "https://www.manage2sail.com/de-DE/event";
+	private static final String FINAL_RACE_NAME = "RVB Final Race";
+	private static final Map<String, Double> ORC_RACES = new HashMap<>()
+	{{
+		put("39. Internationaler Drei-Länder-Cup 2025", 3.0);
+		put("Graf-Zeppelin-Regatta", 3.0);
+		put("74. RUND UM 2025", 3.3);
+		put("West - Ost 2025", 3.3);
+		put("53. Altnauer TagNacht Regatta", 3.0);
+		put("Blue Planet Flug Trophy", 3.0);
+		put(FINAL_RACE_NAME, 3.0);
+	}};
+
 
 	private final RaceRepo raceRepo;
 	private final RaceResultRepo resultRepo;
@@ -64,6 +85,7 @@ public class RaceService
 			if (existingEntities.size() > 1)
 				throw new IllegalArgumentException(
 						"Multiple races with that url are already loaded. Url: " + raceResultUrl);
+			//TODO: Re-calculate scores if possible
 			return getResults(existingEntities.get(0).getId());
 		}
 
@@ -76,33 +98,61 @@ public class RaceService
 		if (result == null)
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Could not find any results for url: " + url);
 
-		//TODO: Fill missing values with additional calls
-		//M2s information:
-		String raceName = "";
-		Long startDate = 0L;
-		Long endDate = 0L;
-		//Orc Rangliste information
-		Double scoreModifier = 0.0;
-		Boolean isOrcRace = false;
-		//Ensure, race-name is not 'Final Race'
-		Boolean isBufferRace = true;
+		Document page;
+		String raceName;
+		long startDate = 0;
+		long endDate = 0;
+		double scoreModifier = 1.0;
+		boolean isOrcRace = false;
+		try
+		{
+			page = Jsoup.connect(M2S_UI_URL + "/" + getM2sRaceId(raceResultUrl)).get();
+			Element eventName = page.getElementsByClass("eventName").first();
+			raceName = eventName.getElementsByTag("h1").first().text();
+			String[] dates = eventName.getElementsByClass("eventDates").first().text().split(" - ");
+			SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
+			switch (dates.length)
+			{
+				case 1:
+					startDate = dateFormatter.parse(dates[0]).getTime();
+					endDate = dateFormatter.parse(dates[0]).getTime();
+					break;
+				case 2:
+					startDate = dateFormatter.parse(dates[0]).getTime();
+					endDate = dateFormatter.parse(dates[1]).getTime();
+					break;
+				default:
+					log.warn("Could not add a date to race with url: {}", url);
+			}
+			if (ORC_RACES.containsKey(raceName))
+			{
+				scoreModifier = ORC_RACES.get(raceName);
+				isOrcRace = true;
+			}
+		} catch (IOException | NullPointerException | ParseException e)
+		{
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Could not fetch race-details from manage2sail");
+		}
 
 		RaceEntity raceEntity = RaceEntity.builder().name(raceName).startDate(startDate)
 										  .raceGroup(result.getRaceGroup()).endDate(endDate)
 										  .scoreModifier(scoreModifier).url(raceResultUrl).orcRace(isOrcRace)
-										  .bufferRace(isBufferRace).build();
+										  .bufferRace(!raceName.contains(FINAL_RACE_NAME))
+										  .participants(result.getShipResults().size()).build();
+		raceRepo.save(raceEntity);
 
 		List<RaceResultEntity> raceResultEntities = new ArrayList<>();
 		for (M2sSingleResultJsonDto singleResult : result.getShipResults())
 		{
-			raceResultEntities.add(
-					RaceResultEntity.builder().name(raceName).startDate(startDate).raceGroup(result.getRaceGroup())
-									.skipper(singleResult.getSkipper()).shipName(singleResult.getShipName())
-									.position(singleResult.getPosition()).shipClass(singleResult.getShipClass())
-									.build());
+			RaceResultEntity resultEntity = RaceResultEntity.builder().name(raceName).startDate(startDate)
+															.raceGroup(result.getRaceGroup())
+															.skipper(singleResult.getSkipper())
+															.shipName(singleResult.getShipName())
+															.position(singleResult.getPosition())
+															.shipClass(singleResult.getShipClass()).build();
+			raceResultEntities.add(resultEntity);
+			resultRepo.save(resultEntity);
 		}
-
-		//TODO: Save results and race details in database
 
 		return raceResultEntities;
 	}

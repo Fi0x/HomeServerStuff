@@ -55,7 +55,32 @@ function addRace() {
 }
 
 function fillRaceResults() {
-    console.log(races);
-    console.log(raceResults);
-    //TODO: Fill data to race-results
+    let scorePairs = [];
+    for (let result of raceResults) {
+        let combinedId = result.shipName.replace(/\s/g, '') + result.skipper.replace(/\s/g, '');
+
+        let totalPoints = 0;
+        for (let singleResult of result.singleRaceResults) {
+            let raceId = singleResult.raceName.replace(/\s/g, '');
+            document.getElementById(`${combinedId}position${raceId}`).innerText = singleResult.position;
+
+            let race = races.find(r => r.raceName === singleResult.raceName && r.raceGroup === singleResult.raceGroup);
+            let raceScore = ((race.participants - singleResult.position + 1) / (race.participants + 1) * 100 * race.scoreModifier).toFixed(1);
+            document.getElementById(`${combinedId}points${raceId}`).innerText = raceScore.toString();
+            totalPoints = totalPoints + Number(raceScore);
+        }
+
+        document.getElementById(`${combinedId}pointsTotal`).innerText = totalPoints.toFixed(1).toString();
+
+        let positionElement = document.getElementById(`${combinedId}positionOverall`);
+        scorePairs.push({
+            score: totalPoints,
+            element: positionElement
+        });
+    }
+
+    scorePairs.sort((a, b) => b.score - a.score);
+    for (let i = 1; i < scorePairs.length; i++) {
+        scorePairs[i - 1].element.innerText = i;
+    }
 }

@@ -15,38 +15,27 @@
     <table id="searchableTable" class="table sortable">
         <thead>
         <tr class="underlined-row">
+            <th class="clickable" colspan="1">Position</th>
             <th class="clickable" colspan="1">Ship</th>
             <th class="clickable" colspan="1">Skipper</th>
             <th class="clickable" colspan="1">Class</th>
             <c:forEach items="${races}" var="race">
-                <c:if test="${race.bufferRace}">
                     <th class="clickable" colspan="2">${race.name}</th>
-                </c:if>
             </c:forEach>
-            <%--            <th class="clickable" colspan="2">Drei Länder Cup</th>--%>
-            <%--            <th class="clickable" colspan="2">Graf Zeppelin Regatta</th>--%>
-            <%--            <th class="clickable" colspan="2">Rund Um</th>--%>
-            <%--            <th class="clickable" colspan="2">West-Ost Regatta</th>--%>
-            <%--            <th class="clickable" colspan="2">Altnauer TagNacht Regatta</th>--%>
-            <%--            <th class="clickable" colspan="2">Blue Planet Flug Trophy</th>--%>
-            <th class="clickable" colspan="2">Final Race</th>
             <th class="clickable" colspan="1">Gesamt</th>
         </tr>
         </thead>
         <tbody>
         <c:forEach items="${raceResults}" var="result">
             <tr>
+                <td id="${result.shipName.replace(' ', '')}${result.skipper.replace(' ', '')}positionOverall"></td>
                 <td>${result.shipName}</td>
                 <td>${result.skipper}</td>
                 <td>${result.shipClass}</td>
                 <c:forEach items="${races}" var="race">
-                    <c:if test="${race.bufferRace}">
                         <td id="${result.shipName.replace(' ', '')}${result.skipper.replace(' ', '')}position${race.name.replace(' ', '')}"></td>
                         <td id="${result.shipName.replace(' ', '')}${result.skipper.replace(' ', '')}points${race.name.replace(' ', '')}"></td>
-                    </c:if>
                 </c:forEach>
-                <td id="${result.shipName.replace(' ', '')}${result.skipper.replace(' ', '')}positionFinalRace"></td>
-                <td id="${result.shipName.replace(' ', '')}${result.skipper.replace(' ', '')}pointsFinalRace"></td>
                 <td id="${result.shipName.replace(' ', '')}${result.skipper.replace(' ', '')}pointsTotal"></td>
             </tr>
         </c:forEach>
@@ -59,8 +48,36 @@
     let baseUrl = "${pageContext.request.contextPath}/api"
 </script>
 <script>
-    let races = ${races};
-    let raceResults = ${raceResults};
+    let raceResults = [
+        <c:forEach items="${raceResults}" var="raceResult" varStatus="loop">
+        {
+            shipName: "${raceResult.shipName}",
+            skipper: "${raceResult.skipper}",
+            shipClass: "${raceResult.shipClass}",
+            singleRaceResults: [
+                <c:forEach items="${raceResult.raceResults}" var="singleResult" varStatus="innerLoop">
+                {
+                    raceName: "${singleResult.name}",
+                    position: ${singleResult.position},
+                    raceGroup: "${singleResult.raceGroup}"
+                }${not innerLoop.last ? ',' : ''}
+                </c:forEach>
+            ]
+        }${not loop.last ? ',' : ''}
+        </c:forEach>
+    ];
+    let races = [
+        <c:forEach items="${races}" var="race" varStatus="loop">
+        {
+            raceName: "${race.name}",
+            raceGroup: "${race.raceGroup}",
+            scoreModifier: ${race.scoreModifier},
+            orcRace: ${race.orcRace},
+            bufferRace: ${race.bufferRace},
+            participants: ${race.participants}
+        }${not loop.last ? ',' : ''}
+        </c:forEach>
+    ]
 </script>
 <script>
     onload = function () {

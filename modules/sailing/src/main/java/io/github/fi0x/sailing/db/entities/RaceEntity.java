@@ -30,6 +30,7 @@ public class RaceEntity
 	private String url;
 	private Boolean orcRace;
 	private Boolean bufferRace;
+	private Integer participants;
 
 	public RaceId getId()
 	{
