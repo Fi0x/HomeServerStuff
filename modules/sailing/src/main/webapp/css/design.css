@@ -157,6 +157,11 @@ tr {
     border-color: var(--light-accent);
 }
 
+.left-line {
+    border-left-width: 0.1rem;
+    border-color: var(--light-accent);
+}
+
 .header-row {
     background-color: rgba(255, 255, 255, 0.13);
 }

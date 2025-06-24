@@ -16,27 +16,29 @@
         <thead>
         <tr class="underlined-row">
             <th class="clickable" colspan="1">Position</th>
-            <th class="clickable" colspan="1">Ship</th>
+            <th class="clickable left-line" colspan="1">Ship</th>
             <th class="clickable" colspan="1">Skipper</th>
             <th class="clickable" colspan="1">Class</th>
             <c:forEach items="${races}" var="race">
-                    <th class="clickable" colspan="2">${race.name}</th>
+                <th class="clickable left-line" colspan="2">${race.name}</th>
             </c:forEach>
-            <th class="clickable" colspan="1">Gesamt</th>
+            <th class="clickable left-line" colspan="1">Gesamt</th>
         </tr>
         </thead>
         <tbody>
         <c:forEach items="${raceResults}" var="result">
             <tr>
                 <td id="${result.shipName.replace(' ', '')}${result.skipper.replace(' ', '')}positionOverall"></td>
-                <td>${result.shipName}</td>
+                <td class="left-line">${result.shipName}</td>
                 <td>${result.skipper}</td>
                 <td>${result.shipClass}</td>
                 <c:forEach items="${races}" var="race">
-                        <td id="${result.shipName.replace(' ', '')}${result.skipper.replace(' ', '')}position${race.name.replace(' ', '')}"></td>
+                    <td id="${result.shipName.replace(' ', '')}${result.skipper.replace(' ', '')}position${race.name.replace(' ', '')}"
+                        class="left-line"></td>
                         <td id="${result.shipName.replace(' ', '')}${result.skipper.replace(' ', '')}points${race.name.replace(' ', '')}"></td>
                 </c:forEach>
-                <td id="${result.shipName.replace(' ', '')}${result.skipper.replace(' ', '')}pointsTotal"></td>
+                <td id="${result.shipName.replace(' ', '')}${result.skipper.replace(' ', '')}pointsTotal"
+                    class="left-line"></td>
             </tr>
         </c:forEach>
         </tbody>
