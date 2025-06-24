@@ -58,10 +58,13 @@ public class DatabaseCleanup
 
 	private void averageDays(List<DataEntity> entities)
 	{
-		if(entities.isEmpty())
+		if (entities.isEmpty())
 			return;
 
-		entities.sort((e1, e2) -> Math.toIntExact((e2.getTimestamp() - e1.getTimestamp())));
+		entities.sort((e1, e2) -> {
+			long compare = e2.getTimestamp() - e1.getTimestamp();
+			return compare < 0 ? -1 : compare > 0 ? 1 : 0;
+		});
 
 		final Date mostRecentDate = new Date(entities.get(0).getTimestamp());
 		List<DataEntity> workingEntities = new java.util.ArrayList<>(entities.stream()
@@ -70,7 +73,7 @@ public class DatabaseCleanup
 																					 new Date(entity.getTimestamp())))
 																			 .toList());
 
-		while(!workingEntities.isEmpty())
+		while (!workingEntities.isEmpty())
 		{
 			final Date youngestEntryDate = new Date(workingEntities.get(0).getTimestamp());
 			List<DataEntity> currentEntities = workingEntities.stream()
@@ -79,7 +82,7 @@ public class DatabaseCleanup
 																											entity.getTimestamp())))
 															  .toList();
 
-			if(currentEntities.size() > 1)
+			if (currentEntities.size() > 1)
 				saveAverage(currentEntities, youngestEntryDate);
 
 			workingEntities.removeAll(currentEntities);
@@ -88,20 +91,19 @@ public class DatabaseCleanup
 
 	private void saveAverage(List<DataEntity> entities, Date desiredDate)
 	{
-		if(entities.isEmpty())
+		if (entities.isEmpty())
 			return;
 
 		int count = 0;
 		double total = 0;
-		for(DataEntity entity : entities)
+		for (DataEntity entity : entities)
 		{
 			count++;
 			total += entity.getValue();
 		}
 
-		DataEntity averageEntity =
-				new DataEntity(entities.get(0).getAddress(), entities.get(0).getSensor(), desiredDate.getTime(),
-							   total / count);
+		DataEntity averageEntity = new DataEntity(entities.get(0).getAddress(), entities.get(0).getSensor(),
+												  desiredDate.getTime(), total / count);
 
 		dataRepo.deleteAll(entities);
 		dataRepo.save(averageEntity);
@@ -111,8 +113,9 @@ public class DatabaseCleanup
 	{
 		List<DataEntity> dataEntities = dataRepo.findAll();
 
-		for(SensorEntity sensorEntity : sensorEntities)
-			dataEntities = dataEntities.stream().filter(dataEntity -> !isSameSensor(sensorEntity, dataEntity)).toList();
+		for (SensorEntity sensorEntity : sensorEntities)
+			dataEntities =
+					dataEntities.stream().filter(dataEntity -> !isSameSensor(sensorEntity, dataEntity)).toList();
 
 		dataRepo.deleteAll(dataEntities);
 	}
