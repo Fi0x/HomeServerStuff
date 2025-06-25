@@ -6,10 +6,7 @@ import io.github.fi0x.sailing.db.entities.RaceEntity;
 import io.github.fi0x.sailing.db.entities.RaceId;
 import io.github.fi0x.sailing.db.entities.RaceResultEntity;
 import io.github.fi0x.sailing.logic.converter.RaceResultToDtoConverter;
-import io.github.fi0x.sailing.logic.dto.M2sRaceResultJsonDto;
-import io.github.fi0x.sailing.logic.dto.M2sSingleResultJsonDto;
-import io.github.fi0x.sailing.logic.dto.RaceResultDto;
-import io.github.fi0x.sailing.logic.dto.ShipRaceResults;
+import io.github.fi0x.sailing.logic.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -24,10 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -55,37 +49,34 @@ public class RaceService
 	private final RaceResultRepo resultRepo;
 	private final RaceResultToDtoConverter raceResultConverter;
 
-	public List<RaceEntity> getAllOrcRaces(String group)
+	public List<RaceEntity> getAllOrcRaces(String group, Integer year)
 	{
 		List<RaceEntity> resultEntities = raceRepo.findAllByOrcRaceOrderByStartDateAsc(true);
-
-		if (group != null)
-			return resultEntities.stream().filter(result -> result.getRaceGroup().equals(group)).toList();
-
-		return resultEntities;
+		return filterYearAndGroup(resultEntities, group, year, RaceEntity.class);
 	}
 
-	public List<RaceEntity> getAllRaces()
+	public List<RaceEntity> getAllRaces(String group, Integer year)
 	{
 		List<RaceEntity> entities = raceRepo.findAll();
 		entities.sort(
 				(a, b) -> a.getStartDate() - b.getStartDate() > 0 ? 1 : a.getStartDate() - b.getStartDate() == 0 ? 0 :
 						-1);
-		return entities;
+
+		return filterYearAndGroup(entities, group, year, RaceEntity.class);
 	}
 
-	public List<String> getAllOrcRaceGroups()
+	public List<String> getAllRaceGroupsWithYear()
 	{
-		return raceRepo.findAll().stream().map(RaceEntity::getRaceGroup).distinct().toList();
+		return raceRepo.findAll().stream().map(RaceEntity::getGroupAndYear).distinct().toList();
 	}
 
-	public List<ShipRaceResults> getAllResults(String group)
+	public List<ShipRaceResults> getAllResults(String group, Integer year)
 	{
 		List<ShipRaceResults> results = new ArrayList<>();
 
 		List<RaceResultEntity> entities = resultRepo.findAll(Sort.by("shipName", "skipper"));
-		if (group != null)
-			entities = entities.stream().filter(result -> result.getRaceGroup().equals(group)).toList();
+
+		entities = filterYearAndGroup(entities, group, year, RaceResultEntity.class);
 
 		ShipRaceResults current = null;
 		for (RaceResultEntity entity : entities)
@@ -199,6 +190,21 @@ public class RaceService
 		}
 
 		return raceResultEntities;
+	}
+
+	private <X extends RaceInformation> List<X> filterYearAndGroup(List<X> raceEntities, String group, Integer year,
+																   Class<X> resultClass)
+	{
+		if (group != null)
+			raceEntities = raceEntities.stream().filter(result -> result.getRaceGroup().equals(group)).toList();
+		if (year != null)
+			raceEntities = raceEntities.stream().filter(result -> {
+				Calendar calendar = new GregorianCalendar();
+				calendar.setTime(new Date(result.getStartDate()));
+				return calendar.get(Calendar.YEAR) == year;
+			}).toList();
+
+		return raceEntities;
 	}
 
 	private List<RaceEntity> getRace(String url)

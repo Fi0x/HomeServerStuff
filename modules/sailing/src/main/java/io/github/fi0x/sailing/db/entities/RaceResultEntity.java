@@ -1,5 +1,6 @@
 package io.github.fi0x.sailing.db.entities;
 
+import io.github.fi0x.sailing.logic.dto.RaceInformation;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
@@ -16,7 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Table(name = "SAILRESULTS")
 @IdClass(RaceResultId.class)
-public class RaceResultEntity
+public class RaceResultEntity implements RaceInformation
 {
 	@Id
 	private String name;

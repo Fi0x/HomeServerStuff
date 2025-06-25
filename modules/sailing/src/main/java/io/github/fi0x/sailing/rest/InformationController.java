@@ -32,29 +32,31 @@ public class InformationController
 	{
 		log.info("showMainPage() called");
 
-		model.put("raceGroups", raceService.getAllOrcRaceGroups());
+		model.put("raceGroups", raceService.getAllRaceGroupsWithYear());
 
 		return "main";
 	}
 
 	@GetMapping("/race-results/orc")
-	public String showOrcRaceResults(ModelMap model, @RequestParam(required = false) String group)
+	public String showOrcRaceResults(ModelMap model, @RequestParam(required = false) String group,
+									 @RequestParam(required = false) Integer year)
 	{
 		log.info("showOrcRaceResults() called");
 
-		model.put("races", raceService.getAllOrcRaces(group));
-		model.put("raceResults", raceService.getAllResults(group));
+		model.put("races", raceService.getAllOrcRaces(group, year));
+		model.put("raceResults", raceService.getAllResults(group, year));
 
 		return "race-results";
 	}
 
 	@GetMapping("/race-results")
-	public String showRaceResults(ModelMap model)
+	public String showRaceResults(ModelMap model, @RequestParam(required = false) String group,
+								  @RequestParam(required = false) Integer year)
 	{
 		log.info("showRaceResults() called");
 
-		model.put("races", raceService.getAllRaces());
-		model.put("raceResults", raceService.getAllResults(null));
+		model.put("races", raceService.getAllRaces(group, year));
+		model.put("raceResults", raceService.getAllResults(group, year));
 
 		return "race-results";
 	}

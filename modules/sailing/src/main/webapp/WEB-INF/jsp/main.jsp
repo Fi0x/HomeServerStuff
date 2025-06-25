@@ -10,9 +10,10 @@
     <h1>Sailing</h1>
     <a class="btn" href="${pageContext.request.contextPath}/race-results">Show all race-results</a>
     <c:forEach items="${raceGroups}" var="group">
-        <a class="btn" href="${pageContext.request.contextPath}/race-results/orc?group=${group}">${group} results</a>
+        <a class="btn"
+           href="${pageContext.request.contextPath}/race-results?group=${group.split(" - ")[0]}&year=${group.split(" - ")[1]}">${group}</a>
     </c:forEach>
-    <a class="btn" href="${pageContext.request.contextPath}/orc">Show ORC certificates</a>
+    <a class="btn-edit" href="${pageContext.request.contextPath}/orc">Show ORC certificates</a>
 </div>
 <%@include file="../common/scripts.jspf" %>
 <script>

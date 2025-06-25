@@ -1,5 +1,6 @@
 package io.github.fi0x.sailing.db.entities;
 
+import io.github.fi0x.sailing.logic.dto.RaceInformation;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
@@ -9,6 +10,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 @Data
 @Entity
 @Builder
@@ -16,7 +21,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Table(name = "SAILRACE")
 @IdClass(RaceId.class)
-public class RaceEntity
+public class RaceEntity implements RaceInformation
 {
 	@Id
 	private String name;
@@ -35,5 +40,12 @@ public class RaceEntity
 	public RaceId getId()
 	{
 		return new RaceId(name, startDate, raceGroup);
+	}
+
+	public String getGroupAndYear()
+	{
+		Calendar c = new GregorianCalendar();
+		c.setTime(new Date(startDate));
+		return raceGroup + " - " + c.get(Calendar.YEAR);
 	}
 }
