@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -20,4 +22,6 @@ public class M2sSingleResultJsonDto
 	private String shipName;
 	@JsonProperty("BoatType")
 	private String shipClass;
+	@JsonProperty("EntryRaceResults")
+	private List<M2sSingleResultDetailsJsonDto> raceEntries;
 }

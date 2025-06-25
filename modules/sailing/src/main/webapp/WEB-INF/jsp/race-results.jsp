@@ -9,7 +9,7 @@
 <div class="container">
     <h1>Race results</h1>
     <div>
-        <input type="text" id="newRaceUrl" placeholder="http://...">
+        <input type="text" id="newRaceUrl" placeholder="https://www.manage2sail.com/...">
         <div class="btn" onclick="addRace()" title="Link to manage2sail result page">Add new race-results</div>
     </div>
     <table id="searchableTable" class="table sortable">
@@ -33,9 +33,9 @@
                 <td>${result.skipper}</td>
                 <td>${result.shipClass}</td>
                 <c:forEach items="${races}" var="race">
-                    <td id="${result.shipName.replace(' ', '')}${result.skipper.replace(' ', '')}position${race.name.replace(' ', '')}"
+                    <td id="${result.shipName.replace(' ', '')}${result.skipper.replace(' ', '')}position${race.name.replace(' ', '')}${race.raceGroup.replace(' ', '')}"
                         class="left-line"></td>
-                        <td id="${result.shipName.replace(' ', '')}${result.skipper.replace(' ', '')}points${race.name.replace(' ', '')}"></td>
+                    <td id="${result.shipName.replace(' ', '')}${result.skipper.replace(' ', '')}points${race.name.replace(' ', '')}${race.raceGroup.replace(' ', '')}"></td>
                 </c:forEach>
                 <td id="${result.shipName.replace(' ', '')}${result.skipper.replace(' ', '')}pointsTotal"
                     class="left-line"></td>
@@ -61,6 +61,7 @@
                 {
                     raceName: "${singleResult.name}",
                     position: ${singleResult.position},
+                    score: ${singleResult.score},
                     raceGroup: "${singleResult.raceGroup}"
                 }${not innerLoop.last ? ',' : ''}
                 </c:forEach>

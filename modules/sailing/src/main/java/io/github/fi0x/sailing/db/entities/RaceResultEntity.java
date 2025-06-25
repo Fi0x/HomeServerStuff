@@ -29,5 +29,6 @@ public class RaceResultEntity
 
 	private String shipName;
 	private Integer position;
+	private Double score;
 	private String shipClass;
 }
