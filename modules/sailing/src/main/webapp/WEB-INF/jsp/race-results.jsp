@@ -62,7 +62,8 @@
                     raceName: "${singleResult.name}",
                     position: ${singleResult.position},
                     score: ${singleResult.score},
-                    raceGroup: "${singleResult.raceGroup}"
+                    raceGroup: "${singleResult.raceGroup}",
+                    crossed: ${singleResult.crossed}
                 }${not innerLoop.last ? ',' : ''}
                 </c:forEach>
             ]

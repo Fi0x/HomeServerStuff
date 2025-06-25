@@ -37,9 +37,8 @@ function addCertificate() {
         type: 'GET',
         url: `${baseUrl}/orc/add/${certificateId}`,
         dataType: 'json',
-        success: function (res) {
-            //TODO: Maybe update the orc-certificate-list with the new data
-            console.log(res);
+        success: function () {
+            location.reload();
         }
     });
 }
@@ -48,9 +47,8 @@ function addRace() {
     let textField = document.getElementById("newRaceUrl");
     let url = textField.value;
 
-    $.post(`${baseUrl}/race/add`, url, function (res) {
-        //TODO: Maybe update the result-list with the new data
-        console.log(res);
+    $.post(`${baseUrl}/race/add`, url, function () {
+        location.reload();
     });
 }
 
@@ -62,12 +60,16 @@ function fillRaceResults() {
         let totalPoints = 0;
         for (let singleResult of result.singleRaceResults) {
             let raceId = singleResult.raceName.replace(/\s/g, '') + singleResult.raceGroup.replace(/\s/g, '');
-            console.log(`${combinedId}position${raceId}`);
-            document.getElementById(`${combinedId}position${raceId}`).innerText = singleResult.position;
-
-            let race = races.find(r => r.raceName === singleResult.raceName && r.raceGroup === singleResult.raceGroup);
-            document.getElementById(`${combinedId}points${raceId}`).innerText = singleResult.score.toFixed(1).toString();
-            totalPoints = totalPoints + Number(singleResult.score);
+            let positionElement = document.getElementById(`${combinedId}position${raceId}`);
+            let scoreElement = document.getElementById(`${combinedId}points${raceId}`);
+            positionElement.innerText = singleResult.position;
+            scoreElement.innerText = singleResult.score.toFixed(1).toString();
+            if (singleResult.crossed) {
+                positionElement.classList.add("crossed");
+                scoreElement.classList.add("crossed");
+            } else {
+                totalPoints += Number(singleResult.score);
+            }
         }
 
         document.getElementById(`${combinedId}pointsTotal`).innerText = totalPoints.toFixed(1).toString();

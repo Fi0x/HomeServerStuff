@@ -3,9 +3,12 @@ package io.github.fi0x.sailing.service;
 import io.github.fi0x.sailing.db.RaceRepo;
 import io.github.fi0x.sailing.db.RaceResultRepo;
 import io.github.fi0x.sailing.db.entities.RaceEntity;
+import io.github.fi0x.sailing.db.entities.RaceId;
 import io.github.fi0x.sailing.db.entities.RaceResultEntity;
+import io.github.fi0x.sailing.logic.converter.RaceResultToDtoConverter;
 import io.github.fi0x.sailing.logic.dto.M2sRaceResultJsonDto;
 import io.github.fi0x.sailing.logic.dto.M2sSingleResultJsonDto;
+import io.github.fi0x.sailing.logic.dto.RaceResultDto;
 import io.github.fi0x.sailing.logic.dto.ShipRaceResults;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -49,6 +53,7 @@ public class RaceService
 
 	private final RaceRepo raceRepo;
 	private final RaceResultRepo resultRepo;
+	private final RaceResultToDtoConverter raceResultConverter;
 
 	public List<RaceEntity> getAllOrcRaces(String group)
 	{
@@ -93,10 +98,26 @@ public class RaceService
 				results.add(current);
 			}
 
-			current.getRaceResults().add(entity);
+			current.getRaceResults().add(raceResultConverter.convert(entity));
 		}
 
-		//TODO: Cross out crossable races
+		Map<RaceId, Boolean> raceMap = raceRepo.findAll().stream()
+											   .collect(Collectors.toMap(RaceEntity::getId,
+																		 RaceEntity::getBufferRace));
+		for (ShipRaceResults shipDetails : results)
+		{
+			List<RaceResultDto> crossableResults = shipDetails.getRaceResults().stream()
+															  .filter(res -> raceMap.get(res.getRaceId()))
+															  .sorted((a, b) -> a.getScore() - b.getScore() == 0 ? 0 :
+																	  a.getScore() - b.getScore() > 0 ? 1 : -1)
+															  .toList();
+			if (crossableResults.size() <= 4)
+				continue;
+
+			crossableResults.get(0).setCrossed(true);
+			if (crossableResults.size() > 5)
+				crossableResults.get(1).setCrossed(true);
+		}
 
 		return results;
 	}

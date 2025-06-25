@@ -1,6 +1,5 @@
 package io.github.fi0x.sailing.logic.dto;
 
-import io.github.fi0x.sailing.db.entities.RaceResultEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,5 +16,5 @@ public class ShipRaceResults
 	private String shipName;
 	private String skipper;
 	private String shipClass;
-	private List<RaceResultEntity> raceResults;
+	private List<RaceResultDto> raceResults;
 }

@@ -260,3 +260,7 @@ input {
     background-color: var(--custom-light-yellow);
     color: var(--custom-black);
 }
+
+.crossed {
+    text-decoration: line-through;
+}
