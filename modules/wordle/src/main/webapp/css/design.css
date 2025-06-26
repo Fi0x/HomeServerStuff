@@ -32,6 +32,22 @@ body {
     border-width: 0;
 }
 
+.keyboardKey1 {
+    width: 3rem;
+    height: 3rem;
+    align-content: center;
+    margin: 0.2rem;
+    font-weight: bold;
+}
+
+.keyboardKey2 {
+    width: 6rem;
+    height: 3rem;
+    align-content: center;
+    margin: 0.2rem 0.4rem;
+    font-weight: bold;
+}
+
 .btn:hover {
     color: var(--custom-white);
     background-color: var(--dark-accent);
@@ -254,4 +270,16 @@ input {
 .yellow:hover {
     background-color: var(--custom-light-yellow);
     color: var(--custom-black);
+}
+
+.riddleTable {
+    margin: 2rem auto;
+}
+
+.riddleCell {
+    width: 6rem;
+    height: 6rem;
+    background-color: var(--light-accent);
+    border-width: 0.3rem;
+    border-color: var(--dark-accent);
 }
