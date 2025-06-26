@@ -8,7 +8,7 @@
 <%@include file="../common/navigation.jspf" %>
 <div class="container">
     <h1>Wordle</h1>
-    <a class="btn-success" href="#{pageContext.request.contextPath}/play">Daily</a>
+    <a class="btn-success" href="${pageContext.request.contextPath}/play">Daily</a>
 </div>
 <%@include file="../common/scripts.jspf" %>
 <script src="${pageContext.request.contextPath}/js/wordle-functions.js"></script>
