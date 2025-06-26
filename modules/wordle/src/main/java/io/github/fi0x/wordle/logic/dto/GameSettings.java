@@ -9,9 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class KeyDto
+public class GameSettings
 {
-	private String label;
-	private int width;
-	private int code;
+	private String gameModeName;
+	private Long timestamp;
+	private String playerName;
+	private Long started;
 }

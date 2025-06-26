@@ -1,10 +1,21 @@
 package io.github.fi0x.wordle.service;
 
+import io.github.fi0x.util.components.Authenticator;
+import io.github.fi0x.wordle.db.GameRepo;
+import io.github.fi0x.wordle.db.WordRepo;
+import io.github.fi0x.wordle.db.entities.GameEntity;
+import io.github.fi0x.wordle.db.entities.WordEntity;
+import io.github.fi0x.wordle.logic.dto.GameSettings;
 import io.github.fi0x.wordle.logic.dto.KeyDto;
 import io.github.fi0x.wordle.logic.dto.KeyboardDto;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -13,19 +24,82 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DataService
 {
+	private static final Integer MIN_VERIFICATIONS_FOR_RIDDLE = 100;
+	private static final Integer MAX_SEARCH_TRIES = 100;
+	private static final String DAILY = "daily";
+	private static final String TEN_MINUTES = "ten-minutes";
 	private static final KeyboardDto KEYBOARD_LAYOUT_DE = KeyboardDto.builder().firstRow(
-			List.of(new KeyDto("Q", 1), new KeyDto("W" + " ", 1), new KeyDto("E ", 1), new KeyDto("R ", 1),
-					new KeyDto("T ", 1), new KeyDto("Y ", 1), new KeyDto("U ", 1), new KeyDto("I ", 1),
-					new KeyDto("O ", 1), new KeyDto("P ", 1), new KeyDto("Ü", 1))).secondRow(
-			List.of(new KeyDto("A ", 1), new KeyDto("S ", 1), new KeyDto("D ", 1), new KeyDto("F ", 1),
-					new KeyDto("G ", 1), new KeyDto("H ", 1), new KeyDto("J ", 1), new KeyDto("K ", 1),
-					new KeyDto("L ", 1), new KeyDto("Ö ", 1), new KeyDto("Ä", 1))).thirdRow(
-			List.of(new KeyDto("<-", 2), new KeyDto("Y ", 1), new KeyDto("X ", 1), new KeyDto("C ", 1),
-					new KeyDto("V ", 1), new KeyDto("B ", 1), new KeyDto("N ", 1), new KeyDto("M ", 1),
-					new KeyDto("Enter", 2))).build();
+			List.of(new KeyDto("Q", 1, 81), new KeyDto("W", 1, 87), new KeyDto("E", 1, 69), new KeyDto("R", 1, 82),
+					new KeyDto("T", 1, 84), new KeyDto("Z", 1, 90), new KeyDto("U", 1, 85), new KeyDto("I", 1, 73),
+					new KeyDto("O", 1, 79), new KeyDto("P", 1, 80), new KeyDto("Ü", 1, 219))).secondRow(
+			List.of(new KeyDto("A", 1, 65), new KeyDto("S", 1, 83), new KeyDto("D", 1, 68), new KeyDto("F", 1, 70),
+					new KeyDto("G", 1, 71), new KeyDto("H", 1, 72), new KeyDto("J", 1, 74), new KeyDto("K", 1, 75),
+					new KeyDto("L", 1, 76), new KeyDto("Ö", 1, 186), new KeyDto("Ä", 1, 222))).thirdRow(
+			List.of(new KeyDto("<-", 2, 8), new KeyDto("Y", 1, 89), new KeyDto("X", 1, 88), new KeyDto("C", 1, 67),
+					new KeyDto("V", 1, 86), new KeyDto("B", 1, 66), new KeyDto("N", 1, 78), new KeyDto("M", 1, 77),
+					new KeyDto("Enter", 2, 13))).build();
 
-	public KeyboardDto getKeyboardData()
+	private final Authenticator authenticator;
+	private final GameRepo gameRepo;
+	private final WordRepo wordRepo;
+
+	public KeyboardDto getKeyboardData(@NotNull String language)
 	{
-		return KEYBOARD_LAYOUT_DE;
+		if ("DE".equals(language.toUpperCase()))
+			return KEYBOARD_LAYOUT_DE;
+		throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,
+										  "The requested language does not exist in the database");
+	}
+
+	public GameSettings getNewSettings(String gameMode)
+	{
+		long timestamp = System.currentTimeMillis();
+		switch (gameMode)
+		{
+			case DAILY -> timestamp = timestamp / 1000 / 60 / 60 / 24 * 24 * 60 * 60 * 1000;
+			case TEN_MINUTES -> timestamp = timestamp / 1000 / 60 / 10 * 10 * 60 * 1000;
+		}
+
+		if (gameRepo.findById(timestamp).isEmpty())
+			createNewGame(timestamp);
+
+		return GameSettings.builder().gameModeName(gameMode).timestamp(timestamp)
+						   .playerName(authenticator.getAuthenticatedUsername()).started(System.currentTimeMillis())
+						   .build();
+	}
+
+	private void createNewGame(Long timestamp)
+	{
+		String word = getRandomWord().getWord();
+		GameEntity newGame = GameEntity.builder().timestamp(timestamp).word(word).build();
+		gameRepo.save(newGame);
+	}
+
+	private WordEntity getRandomWord()
+	{
+		log.info("Searching word");
+
+		WordEntity word = null;
+		int tries = 0;
+		while (word == null && tries < MAX_SEARCH_TRIES)
+		{
+			long count = wordRepo.count();
+			int idx = (int) (Math.random() * count);
+			Page<WordEntity> wordPage = wordRepo.findAll(PageRequest.of(idx, 1));
+
+			if (!wordPage.hasContent())
+				throw new ResponseStatusException(HttpStatus.NO_CONTENT, "No known words yet");
+
+			word = wordPage.getContent().get(0);
+			log.info("Found '{}' for index {}", word, idx);
+			if (word.getVerified() < MIN_VERIFICATIONS_FOR_RIDDLE && word.getVerified() >= 0)
+				word = null;
+			tries++;
+		}
+
+		if (word == null)
+			throw new ResponseStatusException(HttpStatus.NO_CONTENT, "No known word found");
+
+		return word;
 	}
 }

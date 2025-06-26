@@ -5,13 +5,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class KeyDto
+public class WordValidationDto
 {
-	private String label;
-	private int width;
-	private int code;
+	private String word;
+	@Builder.Default
+	private List<Integer> characterValidation = new ArrayList<>();
 }
