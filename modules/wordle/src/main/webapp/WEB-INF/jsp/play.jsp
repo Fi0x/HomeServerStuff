@@ -12,17 +12,17 @@
         <tbody id="fieldTable">
         </tbody>
     </table>
-    <div>
+    <div class="keyboardRow">
         <c:forEach items="${keyboard.firstRow}" var="key"><a id="key${key.code}"
                                                              class="btn keyboardKey${key.width}"
                                                              onclick="pressKey(${key.code}, `${key.label}`)">${key.label}</a></c:forEach>
     </div>
-    <div>
+    <div class="keyboardRow">
         <c:forEach items="${keyboard.secondRow}" var="key"><a id="key${key.code}"
                                                               class="btn keyboardKey${key.width}"
                                                               onclick="pressKey(${key.code}, `${key.label}`)">${key.label}</a></c:forEach>
     </div>
-    <div>
+    <div class="keyboardRow">
         <c:forEach items="${keyboard.thirdRow}" var="key"><a id="key${key.code}"
                                                              class="btn keyboardKey${key.width}"
                                                              onclick="pressKey(${key.code}, `${key.label}`)">${key.label}</a></c:forEach>

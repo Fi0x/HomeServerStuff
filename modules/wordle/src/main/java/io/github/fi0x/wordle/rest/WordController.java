@@ -1,7 +1,9 @@
 package io.github.fi0x.wordle.rest;
 
+import io.github.fi0x.wordle.logic.dto.GameResultDto;
 import io.github.fi0x.wordle.logic.dto.GameSettings;
 import io.github.fi0x.wordle.logic.dto.WordValidationDto;
+import io.github.fi0x.wordle.service.DataService;
 import io.github.fi0x.wordle.service.WordService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 public class WordController
 {
+	private final DataService dataService;
 	private final WordService wordService;
 
 	@PostMapping("/words/verify")
@@ -25,5 +28,13 @@ public class WordController
 		if (!wordService.validate(word))
 			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Word is not in word-list");
 		return wordService.match(settings, word);
+	}
+
+	@PostMapping("/results/save")
+	public GameResultDto saveResult(@RequestBody GameResultDto resultEntity)
+	{
+		log.debug("saveResult() called");
+
+		return dataService.saveGame(resultEntity);
 	}
 }

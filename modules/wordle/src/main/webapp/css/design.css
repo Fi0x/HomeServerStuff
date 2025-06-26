@@ -187,6 +187,19 @@ tr {
     background-color: rgba(255, 255, 255, 0.13);
 }
 
+.stats {
+    background-color: var(--light-accent2);
+    width: 25rem;
+    margin: auto;
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.stats p {
+    margin: 0;
+    padding: 0;
+}
+
 .selection {
     color: var(--custom-black);
     background-color: var(--custom-white);

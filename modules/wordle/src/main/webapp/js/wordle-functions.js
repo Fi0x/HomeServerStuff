@@ -144,11 +144,66 @@ function colorCodeResults(jsonResponse) {
 }
 
 function completeLevel() {
-    alert("You won!");
-    //TODO: Complete the level for the user
+    let keyboardParent = hideKeyboard();
+
+    let result = {
+        timestamp: gameSettings.timestamp,
+        tries: currentRow + 1,
+        requiredTime: gameSettings.started
+    }
+    fetch(`${baseUrl}/results/save`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(result)
+    }).then(function (response) {
+        if (!response.ok)
+            alert("Result already saved");
+        else
+            response.json().then(jsonResult => {
+                displayStats(keyboardParent, jsonResult);
+            });
+    });
+
+    showMenuButton(keyboardParent);
+}
+
+function displayStats(parentElement, statsJson) {
+    let statsDiv = document.createElement("div");
+    statsDiv.append(getStatElement(`Player: ${statsJson.playerName}`));
+    statsDiv.append(getStatElement(`Required Time: ${(statsJson.requiredTime / 1000).toFixed(0)}s`));
+    statsDiv.append(getStatElement(`Tries: ${statsJson.tries}`));
+    statsDiv.classList.add("stats");
+    parentElement.prepend(statsDiv);
+}
+
+function getStatElement(text) {
+    let element = document.createElement("p");
+    element.innerText = text;
+    return element;
 }
 
 function failLevel() {
-    alert("Failed! You suck at this (at least a bit)")
-    //TODO: Fail level
+    showMenuButton(hideKeyboard());
+    alert("Failed! You suck at this (at least a bit)");
+    //TODO: Fail level in stats
+}
+
+function hideKeyboard() {
+    let keyboard = document.getElementsByClassName("keyboardRow");
+    let keyboardParent = keyboard[0].parentElement;
+    for (let i = keyboard.length; i > 0; i--)
+        keyboardParent.removeChild(keyboard[i - 1]);
+
+    return keyboardParent;
+}
+
+function showMenuButton(parent) {
+    let menuButton = document.createElement("a");
+    menuButton.innerText = "Return to menu";
+    menuButton.classList.add("btn");
+    menuButton.href = `/`;
+    parent.append(menuButton);
 }

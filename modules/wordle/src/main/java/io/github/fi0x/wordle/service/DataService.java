@@ -2,9 +2,14 @@ package io.github.fi0x.wordle.service;
 
 import io.github.fi0x.util.components.Authenticator;
 import io.github.fi0x.wordle.db.GameRepo;
+import io.github.fi0x.wordle.db.GameResultRepo;
 import io.github.fi0x.wordle.db.WordRepo;
 import io.github.fi0x.wordle.db.entities.GameEntity;
+import io.github.fi0x.wordle.db.entities.GameResultEntity;
+import io.github.fi0x.wordle.db.entities.GameResultId;
 import io.github.fi0x.wordle.db.entities.WordEntity;
+import io.github.fi0x.wordle.logic.converter.GameResultConverter;
+import io.github.fi0x.wordle.logic.dto.GameResultDto;
 import io.github.fi0x.wordle.logic.dto.GameSettings;
 import io.github.fi0x.wordle.logic.dto.KeyDto;
 import io.github.fi0x.wordle.logic.dto.KeyboardDto;
@@ -18,6 +23,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Controller
@@ -42,10 +48,12 @@ public class DataService
 	private final Authenticator authenticator;
 	private final GameRepo gameRepo;
 	private final WordRepo wordRepo;
+	private final GameResultRepo resultRepo;
+	private final GameResultConverter gameResultConverter;
 
 	public KeyboardDto getKeyboardData(@NotNull String language)
 	{
-		if ("DE".equals(language.toUpperCase()))
+		if("DE".equalsIgnoreCase(language))
 			return KEYBOARD_LAYOUT_DE;
 		throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,
 										  "The requested language does not exist in the database");
@@ -54,18 +62,35 @@ public class DataService
 	public GameSettings getNewSettings(String gameMode)
 	{
 		long timestamp = System.currentTimeMillis();
-		switch (gameMode)
+		switch(gameMode)
 		{
 			case DAILY -> timestamp = timestamp / 1000 / 60 / 60 / 24 * 24 * 60 * 60 * 1000;
 			case TEN_MINUTES -> timestamp = timestamp / 1000 / 60 / 10 * 10 * 60 * 1000;
 		}
 
-		if (gameRepo.findById(timestamp).isEmpty())
+		if(gameRepo.findById(timestamp).isEmpty())
 			createNewGame(timestamp);
 
 		return GameSettings.builder().gameModeName(gameMode).timestamp(timestamp)
 						   .playerName(authenticator.getAuthenticatedUsername()).started(System.currentTimeMillis())
 						   .build();
+	}
+
+	public GameResultDto saveGame(GameResultDto resultDto)
+	{
+		resultDto.setPlayerName(authenticator.getAuthenticatedUsername());
+		Optional<GameResultEntity> resultEntity =
+				resultRepo.findById(new GameResultId(resultDto.getTimestamp(), resultDto.getPlayerName()));
+		if(resultEntity.isPresent())
+		{
+			log.warn("Result already saved for that user");
+			return gameResultConverter.convert(resultEntity.get());
+		}
+
+		resultDto.setRequiredTime(System.currentTimeMillis() - resultDto.getRequiredTime());
+
+		resultRepo.save(gameResultConverter.convert(resultDto));
+		return resultDto;
 	}
 
 	private void createNewGame(Long timestamp)
@@ -81,23 +106,23 @@ public class DataService
 
 		WordEntity word = null;
 		int tries = 0;
-		while (word == null && tries < MAX_SEARCH_TRIES)
+		while(word == null && tries < MAX_SEARCH_TRIES)
 		{
 			long count = wordRepo.count();
 			int idx = (int) (Math.random() * count);
 			Page<WordEntity> wordPage = wordRepo.findAll(PageRequest.of(idx, 1));
 
-			if (!wordPage.hasContent())
+			if(!wordPage.hasContent())
 				throw new ResponseStatusException(HttpStatus.NO_CONTENT, "No known words yet");
 
 			word = wordPage.getContent().get(0);
 			log.info("Found '{}' for index {}", word, idx);
-			if (word.getVerified() < MIN_VERIFICATIONS_FOR_RIDDLE && word.getVerified() >= 0)
+			if(word.getVerified() < MIN_VERIFICATIONS_FOR_RIDDLE && word.getVerified() >= 0)
 				word = null;
 			tries++;
 		}
 
-		if (word == null)
+		if(word == null)
 			throw new ResponseStatusException(HttpStatus.NO_CONTENT, "No known word found");
 
 		return word;

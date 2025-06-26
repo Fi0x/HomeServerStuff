@@ -8,6 +8,7 @@
 <%@include file="../common/navigation.jspf" %>
 <div class="container">
     <h1>Wordle</h1>
+    <%--    TODO: Only show games which haven't been played yet--%>
     <a class="btn-success" href="${pageContext.request.contextPath}/play?gameMode=daily">Daily</a>
     <a class="btn-success" href="${pageContext.request.contextPath}/play?gameMode=ten-minutes">Ten Minutes</a>
 </div>
