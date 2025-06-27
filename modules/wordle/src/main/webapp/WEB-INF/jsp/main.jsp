@@ -8,9 +8,17 @@
 <%@include file="../common/navigation.jspf" %>
 <div class="container">
     <h1>Wordle</h1>
-    <%--    TODO: Only show games which haven't been played yet--%>
-    <a class="btn-success" href="${pageContext.request.contextPath}/play?gameMode=daily">Daily</a>
-    <a class="btn-success" href="${pageContext.request.contextPath}/play?gameMode=ten-minutes">Ten Minutes</a>
+    <div class="top-margin">
+        <c:forEach items="${gameModes}" var="mode">
+            <a class="btn-success" href="${pageContext.request.contextPath}/play?gameMode=${mode.id}">${mode.label}</a>
+        </c:forEach>
+        <c:if test="${gameModes.size() == 0}">
+            <p>You have already played all available game-modes. Please wait, until they reset to play the next word</p>
+        </c:if>
+    </div>
+    <div class="top-margin-double">
+        <a class="btn" href="${pageContext.request.contextPath}/validation">Add or validate words</a>
+    </div>
 </div>
 <%@include file="../common/scripts.jspf" %>
 <script src="${pageContext.request.contextPath}/js/wordle-functions.js"></script>

@@ -34,18 +34,20 @@ body {
 
 .keyboardKey1 {
     width: 5rem;
-    height: 5rem;
+    height: 7rem;
     align-content: center;
     margin: 0.1rem;
     font-weight: bold;
+    font-size: 3rem;
 }
 
 .keyboardKey2 {
     width: 10rem;
-    height: 5rem;
+    height: 7rem;
     align-content: center;
     margin: 0.1rem 0.2rem;
     font-weight: bold;
+    font-size: 3rem;
 }
 
 .btn:hover {
@@ -290,6 +292,7 @@ input {
     border-color: var(--dark-accent);
     font-size: 3.5rem;
     text-align: center;
+    font-weight: bold;
 }
 
 .selectedCell {
@@ -316,4 +319,12 @@ input {
 
 .container {
     max-width: 100%;
+}
+
+.top-margin {
+    margin-top: 2rem;
+}
+
+.top-margin-double {
+    margin-top: 4rem;
 }

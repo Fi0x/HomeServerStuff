@@ -9,13 +9,11 @@ import io.github.fi0x.wordle.db.entities.GameResultEntity;
 import io.github.fi0x.wordle.db.entities.GameResultId;
 import io.github.fi0x.wordle.db.entities.WordEntity;
 import io.github.fi0x.wordle.logic.converter.GameResultConverter;
-import io.github.fi0x.wordle.logic.dto.GameResultDto;
-import io.github.fi0x.wordle.logic.dto.GameSettings;
-import io.github.fi0x.wordle.logic.dto.KeyDto;
-import io.github.fi0x.wordle.logic.dto.KeyboardDto;
+import io.github.fi0x.wordle.logic.dto.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -30,10 +28,15 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class DataService
 {
-	private static final Integer MIN_VERIFICATIONS_FOR_RIDDLE = 100;
+	@Value("${homeserver.wordle.verified-amount.riddle}")
+	private Integer minVerificationsForRiddle;
 	private static final Integer MAX_SEARCH_TRIES = 100;
 	private static final String DAILY = "daily";
 	private static final String TEN_MINUTES = "ten-minutes";
+	private static final String FIVE_MINUTES = "five-minutes";
+	private static final List<GameModeDto> GAME_MODES = List.of(new GameModeDto(DAILY, "Daily"),
+																new GameModeDto(TEN_MINUTES, "Ten Minutes"),
+																new GameModeDto(FIVE_MINUTES, "Five Minutes"));
 	private static final KeyboardDto KEYBOARD_LAYOUT_DE = KeyboardDto.builder().firstRow(
 			List.of(new KeyDto("Q", 1, 81), new KeyDto("W", 1, 87), new KeyDto("E", 1, 69), new KeyDto("R", 1, 82),
 					new KeyDto("T", 1, 84), new KeyDto("Z", 1, 90), new KeyDto("U", 1, 85), new KeyDto("I", 1, 73),
@@ -51,9 +54,16 @@ public class DataService
 	private final GameResultRepo resultRepo;
 	private final GameResultConverter gameResultConverter;
 
+	public List<GameModeDto> getGameModes()
+	{
+		String username = authenticator.getAuthenticatedUsername();
+		return GAME_MODES.stream().filter(gameMode -> resultRepo.findById(
+				new GameResultId(getTimestampForLastGame(gameMode.getId()), username)).isEmpty()).toList();
+	}
+
 	public KeyboardDto getKeyboardData(@NotNull String language)
 	{
-		if("DE".equalsIgnoreCase(language))
+		if ("DE".equalsIgnoreCase(language))
 			return KEYBOARD_LAYOUT_DE;
 		throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,
 										  "The requested language does not exist in the database");
@@ -61,27 +71,25 @@ public class DataService
 
 	public GameSettings getNewSettings(String gameMode)
 	{
-		long timestamp = System.currentTimeMillis();
-		switch(gameMode)
-		{
-			case DAILY -> timestamp = timestamp / 1000 / 60 / 60 / 24 * 24 * 60 * 60 * 1000;
-			case TEN_MINUTES -> timestamp = timestamp / 1000 / 60 / 10 * 10 * 60 * 1000;
-		}
+		long timestamp = getTimestampForLastGame(gameMode);
 
-		if(gameRepo.findById(timestamp).isEmpty())
+		String username = authenticator.getAuthenticatedUsername();
+		if (resultRepo.existsById(new GameResultId(timestamp, username)))
+			throw new ResponseStatusException(HttpStatus.GONE, "You already played this level");
+
+		if (gameRepo.findById(timestamp).isEmpty())
 			createNewGame(timestamp);
 
-		return GameSettings.builder().gameModeName(gameMode).timestamp(timestamp)
-						   .playerName(authenticator.getAuthenticatedUsername()).started(System.currentTimeMillis())
-						   .build();
+		return GameSettings.builder().gameModeName(gameMode).timestamp(timestamp).playerName(username)
+						   .started(System.currentTimeMillis()).build();
 	}
 
 	public GameResultDto saveGame(GameResultDto resultDto)
 	{
 		resultDto.setPlayerName(authenticator.getAuthenticatedUsername());
-		Optional<GameResultEntity> resultEntity =
-				resultRepo.findById(new GameResultId(resultDto.getTimestamp(), resultDto.getPlayerName()));
-		if(resultEntity.isPresent())
+		Optional<GameResultEntity> resultEntity = resultRepo.findById(
+				new GameResultId(resultDto.getTimestamp(), resultDto.getPlayerName()));
+		if (resultEntity.isPresent())
 		{
 			log.warn("Result already saved for that user");
 			return gameResultConverter.convert(resultEntity.get());
@@ -100,29 +108,41 @@ public class DataService
 		gameRepo.save(newGame);
 	}
 
+	private long getTimestampForLastGame(String gameMode)
+	{
+		long timestamp = System.currentTimeMillis();
+		switch (gameMode)
+		{
+			case DAILY -> timestamp = timestamp / 1000 / 60 / 60 / 24 * 24 * 60 * 60 * 1000;
+			case TEN_MINUTES -> timestamp = timestamp / 1000 / 60 / 10 * 10 * 60 * 1000;
+			case FIVE_MINUTES -> timestamp = timestamp / 1000 / 60 / 5 * 5 * 60 * 1000;
+		}
+		return timestamp;
+	}
+
 	private WordEntity getRandomWord()
 	{
-		log.info("Searching word");
+		log.trace("Searching word");
 
 		WordEntity word = null;
 		int tries = 0;
-		while(word == null && tries < MAX_SEARCH_TRIES)
+		while (word == null && tries < MAX_SEARCH_TRIES)
 		{
 			long count = wordRepo.count();
 			int idx = (int) (Math.random() * count);
 			Page<WordEntity> wordPage = wordRepo.findAll(PageRequest.of(idx, 1));
 
-			if(!wordPage.hasContent())
+			if (!wordPage.hasContent())
 				throw new ResponseStatusException(HttpStatus.NO_CONTENT, "No known words yet");
 
 			word = wordPage.getContent().get(0);
-			log.info("Found '{}' for index {}", word, idx);
-			if(word.getVerified() < MIN_VERIFICATIONS_FOR_RIDDLE && word.getVerified() >= 0)
+			log.trace("Found '{}' for index {}", word, idx);
+			if (word.getVerified() < minVerificationsForRiddle && word.getVerified() >= 0)
 				word = null;
 			tries++;
 		}
 
-		if(word == null)
+		if (word == null)
 			throw new ResponseStatusException(HttpStatus.NO_CONTENT, "No known word found");
 
 		return word;

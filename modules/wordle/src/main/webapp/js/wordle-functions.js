@@ -151,21 +151,7 @@ function completeLevel() {
         tries: currentRow + 1,
         requiredTime: gameSettings.started
     }
-    fetch(`${baseUrl}/results/save`, {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(result)
-    }).then(function (response) {
-        if (!response.ok)
-            alert("Result already saved");
-        else
-            response.json().then(jsonResult => {
-                displayStats(keyboardParent, jsonResult);
-            });
-    });
+    sendAndShowResults(keyboardParent, result);
 
     showMenuButton(keyboardParent);
 }
@@ -173,8 +159,14 @@ function completeLevel() {
 function displayStats(parentElement, statsJson) {
     let statsDiv = document.createElement("div");
     statsDiv.append(getStatElement(`Player: ${statsJson.playerName}`));
-    statsDiv.append(getStatElement(`Required Time: ${(statsJson.requiredTime / 1000).toFixed(0)}s`));
-    statsDiv.append(getStatElement(`Tries: ${statsJson.tries}`));
+
+    if (statsJson.tries < 0) {
+        statsDiv.append(getStatElement(`LEVEL FAILED`));
+    } else {
+        statsDiv.append(getStatElement(`Required Time: ${(statsJson.requiredTime / 1000).toFixed(0)}s`));
+        statsDiv.append(getStatElement(`Tries: ${statsJson.tries}`));
+    }
+
     statsDiv.classList.add("stats");
     parentElement.prepend(statsDiv);
 }
@@ -186,9 +178,32 @@ function getStatElement(text) {
 }
 
 function failLevel() {
-    showMenuButton(hideKeyboard());
-    alert("Failed! You suck at this (at least a bit)");
-    //TODO: Fail level in stats
+    let keyboardParent = hideKeyboard();
+    showMenuButton(keyboardParent);
+    let result = {
+        timestamp: gameSettings.timestamp,
+        tries: -1,
+        requiredTime: gameSettings.started
+    }
+    sendAndShowResults(keyboardParent, result);
+}
+
+function sendAndShowResults(parentElement, results) {
+    fetch(`${baseUrl}/results/save`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(results)
+    }).then(function (response) {
+        if (!response.ok)
+            alert("Result already saved");
+        else
+            response.json().then(jsonResult => {
+                displayStats(parentElement, jsonResult);
+            });
+    });
 }
 
 function hideKeyboard() {

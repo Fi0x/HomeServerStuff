@@ -7,6 +7,7 @@ import io.github.fi0x.wordle.logic.dto.GameSettings;
 import io.github.fi0x.wordle.logic.dto.WordValidationDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.server.ResponseStatusException;
@@ -16,7 +17,10 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 public class WordService
 {
-	private static final Integer MIN_VERIFICATIONS_FOR_EXISTENCE = 10;
+	@Value("${homeserver.wordle.verified-amount.exists}")
+	private Integer minVerificationsForExistence;
+	@Value("${homeserver.wordle.verification.increase}")
+	private Integer verificationIncreaseAmount;
 
 	private final GameRepo gameRepo;
 	private final WordRepo wordRepo;
@@ -25,7 +29,7 @@ public class WordService
 	{
 		boolean valid = false;
 		WordEntity wordEntity = wordRepo.findById(word).orElse(WordEntity.builder().word(word).verified(0).build());
-		if (wordEntity.getVerified() >= MIN_VERIFICATIONS_FOR_EXISTENCE || wordEntity.getVerified() < 0)
+		if (wordEntity.getVerified() >= minVerificationsForExistence || wordEntity.getVerified() < 0)
 			valid = true;
 
 		if (wordEntity.getVerified() >= 0)

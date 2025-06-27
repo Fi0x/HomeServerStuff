@@ -16,9 +16,11 @@ public class UiController
 	private final DataService dataService;
 
 	@GetMapping("/")
-	public String showMainPage()
+	public String showMainPage(ModelMap model)
 	{
 		log.info("showMainPage() called");
+
+		model.put("gameModes", dataService.getGameModes());
 
 		return "main";
 	}
@@ -33,5 +35,15 @@ public class UiController
 		model.put("gameMode", dataService.getNewSettings(gameMode));
 
 		return "play";
+	}
+
+	@GetMapping("/validation")
+	public String showValidationPage(ModelMap model)
+	{
+		log.info("showValidationPage() called");
+
+		//TODO: Add word to validate to model
+
+		return "validate";
 	}
 }

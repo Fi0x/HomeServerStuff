@@ -2,6 +2,7 @@ package io.github.fi0x.wordle.rest;
 
 import io.github.fi0x.wordle.logic.dto.GameResultDto;
 import io.github.fi0x.wordle.logic.dto.GameSettings;
+import io.github.fi0x.wordle.logic.dto.ValidationResultDto;
 import io.github.fi0x.wordle.logic.dto.WordValidationDto;
 import io.github.fi0x.wordle.service.DataService;
 import io.github.fi0x.wordle.service.WordService;
@@ -36,5 +37,12 @@ public class WordController
 		log.debug("saveResult() called");
 
 		return dataService.saveGame(resultEntity);
+	}
+
+	@GetMapping("/words/validate/{word}")
+	public ValidationResultDto validateWord(@PathVariable String word)
+	{
+		//TODO: Implement validation and return the next word
+		return ValidationResultDto.builder().build();
 	}
 }
