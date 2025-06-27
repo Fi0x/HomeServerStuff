@@ -40,9 +40,19 @@ public class WordController
 	}
 
 	@GetMapping("/words/validate/{word}")
-	public ValidationResultDto validateWord(@PathVariable String word)
+	public ValidationResultDto validateWord(@PathVariable String word,
+											@RequestParam(required = false, defaultValue = "false") Boolean newCreation)
 	{
-		//TODO: Implement validation and return the next word
-		return ValidationResultDto.builder().build();
+		log.debug("validateWord() called");
+
+		return wordService.validateWordForDb(word, newCreation);
+	}
+
+	@GetMapping("/words/invalidate/{word}")
+	public ValidationResultDto invalidateWord(@PathVariable String word)
+	{
+		log.debug("invalidateWord() called");
+
+		return wordService.invalidateWordForDb(word);
 	}
 }

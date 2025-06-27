@@ -1,6 +1,7 @@
 package io.github.fi0x.wordle.rest;
 
 import io.github.fi0x.wordle.service.DataService;
+import io.github.fi0x.wordle.service.WordService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class UiController
 {
 	private final DataService dataService;
+	private final WordService wordService;
 
 	@GetMapping("/")
 	public String showMainPage(ModelMap model)
@@ -42,7 +44,7 @@ public class UiController
 	{
 		log.info("showValidationPage() called");
 
-		//TODO: Add word to validate to model
+		model.put("wordToVerify", wordService.getWordToValidate());
 
 		return "validate";
 	}

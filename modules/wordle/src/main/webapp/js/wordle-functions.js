@@ -222,3 +222,48 @@ function showMenuButton(parent) {
     menuButton.href = `/`;
     parent.append(menuButton);
 }
+
+function addNewWord() {
+    let word = document.getElementById("newWordInput").value.toUpperCase();
+
+    fetch(`${baseUrl}/words/validate/${word}?newCreation=true`, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json'
+        }
+    }).then(function (response) {
+        if (!response.ok)
+            console.log("Something went wrong when adding a new word");
+        else
+            response.json().then(jsonResult => {
+                document.getElementById("responseTextId").innerText = jsonResult.resultMessage;
+            });
+    });
+}
+
+function inValidateAndUpdateTexts(url) {
+    let buttons = document.getElementsByClassName("clickable");
+    for (let button of buttons) {
+        button.style.display = 'none';
+    }
+
+    let word = document.getElementById("verificationWord").innerText.toUpperCase();
+    fetch(url + word, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json'
+        }
+    }).then(function (response) {
+        if (!response.ok)
+            console.log("Something went wrong when (in-)validating a new word");
+        else
+            response.json().then(jsonResult => {
+                document.getElementById("responseTextId").innerText = jsonResult.resultMessage;
+                document.getElementById("verificationWord").innerText = jsonResult.nextWord;
+            });
+
+        for (let button of buttons) {
+            button.style.display = '';
+        }
+    });
+}
