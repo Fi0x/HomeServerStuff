@@ -6,6 +6,7 @@ import io.github.fi0x.wordle.logic.dto.ValidationResultDto;
 import io.github.fi0x.wordle.logic.dto.WordValidationDto;
 import io.github.fi0x.wordle.service.DataService;
 import io.github.fi0x.wordle.service.WordService;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -40,7 +41,7 @@ public class WordController
 	}
 
 	@GetMapping("/words/validate/{word}")
-	public ValidationResultDto validateWord(@PathVariable String word,
+	public ValidationResultDto validateWord(@Size(min = 5, max = 5) @PathVariable String word,
 											@RequestParam(required = false, defaultValue = "false") Boolean newCreation)
 	{
 		log.debug("validateWord() called");
@@ -49,7 +50,7 @@ public class WordController
 	}
 
 	@GetMapping("/words/invalidate/{word}")
-	public ValidationResultDto invalidateWord(@PathVariable String word)
+	public ValidationResultDto invalidateWord(@Size(min = 5, max = 5) @PathVariable String word)
 	{
 		log.debug("invalidateWord() called");
 

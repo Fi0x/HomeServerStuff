@@ -21,7 +21,7 @@
     <div id="responseTextId">You did not update any entries in the database yet</div>
     <div class="small-background top-margin">
         <h3>Suggest a new word for the word-list</h3>
-        <input id="newWordInput">
+        <input maxlength="5" id="newWordInput">
         <a class="btn" onclick="addNewWord()">Add</a>
     </div>
 </div>
