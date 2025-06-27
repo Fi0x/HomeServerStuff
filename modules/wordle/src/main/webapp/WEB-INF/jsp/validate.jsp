@@ -7,7 +7,7 @@
 <body>
 <%@include file="../common/navigation.jspf" %>
 <div class="container">
-    <h1>Validate words (Not finished)</h1>
+    <h1>Validate words</h1>
     <div class="small-background">
         <label id="verificationWord" class="highlighted">${wordToVerify}</label>
         <div class="top-margin-half">
