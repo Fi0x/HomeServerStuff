@@ -34,9 +34,11 @@ public class DataService
 	private static final String DAILY = "daily";
 	private static final String TEN_MINUTES = "ten-minutes";
 	private static final String FIVE_MINUTES = "five-minutes";
+	private static final String ENDLESS = "endless";
 	private static final List<GameModeDto> GAME_MODES = List.of(new GameModeDto(DAILY, "Daily"),
 																new GameModeDto(TEN_MINUTES, "Ten Minutes"),
-																new GameModeDto(FIVE_MINUTES, "Five Minutes"));
+																new GameModeDto(FIVE_MINUTES, "Five Minutes"),
+																new GameModeDto(ENDLESS, "Endless"));
 	private static final KeyboardDto KEYBOARD_LAYOUT_DE = KeyboardDto.builder().firstRow(
 			List.of(new KeyDto("Q", 1, 81), new KeyDto("W", 1, 87), new KeyDto("E", 1, 69), new KeyDto("R", 1, 82),
 					new KeyDto("T", 1, 84), new KeyDto("Z", 1, 90), new KeyDto("U", 1, 85), new KeyDto("I", 1, 73),
@@ -116,6 +118,7 @@ public class DataService
 			case DAILY -> timestamp = timestamp / 1000 / 60 / 60 / 24 * 24 * 60 * 60 * 1000;
 			case TEN_MINUTES -> timestamp = timestamp / 1000 / 60 / 10 * 10 * 60 * 1000;
 			case FIVE_MINUTES -> timestamp = timestamp / 1000 / 60 / 5 * 5 * 60 * 1000;
+			case ENDLESS -> timestamp = timestamp / 1000 * 1000;
 		}
 		return timestamp;
 	}

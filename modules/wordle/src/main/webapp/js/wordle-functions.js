@@ -125,18 +125,21 @@ function colorCodeResults(jsonResponse) {
             case -1:
                 currentCell.classList.remove("selectedCell");
                 currentCell.classList.add("inactiveCell");
-                document.getElementById(`key${keyCode}`).classList.add("inactiveKey")
+                document.getElementById(`key${keyCode}`).classList.add("inactiveKey");
                 break;
             case 0:
                 currentCell.classList.remove("selectedCell");
                 currentCell.classList.add("yellow");
-                document.getElementById(`key${keyCode}`).classList.add("yellow")
+                let relatedKey = document.getElementById(`key${keyCode}`);
+                if (!relatedKey.classList.contains("green"))
+                    document.getElementById(`key${keyCode}`).classList.add("yellow");
                 break;
             case 1:
                 correctLetters++;
                 currentCell.classList.remove("selectedCell");
                 currentCell.classList.add("green");
-                document.getElementById(`key${keyCode}`).classList.add("green")
+                document.getElementById(`key${keyCode}`).classList.remove("yellow");
+                document.getElementById(`key${keyCode}`).classList.add("green");
                 break;
         }
     }

@@ -3,4 +3,5 @@
     <link href="${pageContext.request.contextPath}/css/design.css" rel="stylesheet">
     <title>Home Server Util</title>
     <link rel="icon" href="${pageContext.request.contextPath}/images/hub.ico">
+    <meta name="viewport" content="user-scalable=0">
 </head>
