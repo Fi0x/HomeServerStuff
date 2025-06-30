@@ -113,7 +113,7 @@ public class DataService
 	{
 		if (valueAdjustment != null)
 			entities.forEach(entity -> {
-				entity.setMin(entity.getMax() + valueAdjustment);
+				entity.setMin(entity.getMin() + valueAdjustment);
 				entity.setMax(entity.getMax() + valueAdjustment);
 				entity.setAverage(entity.getAverage() + valueAdjustment);
 			});
