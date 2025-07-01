@@ -64,18 +64,19 @@ public class InformationController
 	@GetMapping("/sensor/{address}/{name}/update")
 	public String updateSensor(ModelMap model, @PathVariable String address, @PathVariable String name,
 							   @RequestParam(value = "valueAdjustment", required = false) Double valueAdjustment,
+							   @RequestParam(value = "min", required = false) Double minValue,
+							   @RequestParam(value = "max", required = false) Double maxValue,
 							   @RequestParam(value = "deleteValues", required = false) String valueDeletion)
 	{
 		log.info("updateSensor() called");
 
-		if(valueAdjustment != null)
-			sensorService.saveSensorValueAdjustment(address, name, valueAdjustment);
+		sensorService.saveSensorValueAdjustment(address, name, valueAdjustment, minValue, maxValue);
 
-		if(valueDeletion != null)
+		if (valueDeletion != null)
 		{
-			if(valueDeletion.equals("ALL"))
+			if (valueDeletion.equals("ALL"))
 				dataService.deleteForSensor(address, name, null, null);
-			else if(NumberUtils.isCreatable(valueDeletion))
+			else if (NumberUtils.isCreatable(valueDeletion))
 				dataService.deleteForSensor(address, name, null, Double.parseDouble(valueDeletion));
 		}
 

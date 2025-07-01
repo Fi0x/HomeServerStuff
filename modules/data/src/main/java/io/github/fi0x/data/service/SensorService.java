@@ -43,9 +43,9 @@ public class SensorService
 		}
 
 		long timestamp = saveSensorEntity(address, sensorWithData.getName(), sensorWithData.getDescription(),
-										  sensorWithData.getUnit(),
-						 sensorWithData.getType(), sensorWithData.getDataDelay(), sensorWithData.getValueAdjustment(),
-						 sensorWithData.getMinValue(), sensorWithData.getMaxValue());
+										  sensorWithData.getUnit(), sensorWithData.getType(),
+										  sensorWithData.getDataDelay(), sensorWithData.getValueAdjustment(),
+										  sensorWithData.getMinValue(), sensorWithData.getMaxValue());
 		saveTags(sensorWithData.getName(), sensorWithData.getTags());
 
 		saveData(address, sensorWithData.getName(), sensorWithData.getValue(), timestamp);
@@ -53,13 +53,19 @@ public class SensorService
 		return timestamp;
 	}
 
-	public void saveSensorValueAdjustment(String address, String name, double valueAdjustment)
+	public void saveSensorValueAdjustment(String address, String name, Double valueAdjustment, Double minValue,
+										  Double maxValue)
 	{
 		SensorEntity entity = sensorRepo.findByAddressAndName(address, name).orElseThrow(
 				() -> new ResponseStatusException(HttpStatusCode.valueOf(404),
 												  "Requested sensor to update does not exist in the database"));
 
-		entity.setValueAdjustment(valueAdjustment);
+		if (valueAdjustment != null)
+			entity.setValueAdjustment(valueAdjustment);
+		if (minValue != null)
+			entity.setMinValue(minValue);
+		if (maxValue != null)
+			entity.setMaxValue(maxValue);
 
 		sensorRepo.save(entity);
 	}
