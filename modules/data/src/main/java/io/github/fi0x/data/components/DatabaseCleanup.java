@@ -48,7 +48,6 @@ public class DatabaseCleanup
 		Optional<DataEntity> oldestDataEntity = dataRepo.findFirstByAddressAndSensorOrderByTimestampAsc(address, name);
 		oldestDataEntity.ifPresent(entity -> {
 			List<DataEntity> possibleEntities = dataRepo.findFromSensorOlderThan(address, name, oldestAllowedTime);
-			//TODO: Average all days, except current one, but only delete data from outside of allowed times
 			averageDays(possibleEntities);
 		});
 	}

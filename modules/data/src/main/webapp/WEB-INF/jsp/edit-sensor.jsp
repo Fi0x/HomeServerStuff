@@ -52,6 +52,9 @@
         <h3>
             Tags
         </h3>
+        <c:forEach items="${sensor.tags}" var="tag">
+            ${tag}
+        </c:forEach>
     </div>
     <%--        TODO: Add an option to change sensor tags and create custom ones--%>
     <div class="section">
