@@ -16,10 +16,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,6 +59,8 @@ public class DataService
 	private final GameResultRepo resultRepo;
 	private final GameResultConverter gameResultConverter;
 
+	//TODO: Add a cleanup process, to remove all games, that are no longer available and have no player scores
+
 	public List<GameModeDto> getGameModes()
 	{
 		String username = authenticator.getAuthenticatedUsername();
@@ -80,7 +85,7 @@ public class DataService
 			throw new ResponseStatusException(HttpStatus.GONE, "You already played this level");
 
 		if (gameRepo.findById(timestamp).isEmpty())
-			createNewGame(timestamp);
+			createNewGame(timestamp, gameMode);
 
 		return GameSettings.builder().gameModeName(gameMode).timestamp(timestamp).playerName(username)
 						   .started(System.currentTimeMillis()).build();
@@ -103,10 +108,37 @@ public class DataService
 		return resultDto;
 	}
 
-	private void createNewGame(Long timestamp)
+	public List<LeaderboardDto> getAllGameResults()
+	{
+		List<LeaderboardDto> leaderboards = new ArrayList<>();
+
+		for (GameEntity gameEntity : gameRepo.findAll(Sort.by(Sort.Direction.DESC, "timestamp")))
+		{
+			String gameName = GAME_MODES.stream()
+										.filter(gameModeDto -> gameModeDto.getId().equals(gameEntity.getType()))
+										.findFirst().orElse(new GameModeDto(gameEntity.getType(),
+																			gameEntity.getType()))
+										.getLabel();
+			LeaderboardDto leaderboard = LeaderboardDto.builder().gameTimestamp(gameEntity.getTimestamp())
+													   .dateTime(new Date(gameEntity.getTimestamp()))
+													   .word(gameEntity.getWord()).type(gameName).build();
+			leaderboard.setPlayerResults(getGameResults(gameEntity.getTimestamp()));
+			if (!leaderboard.getPlayerResults().isEmpty())
+				leaderboards.add(leaderboard);
+		}
+
+		return leaderboards;
+	}
+
+	private List<GameResultDto> getGameResults(Long gameTimestamp)
+	{
+		return resultRepo.findAllByTimestamp(gameTimestamp).stream().map(gameResultConverter::convert).toList();
+	}
+
+	private void createNewGame(Long timestamp, String gameType)
 	{
 		String word = getRandomWord().getWord();
-		GameEntity newGame = GameEntity.builder().timestamp(timestamp).word(word).build();
+		GameEntity newGame = GameEntity.builder().timestamp(timestamp).word(word).type(gameType).build();
 		gameRepo.save(newGame);
 	}
 

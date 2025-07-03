@@ -48,4 +48,14 @@ public class UiController
 
 		return "validate";
 	}
+
+	@GetMapping("/leaderboard")
+	public String showLeaderboard(ModelMap model)
+	{
+		log.info("showLeaderboard() called");
+
+		model.put("gameResults", dataService.getAllGameResults());
+
+		return "leaderboard";
+	}
 }

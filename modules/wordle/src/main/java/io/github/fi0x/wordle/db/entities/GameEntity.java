@@ -20,4 +20,5 @@ public class GameEntity
 	private Long timestamp;
 
 	private String word;
+	private String type;
 }
