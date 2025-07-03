@@ -10,7 +10,7 @@ public class SensorConverter
 {
 	public static ExpandedSensorDto toExpandedDto(SensorEntity source)
 	{
-		boolean isOffline = source.getDataDelay() == null || System.currentTimeMillis() - source.getLastUpdate() > source.getDataDelay() * 2;
+		boolean isOffline = source.getDataDelay() == null || source.getLastUpdate() == null || System.currentTimeMillis() - source.getLastUpdate() > source.getDataDelay() * 2;
 		Date lastUpdated = source.getLastUpdate() == null ? new Date(0) : new Date(source.getLastUpdate());
 
 		return ExpandedSensorDto.builder().address(source.getAddress()).name(source.getName())
