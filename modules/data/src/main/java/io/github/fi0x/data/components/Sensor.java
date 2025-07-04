@@ -15,14 +15,14 @@ public class Sensor
 {
 	private final SensorRepo sensorRepo;
 
-	public void updateSensorTimestamp(String address, String name)
+	public void updateSensorTimestamp(String address, String name, Long newTimestamp)
 	{
 		SensorEntity entity = sensorRepo.findByAddressAndName(address, name).orElseThrow(() -> {
 			log.warn("No sensor registered under ip '{}'", address);
 			return new ResponseStatusException(HttpStatusCode.valueOf(404),
 											   "The sensor at ip " + address + " is not registered and can therefore " + "not be updated with a new timestamp");
 		});
-		entity.setLastUpdate(System.currentTimeMillis());
+		entity.setLastUpdate(newTimestamp);
 		sensorRepo.save(entity);
 	}
 

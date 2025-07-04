@@ -12,6 +12,7 @@
     --custom-light-red: #e50000;
     --custom-yellow: #cba000;
     --custom-light-yellow: #e0bf47;
+    --custom-light-blue: #0073e3;
 }
 
 body {
@@ -208,6 +209,18 @@ input {
     border-radius: 0.1rem;
 }
 
+input[type="checkbox"] {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+    appearance: none;
+}
+
+input[type="checkbox"]:checked {
+    background-color: var(--custom-black);
+}
+
 .align-top {
     align-content: start;
 }
@@ -227,6 +240,11 @@ input {
     padding: 0.3rem;
     background-color: var(--dark-accent);
     border-radius: 0.3rem;
+    display: inline-flex;
+}
+
+.filter-checkbox {
+    margin-left: 0.5rem;
 }
 
 .filter-option:hover {
@@ -245,6 +263,13 @@ input {
     width: 100%;
 }
 
+.color-tag {
+    display: inline-block;
+    width: 1.5rem;
+    height: 1.5rem;
+    background-color: transparent;
+}
+
 .red {
     background-color: var(--custom-red);
 }
@@ -261,4 +286,33 @@ input {
 .yellow:hover {
     background-color: var(--custom-light-yellow);
     color: var(--custom-black);
+}
+
+.settings-section {
+    width: 100%;
+    column-gap: 1rem;
+    padding: 1rem;
+    row-gap: 1rem;
+    border-spacing: 0.5rem;
+    border-collapse: separate;
+}
+
+.sub-section {
+    background-color: var(--dark-accent2);
+    padding: 1rem;
+    border-radius: 0.3rem;
+    align-content: center;
+    align-items: center;
+}
+
+.sub-section p {
+    text-align: center;
+}
+
+.transparent-background {
+    background-color: transparent;
+}
+
+.center {
+    text-align: center;
 }

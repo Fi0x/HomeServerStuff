@@ -7,6 +7,7 @@
 //# define DHTTYPE DHT11
 #define DHTTYPE DHT22
 #define DHTPIN D7
+#define POWERPIN D4
 
 // WIFI settings
 #define WIFI_SSID "SSID"
@@ -38,15 +39,18 @@ HTTPClient http;
 //Setup
 void setup()
 {
-  delay(100);
   String serverUrl = "http://";
   serverUrl.concat(SERVER_IP);
   serverUrl.concat(":");
   serverUrl.concat(SERVER_PORT);
 
+  // Power sensor
+  pinMode(POWERPIN, OUTPUT);
+  digitalWrite(POWERPIN, HIGH);
+
   // Start and read sensor data
   dht.begin();
-  delay(2500);
+  delay(2100);
   float temperature = dht.readTemperature();
   float humidity = dht.readHumidity();
 
