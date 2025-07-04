@@ -39,8 +39,8 @@ public class DataService
 	private static final String FIVE_MINUTES = "five-minutes";
 	private static final String ENDLESS = "endless";
 	private static final List<GameModeDto> GAME_MODES = List.of(new GameModeDto(DAILY, "Daily"),
-																new GameModeDto(TEN_MINUTES, "Ten Minutes"),
-																new GameModeDto(FIVE_MINUTES, "Five Minutes"),
+																new GameModeDto(TEN_MINUTES, "Ten-Minutes"),
+																new GameModeDto(FIVE_MINUTES, "Five-Minutes"),
 																new GameModeDto(ENDLESS, "Endless"));
 	private static final KeyboardDto KEYBOARD_LAYOUT_DE = KeyboardDto.builder().firstRow(
 			List.of(new KeyDto("Q", 1, 81), new KeyDto("W", 1, 87), new KeyDto("E", 1, 69), new KeyDto("R", 1, 82),

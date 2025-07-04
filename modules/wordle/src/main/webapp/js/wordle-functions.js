@@ -270,3 +270,14 @@ function inValidateAndUpdateTexts(url) {
         }
     });
 }
+
+function updateFilterState(gameFilter, checkbox) {
+    let gameDivs = document.getElementsByClassName(`gameType${gameFilter}`);
+
+    for (let gameDiv of gameDivs) {
+        if (checkbox.checked)
+            gameDiv.style.display = "";
+        else
+            gameDiv.style.display = "none";
+    }
+}

@@ -1,5 +1,6 @@
 package io.github.fi0x.wordle.rest;
 
+import io.github.fi0x.wordle.logic.dto.LeaderboardDto;
 import io.github.fi0x.wordle.service.DataService;
 import io.github.fi0x.wordle.service.WordService;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Controller
@@ -54,7 +58,10 @@ public class UiController
 	{
 		log.info("showLeaderboard() called");
 
-		model.put("gameResults", dataService.getAllGameResults());
+		List<LeaderboardDto> leaderboards = dataService.getAllGameResults();
+		model.put("gameResults", leaderboards);
+		model.put("gameModes",
+				  leaderboards.stream().map(LeaderboardDto::getType).filter(Objects::nonNull).distinct().toList());
 
 		return "leaderboard";
 	}
