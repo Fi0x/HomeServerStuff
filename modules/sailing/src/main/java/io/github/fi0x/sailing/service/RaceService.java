@@ -24,6 +24,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+//TODO: Get the hub notifications working again
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
