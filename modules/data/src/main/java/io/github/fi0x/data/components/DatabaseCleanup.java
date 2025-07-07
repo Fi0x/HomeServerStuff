@@ -41,6 +41,8 @@ public class DatabaseCleanup
 				sensorEntity -> cleanSensor(sensorEntity.getAddress(), sensorEntity.getName(), oldestAllowedTime));
 
 		cleanSensorlessData(sensorEntities);
+
+		log.debug("Database cleanup complete");
 	}
 
 	private void cleanSensor(String address, String name, long oldestAllowedTime)

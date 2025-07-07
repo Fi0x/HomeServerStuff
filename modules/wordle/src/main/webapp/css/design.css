@@ -1,0 +1,367 @@
+:root {
+    --custom-background-color: #51545e;
+    --custom-white: rgba(255, 255, 255, 0.88);
+    --custom-black: rgba(0, 0, 0, 0.88);
+    --dark-accent: rgba(98, 98, 98, 0.88);
+    --dark-accent2: rgba(120, 120, 120, 0.88);
+    --light-accent: rgba(213, 213, 213, 0.88);
+    --light-accent2: rgba(150, 150, 150, 0.88);
+    --custom-green: #308600;
+    --custom-light-green: #b8f693;
+    --custom-red: #9b0000;
+    --custom-light-red: #e50000;
+    --custom-yellow: #cba000;
+    --custom-light-yellow: #e0bf47;
+}
+
+body {
+    color: var(--custom-white);
+    background-color: var(--custom-background-color);
+    margin: 0.75rem;
+    font-family: "Segoe UI", sans-serif;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.btn {
+    color: var(--custom-black);
+    background-color: var(--light-accent);
+    border-color: var(--light-accent);
+    border-radius: 0.3rem;
+    padding: 0.3rem;
+    border-width: 0;
+}
+
+.keyboardKey1 {
+    width: 5rem;
+    height: 7rem;
+    align-content: center;
+    margin: 0.1rem;
+    font-weight: bold;
+    font-size: 3rem;
+}
+
+.keyboardKey2 {
+    width: 10rem;
+    height: 7rem;
+    align-content: center;
+    margin: 0.1rem 0.2rem;
+    font-weight: bold;
+    font-size: 3rem;
+}
+
+.btn:hover {
+    color: var(--custom-white);
+    background-color: var(--dark-accent);
+}
+
+.keyboardKey1:hover {
+    color: var(--custom-black);
+    background-color: var(--light-accent2);
+}
+
+.keyboardKey2:hover {
+    color: var(--custom-black);
+    background-color: var(--light-accent2);
+}
+
+.btn-success {
+    color: var(--custom-white);
+    background-color: var(--custom-green);
+    border-color: var(--custom-green);
+    border-radius: 0.3rem;
+    padding: 0.3rem;
+    text-decoration: none;
+    border-width: 0;
+}
+
+.btn-success:hover {
+    color: var(--custom-black);
+    background-color: var(--custom-light-green);
+}
+
+.btn-danger {
+    color: var(--custom-white);
+    background-color: var(--custom-red);
+    border-color: var(--custom-red);
+    border-radius: 0.3rem;
+    padding: 0.3rem;
+    text-decoration: none;
+    border-width: 0;
+}
+
+.btn-danger:hover {
+    color: var(--custom-black);
+    background-color: var(--custom-light-red);
+}
+
+.btn-edit {
+    color: var(--custom-black);
+    background-color: var(--custom-yellow);
+    border-color: var(--custom-yellow);
+    border-radius: 0.3rem;
+    padding: 0.3rem;
+    text-decoration: none;
+}
+
+.btn-edit:hover {
+    background-color: var(--custom-light-yellow);
+}
+
+.btn-hidden-light {
+    color: var(--custom-white);
+    background-color: transparent;
+    text-decoration: none;
+    border-color: transparent;
+    border-radius: 0.3rem;
+    padding: 0.3rem;
+    border-width: 0;
+}
+
+.btn-hidden-light:hover {
+    color: var(--custom-black);
+    background-color: var(--light-accent);
+    text-decoration: none;
+}
+
+.round-image {
+    border-radius: 1rem;
+}
+
+.round-button {
+    border-radius: 2rem;
+    width: 2rem;
+    height: 2rem;
+}
+
+.menu-bar-image {
+    max-width: 100%;
+    max-height: 100%;
+    height: 2rem;
+}
+
+.main-menu-element {
+    background-color: var(--dark-accent2);
+    padding: 0.5rem;
+    margin-right: 0.5rem;
+}
+
+.navbar {
+    background-color: var(--dark-accent);
+    padding: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.nav-link {
+    color: var(--custom-white);
+    border-radius: 0.3rem;
+}
+
+li {
+    align-content: center;
+}
+
+td {
+    align-content: center;
+    padding: 0.5rem;
+}
+
+tr {
+    color: var(--custom-white);
+}
+
+.nav-link:hover {
+    color: var(--custom-black);
+    background-color: var(--light-accent);
+}
+
+.table > :not(caption) > * > * {
+    color: inherit;
+    background-color: transparent;
+}
+
+.underlined-row {
+    border-bottom-width: 0.1rem;
+    border-color: var(--light-accent);
+}
+
+.header-row {
+    background-color: rgba(255, 255, 255, 0.13);
+}
+
+.stats {
+    background-color: var(--light-accent2);
+    width: 25rem;
+    margin: auto;
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.stats p {
+    margin: 0;
+    padding: 0;
+}
+
+.selection {
+    color: var(--custom-black);
+    background-color: var(--custom-white);
+    padding: 0.1rem;
+}
+
+.search-input {
+    width: 100%;
+}
+
+.search-label {
+    width: 100%;
+    margin: 0.5rem 0;
+}
+
+table {
+    background-color: var(--dark-accent);
+    border-radius: 0.3rem;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.non-editable {
+    background-color: var(--light-accent);
+    border-color: transparent;
+}
+
+.non-editable:focus-visible {
+    outline-width: 0;
+}
+
+.long-input {
+    width: 25rem;
+}
+
+.file-input {
+    color: var(--custom-black);
+}
+
+input {
+    background-color: var(--custom-white);
+    border-color: transparent;
+    border-radius: 0.1rem;
+}
+
+.align-top {
+    align-content: start;
+}
+
+.spaced-text {
+    margin: 0.5rem;
+}
+
+.clickable-row:hover {
+    background-color: var(--light-accent2);
+    cursor: pointer;
+}
+
+#dataChart {
+    width: 100%;
+    max-width: 700px;
+}
+
+.riddleTable {
+    margin: 2rem auto;
+}
+
+.riddleCell {
+    width: 6rem;
+    height: 6rem;
+    color: var(--custom-black);
+    background-color: var(--custom-white);
+    border-width: 0.3rem;
+    border-color: var(--dark-accent);
+    font-size: 3.5rem;
+    text-align: center;
+    font-weight: bold;
+}
+
+.selectedCell {
+    background-color: var(--light-accent2);
+}
+
+.inactiveCell {
+    background-color: var(--light-accent);
+}
+
+.green {
+    background-color: var(--custom-green);
+    color: var(--custom-black);
+}
+
+.yellow {
+    background-color: var(--custom-yellow);
+    color: var(--custom-black);
+}
+
+.inactiveKey {
+    background-color: var(--dark-accent2);
+}
+
+.container {
+    max-width: 100%;
+}
+
+.highlighted {
+    background-color: var(--dark-accent2);
+    padding: 0 1rem;
+    font-weight: bold;
+    font-size: 2rem;
+}
+
+.top-margin-half {
+    margin-top: 1rem;
+}
+
+.top-margin {
+    margin-top: 2rem;
+}
+
+.top-margin-double {
+    margin-top: 4rem;
+}
+
+.small-background {
+    width: fit-content;
+    margin: 2rem auto;
+    padding: 1rem;
+    background-color: var(--light-accent2);
+    color: var(--custom-black);
+    border-radius: 0.5rem;
+}
+
+.filter-option {
+    cursor: pointer;
+    margin: 0.5rem;
+    padding: 0.3rem;
+    background-color: var(--dark-accent);
+    border-radius: 0.3rem;
+    display: inline-flex;
+}
+
+.filter-option:hover {
+    background-color: var(--dark-accent2);
+}
+
+.filter-checkbox {
+    margin-left: 0.5rem;
+}
+
+input[type="checkbox"] {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+    appearance: none;
+}
+
+input[type="checkbox"]:checked {
+    background-color: var(--custom-black);
+}
