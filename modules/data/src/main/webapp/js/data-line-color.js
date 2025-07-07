@@ -6,8 +6,6 @@ function colorDataLines() {
     let previousMillis = new Date(sensorData[sensorData.length - 1].x).getTime();
 
     if (currentMillis - previousMillis > sensorInformation.delay * 2) {
-        console.log('Too old: ' + (currentMillis - previousMillis));
-        console.log(new Date(currentMillis) + ',' + new Date(previousMillis));
         document.getElementById('dataEntry' + 0).classList.add('yellow');
     } else if (sensorInformation.min > sensorData[sensorData.length - 1].y || sensorInformation.max < sensorData[sensorData.length - 1].y) {
         document.getElementById('dataEntry' + 0).classList.add('red');

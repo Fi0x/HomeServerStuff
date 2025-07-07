@@ -2,8 +2,10 @@ package io.github.fi0x.data.components;
 
 import io.github.fi0x.data.db.DataRepo;
 import io.github.fi0x.data.db.SensorRepo;
+import io.github.fi0x.data.db.StatDataRepo;
 import io.github.fi0x.data.db.entities.DataEntity;
 import io.github.fi0x.data.db.entities.SensorEntity;
+import io.github.fi0x.data.db.entities.StatDataEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
@@ -24,6 +26,7 @@ public class DatabaseCleanup
 	private Long maxValueTime;
 
 	private final DataRepo dataRepo;
+	private final StatDataRepo statRepo;
 	private final SensorRepo sensorRepo;
 
 	@Scheduled(fixedRate = 3600000)
@@ -33,17 +36,20 @@ public class DatabaseCleanup
 
 		List<SensorEntity> sensorEntities = sensorRepo.findAll();
 		long oldestAllowedTime = System.currentTimeMillis() - (maxValueTime * 1000);
-		sensorEntities.forEach(sensorEntity -> {
-			cleanSensor(sensorEntity.getAddress(), sensorEntity.getName(), oldestAllowedTime);
-		});
+
+		sensorEntities.forEach(
+				sensorEntity -> cleanSensor(sensorEntity.getAddress(), sensorEntity.getName(), oldestAllowedTime));
+
+		cleanSensorlessData(sensorEntities);
+
+		log.debug("Database cleanup complete");
 	}
 
 	private void cleanSensor(String address, String name, long oldestAllowedTime)
 	{
 		Optional<DataEntity> oldestDataEntity = dataRepo.findFirstByAddressAndSensorOrderByTimestampAsc(address, name);
 		oldestDataEntity.ifPresent(entity -> {
-			List<DataEntity> possibleEntities = dataRepo.findAllValuesOlderThan(oldestAllowedTime);
-
+			List<DataEntity> possibleEntities = dataRepo.findFromSensorOlderThan(address, name, oldestAllowedTime);
 			averageDays(possibleEntities);
 		});
 	}
@@ -53,7 +59,10 @@ public class DatabaseCleanup
 		if (entities.isEmpty())
 			return;
 
-		entities.sort((e1, e2) -> Math.toIntExact((e2.getTimestamp() - e1.getTimestamp())));
+		entities.sort((e1, e2) -> {
+			long compare = e2.getTimestamp() - e1.getTimestamp();
+			return compare < 0 ? -1 : compare > 0 ? 1 : 0;
+		});
 
 		final Date mostRecentDate = new Date(entities.get(0).getTimestamp());
 		List<DataEntity> workingEntities = new java.util.ArrayList<>(entities.stream()
@@ -71,17 +80,26 @@ public class DatabaseCleanup
 																											entity.getTimestamp())))
 															  .toList();
 
-			if (currentEntities.size() > 1)
-				saveAverage(currentEntities, youngestEntryDate);
+			if (!currentEntities.isEmpty())
+			{
+				StatDataEntity statDataEntity = getAverage(currentEntities, youngestEntryDate);
+
+				if (statDataEntity != null)
+				{
+					addMinAndMaxValues(statDataEntity, currentEntities);
+					statRepo.save(statDataEntity);
+				}
+				dataRepo.deleteAll(entities);
+			}
 
 			workingEntities.removeAll(currentEntities);
 		}
 	}
 
-	private void saveAverage(List<DataEntity> entities, Date desiredDate)
+	private StatDataEntity getAverage(List<DataEntity> entities, Date desiredDate)
 	{
 		if (entities.isEmpty())
-			return;
+			return null;
 
 		int count = 0;
 		double total = 0;
@@ -94,7 +112,42 @@ public class DatabaseCleanup
 		DataEntity averageEntity = new DataEntity(entities.get(0).getAddress(), entities.get(0).getSensor(),
 												  desiredDate.getTime(), total / count);
 
-		dataRepo.deleteAll(entities);
-		dataRepo.save(averageEntity);
+		return StatDataEntity.builder().address(averageEntity.getAddress()).sensor(averageEntity.getSensor())
+							 .timestamp(averageEntity.getTimestamp()).average(averageEntity.getValue()).build();
+	}
+
+	private void cleanSensorlessData(List<SensorEntity> sensorEntities)
+	{
+		List<DataEntity> dataEntities = dataRepo.findAll();
+
+		for (SensorEntity sensorEntity : sensorEntities)
+			dataEntities =
+					dataEntities.stream().filter(dataEntity -> !isSameSensor(sensorEntity, dataEntity)).toList();
+
+		dataRepo.deleteAll(dataEntities);
+	}
+
+	private boolean isSameSensor(SensorEntity sensor, DataEntity data)
+	{
+		return sensor.getAddress().equals(data.getAddress()) && sensor.getName().equals(data.getSensor());
+	}
+
+	private void addMinAndMaxValues(StatDataEntity statEntity, List<DataEntity> entities)
+	{
+		if (entities.isEmpty())
+			return;
+
+		Double min = entities.get(0).getValue();
+		Double max = entities.get(0).getValue();
+		for (DataEntity e : entities)
+		{
+			if (min > e.getValue())
+				min = e.getValue();
+			if (max < e.getValue())
+				max = e.getValue();
+		}
+
+		statEntity.setMin(min);
+		statEntity.setMax(max);
 	}
 }

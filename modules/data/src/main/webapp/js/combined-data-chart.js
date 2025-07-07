@@ -1,5 +1,7 @@
 const cssWhite = getComputedStyle(document.body).getPropertyValue('--custom-white');
 const cssBlack = getComputedStyle(document.body).getPropertyValue('--custom-black');
+const cssRed = getComputedStyle(document.body).getPropertyValue('--custom-light-red');
+const cssBlue = getComputedStyle(document.body).getPropertyValue('--custom-light-blue');
 
 const dateFormat = {
     day: "numeric",
@@ -11,18 +13,16 @@ const dateFormat = {
 const lineColors = [
     "#5bff00",
     "#00ffd9",
-    "#0048ff",
-    "#a100ff",
-    "#ff0008",
+    "#b9ffef",
+    "#ff000f",
     "#ffea00",
-    "#00912f",
     "#00bbff",
     "#ff00dd",
-    "#880000"
+    "#b5ff8d",
 ];
 
 const datasets = [];
-
+// TODO: Allow data deletion in tooltip
 let chart = new Chart(document.getElementById("dataChart"), {
     type: 'line',
     options: {
@@ -30,7 +30,7 @@ let chart = new Chart(document.getElementById("dataChart"), {
             x: {
                 type: 'time',
                 time: {
-                    tooltipFormat: 'DD.MM hh:mm:ss',
+                    tooltipFormat: 'DD.MM HH:mm:ss',
                     displayFormats: {
                         day: 'MMM DD YY'
                     }
@@ -65,7 +65,7 @@ let chart = new Chart(document.getElementById("dataChart"), {
                 display: true,
                 position: 'right',
                 grid: {
-                    color: cssBlack
+                    color: cssBlue
                 },
                 ticks: {
                     color: cssWhite,
@@ -85,19 +85,28 @@ let chart = new Chart(document.getElementById("dataChart"), {
                     }
                 },
                 grid: {
-                    drawOnChartArea: false,
-                    color: cssBlack
+                    // drawOnChartArea: false,
+                    color: cssRed
                 }
             }
         },
         plugins: {
             legend: {
+                display: false,
+                position: 'bottom',
                 labels: {
-                    color: cssWhite
+                    color: cssWhite,
+                    font: {
+                        size: 15,
+                        weight: "bold"
+                    }
                 }
             },
             tooltip: {
                 callbacks: {
+                    beforeTitle: function (context) {
+                        return context[0].dataset.label;
+                    },
                     label: function (context) {
                         let sensorElement = sensorNames.filter(sensor => sensor.id === context.dataset.id);
                         if (sensorElement?.length > 0)
@@ -134,7 +143,7 @@ let chart = new Chart(document.getElementById("dataChart"), {
 function loadChartData(sensorList) {
     sensorList.forEach((sensorElement) => {
         $.ajax({
-            url: `${baseUrl}/${sensorElement.address}/${sensorElement.name}`,
+            url: `${baseUrl}/${sensorElement.address}/${sensorElement.name}/last-timeframe`,
             type: 'GET',
             dataType: 'json',
             success: function (res) {
@@ -163,12 +172,14 @@ function loadChartData(sensorList) {
                     sensorData.push(entry);
                 });
 
+                let datasetColor = lineColors[datasets.length % lineColors.length];
+
                 let dataset = {
                     id: sensorElement.id,
                     label: sensorElement.name,
                     data: sensorData,
-                    backgroundColor: lineColors[datasets.length % lineColors.length],
-                    borderColor: lineColors[datasets.length % lineColors.length],
+                    backgroundColor: datasetColor,
+                    borderColor: datasetColor,
                     fill: false,
                     borderWidth: 1,
                     pointRadius: 1,
@@ -177,11 +188,16 @@ function loadChartData(sensorList) {
                     hidden: true
                 };
 
-                console.log(dataset);
-
                 datasets.push(dataset);
                 chart.update();
+
+                loadChartColor(sensorElement.id, datasetColor);
             }
         });
     });
+}
+
+function loadChartColor(sensorId, color) {
+    let colorElement = document.getElementById(`color-span${sensorId}`);
+    colorElement.style.background = color;
 }

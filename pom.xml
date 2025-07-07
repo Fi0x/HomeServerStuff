@@ -15,6 +15,7 @@
         <module>modules/recipes</module>
         <module>modules/sailing</module>
         <module>modules/util</module>
+        <module>modules/wordle</module>
     </modules>
 
 </project>

@@ -1,0 +1,12 @@
+<component name="ProjectRunConfigurationManager">
+    <configuration default="false" name="WordleApplication" type="SpringBootApplicationConfigurationType"
+                   factoryName="Spring Boot">
+        <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources"/>
+        <module name="HomeServerWordle"/>
+        <option name="SPRING_BOOT_MAIN_CLASS" value="io.github.fi0x.wordle.WordleApplication"/>
+        <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/modules/wordle"/>
+        <method v="2">
+            <option name="Make" enabled="true"/>
+        </method>
+    </configuration>
+</component>
