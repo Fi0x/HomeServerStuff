@@ -36,8 +36,8 @@ public class OrcInformationToEntityMerger
 
 	private CertificateEntity toEntity(OrcOverviewXmlRowDto rowDto)
 	{
-		return CertificateEntity.builder().id(rowDto.getRefNo()).shipName(rowDto.getYachtName())
-								.certificateType(CertificateType.valueOf(rowDto.getCertName().toUpperCase()))
+		return CertificateEntity.builder().id(rowDto.getRefNo()).shipName(rowDto.getYachtName()).certificateType(
+										CertificateType.valueOf(rowDto.getCertName().toUpperCase().replace(" ", "_")))
 								.country(rowDto.getCountryId()).shipClass(rowDto.getShipClass())
 								.url(URL_BASE + rowDto.getDxtID()).build();
 	}

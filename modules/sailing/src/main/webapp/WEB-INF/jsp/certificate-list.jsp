@@ -33,19 +33,32 @@
         </thead>
         <tbody>
         <c:forEach items="${certificates}" var="certificate">
-            <tr class="clickable-row"
-                onclick="window.location='${certificate.url}'">
+            <tr id="cert${certificate.id}" class="clickable-row" onclick="selectCertificate(`${certificate.id}`)">
                 <td>${certificate.country}</td>
-                <td>${certificate.shipName}</td>
+                <td class="fw-bold">${certificate.shipName}</td>
                 <td>${certificate.shipClass}</td>
-                <td>${certificate.certificateType}</td>
-                <td>${certificate.singleNumber}</td>
-                <td>${certificate.tripleLongLow}</td>
-                <td>${certificate.tripleLongMid}</td>
-                <td>${certificate.tripleLongHigh}</td>
-                <td>${certificate.tripleUpDownLow}</td>
-                <td>${certificate.tripleUpDownMid}</td>
-                <td>${certificate.tripleUpDownHigh}</td>
+                <td><a class="btn" href="${certificate.url}">${certificate.certificateType}</a></td>
+                <td><span class="fw-bold">${certificate.singleNumber}</span><br>
+                    <span id="single${certificate.id}">${(certificate.singleNumber * 60).intValue()} min ${((certificate.singleNumber * 60 - (certificate.singleNumber * 60).intValue()) * 60).intValue()}s</span>
+                </td>
+                <td><span class="fw-bold">${certificate.tripleLongLow}</span><br>
+                    <span id="trilolow${certificate.id}">${(certificate.tripleLongLow * 60).intValue()} min ${((certificate.tripleLongLow * 60 - (certificate.tripleLongLow * 60).intValue()) * 60).intValue()}s</span>
+                </td>
+                <td><span class="fw-bold">${certificate.tripleLongMid}</span><br>
+                    <span id="trilomid${certificate.id}">${(certificate.tripleLongMid * 60).intValue()} min ${((certificate.tripleLongMid * 60 - (certificate.tripleLongMid * 60).intValue()) * 60).intValue()}s</span>
+                </td>
+                <td><span class="fw-bold">${certificate.tripleLongHigh}</span><br>
+                    <span id="trilohigh${certificate.id}">${(certificate.tripleLongHigh * 60).intValue()} min ${((certificate.tripleLongHigh * 60 - (certificate.tripleLongHigh * 60).intValue()) * 60).intValue()}s</span>
+                </td>
+                <td><span class="fw-bold">${certificate.tripleUpDownLow}</span><br>
+                    <span id="triuplow${certificate.id}">${(certificate.tripleUpDownLow * 60).intValue()} min ${((certificate.tripleUpDownLow * 60 - (certificate.tripleUpDownLow * 60).intValue()) * 60).intValue()}s</span>
+                </td>
+                <td><span class="fw-bold">${certificate.tripleUpDownMid}</span><br>
+                    <span id="triupmid${certificate.id}">${(certificate.tripleUpDownMid * 60).intValue()} min ${((certificate.tripleUpDownMid * 60 - (certificate.tripleUpDownMid * 60).intValue()) * 60).intValue()}s</span>
+                </td>
+                <td><span class="fw-bold">${certificate.tripleUpDownHigh}</span><br>
+                    <span id="triuphigh${certificate.id}">${(certificate.tripleUpDownHigh * 60).intValue()} min ${((certificate.tripleUpDownHigh * 60 - (certificate.tripleUpDownHigh * 60).intValue()) * 60).intValue()}s</span>
+                </td>
             </tr>
         </c:forEach>
         </tbody>
@@ -55,6 +68,27 @@
 <script src="../../js/sailing-functions.js"></script>
 <script>
     let baseUrl = "${pageContext.request.contextPath}/api"
+</script>
+<script>
+    const certificates = [
+        <c:forEach items="${certificates}" var="certificate" varStatus="loop">
+        {
+            id: `${certificate.id}`,
+            shipName: `${certificate.shipName}`,
+            certificateType: `${certificate.certificateType}`,
+            country: `${certificate.country}`,
+            shipClass: `${certificate.shipClass}`,
+            url: `${certificate.url}`,
+            singleNumber: ${certificate.singleNumber},
+            tripleLongLow: ${certificate.tripleLongLow},
+            tripleLongMid: ${certificate.tripleLongMid},
+            tripleLongHigh: ${certificate.tripleLongHigh},
+            tripleUpDownLow: ${certificate.tripleUpDownLow},
+            tripleUpDownMid: ${certificate.tripleUpDownMid},
+            tripleUpDownHigh: ${certificate.tripleUpDownHigh}
+        }${not loop.last ? ',' : ''}
+        </c:forEach>
+    ];
 </script>
 <script>
     onload = function () {

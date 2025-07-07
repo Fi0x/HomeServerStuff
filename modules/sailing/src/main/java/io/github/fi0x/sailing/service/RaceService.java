@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+//TODO: Switch image-file to the correct icon
 @Slf4j
 @Service
 @RequiredArgsConstructor

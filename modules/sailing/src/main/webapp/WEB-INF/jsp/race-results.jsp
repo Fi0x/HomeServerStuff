@@ -20,7 +20,8 @@
             <th class="clickable" colspan="1">Skipper</th>
             <th class="clickable" colspan="1">Class</th>
             <c:forEach items="${races}" var="race">
-                <th class="clickable left-line" colspan="2">${race.name}</th>
+                <th class="clickable left-line race-name" colspan="2"><span>${race.name}</span><span
+                        class="thin-text">${race.raceGroup}</span></th>
             </c:forEach>
             <th class="clickable left-line" colspan="1">Gesamt</th>
         </tr>
@@ -33,6 +34,7 @@
                 <td>${result.skipper}</td>
                 <td>${result.shipClass}</td>
                 <c:forEach items="${races}" var="race">
+                    <%--                TODO: When clicked on a race-result, open race-url and show results--%>
                     <td id="${result.shipName.replace(' ', '')}${result.skipper.replace(' ', '')}position${race.name.replace(' ', '')}${race.raceGroup.replace(' ', '')}"
                         class="left-line"></td>
                     <td id="${result.shipName.replace(' ', '')}${result.skipper.replace(' ', '')}points${race.name.replace(' ', '')}${race.raceGroup.replace(' ', '')}"></td>

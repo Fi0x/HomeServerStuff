@@ -93,3 +93,37 @@ function fillRaceResults() {
         tableBody.appendChild(scorePairs[i - 1].rowElement);
     }
 }
+
+function selectCertificate(certificateId) {
+    //TODO: compare times with other certificates and show verguetungs-times for all other certificates
+
+    let selectedCertificate = certificates.find(c => c.id === certificateId);
+
+    for (let cert of certificates) {
+        let row = document.getElementById(`cert${cert.id}`);
+        row.classList.remove('selection');
+
+        setTimeDifferenceOnElements(selectedCertificate.singleNumber - cert.singleNumber, `single${cert.id}`);
+        setTimeDifferenceOnElements(selectedCertificate.tripleLongLow - cert.tripleLongLow, `trilolow${cert.id}`);
+        setTimeDifferenceOnElements(selectedCertificate.tripleLongMid - cert.tripleLongMid, `trilomid${cert.id}`);
+        setTimeDifferenceOnElements(selectedCertificate.tripleLongHigh - cert.tripleLongHigh, `trilohigh${cert.id}`);
+        setTimeDifferenceOnElements(selectedCertificate.tripleUpDownLow - cert.tripleUpDownLow, `triuplow${cert.id}`);
+        setTimeDifferenceOnElements(selectedCertificate.tripleUpDownMid - cert.tripleUpDownMid, `triupmid${cert.id}`);
+        setTimeDifferenceOnElements(selectedCertificate.tripleUpDownHigh - cert.tripleUpDownHigh, `triuphigh${cert.id}`);
+    }
+    document.getElementById(`cert${certificateId}`).classList.add('selection');
+}
+
+function setTimeDifferenceOnElements(diff, elementId) {
+    let minutes = (diff * 60).toFixed(0).toString();
+    let seconds = ((diff * 60 - minutes) * 60).toFixed(0).toString();
+    let element = document.getElementById(elementId);
+
+    element.innerText = `${minutes} min ${seconds}s`;
+    if (diff > 0)
+        element.classList = ['red-text-bold text-nowrap'];
+    else if (diff < 0)
+        element.classList = ['green-text-bold text-nowrap'];
+    else
+        element.classList = ['text-nowrap'];
+}

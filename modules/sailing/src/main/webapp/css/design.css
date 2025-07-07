@@ -263,6 +263,33 @@ input {
     color: var(--custom-black);
 }
 
+.red-text-bold {
+    color: var(--custom-light-red);
+    font-weight: bold;
+}
+
+.green-text-bold {
+    color: var(--custom-light-green);
+    font-weight: bold;
+}
+
 .crossed {
     text-decoration: line-through;
+}
+
+.race-name {
+    vertical-align: bottom;
+    text-align: center;
+}
+
+.race-name span {
+    -ms-writing-mode: tb-rl;
+    -webkit-writing-mode: vertical-rl;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    white-space: nowrap;
+}
+
+.thin-text {
+    font-weight: normal;
 }
