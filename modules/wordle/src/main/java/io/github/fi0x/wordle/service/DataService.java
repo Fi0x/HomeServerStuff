@@ -21,10 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Controller
@@ -58,8 +55,6 @@ public class DataService
 	private final WordRepo wordRepo;
 	private final GameResultRepo resultRepo;
 	private final GameResultConverter gameResultConverter;
-
-	//TODO: Add a cleanup process, to remove all games, that are no longer available and have no player scores
 
 	public List<GameModeDto> getGameModes()
 	{
@@ -132,7 +127,9 @@ public class DataService
 
 	private List<GameResultDto> getGameResults(Long gameTimestamp)
 	{
-		return resultRepo.findAllByTimestamp(gameTimestamp).stream().map(gameResultConverter::convert).toList();
+		return resultRepo.findAllByTimestamp(gameTimestamp).stream().map(gameResultConverter::convert)
+						 .sorted(Comparator.comparingLong(GameResultDto::getRequiredTime))
+						 .sorted(Comparator.comparingInt(GameResultDto::getTries)).toList();
 	}
 
 	private void createNewGame(Long timestamp, String gameType)
