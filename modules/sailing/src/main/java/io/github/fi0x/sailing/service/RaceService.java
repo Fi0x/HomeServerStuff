@@ -76,8 +76,10 @@ public class RaceService
 		List<ShipRaceResults> results = new ArrayList<>();
 
 		List<RaceResultEntity> entities = resultRepo.findAll(Sort.by("shipName", "skipper"));
-
 		entities = filterYearAndGroup(entities, group, year, RaceResultEntity.class);
+
+		List<RaceEntity> races = raceRepo.findAll();
+		races = filterYearAndGroup(races, group, year, RaceEntity.class);
 
 		ShipRaceResults current = null;
 		for (RaceResultEntity entity : entities)
@@ -90,7 +92,11 @@ public class RaceService
 				results.add(current);
 			}
 
-			current.getRaceResults().add(raceResultConverter.convert(entity));
+			RaceResultDto raceResultDto = raceResultConverter.convert(entity);
+			raceResultDto.setUrl(
+					races.stream().filter(race -> race.getId().equals(raceResultDto.getRaceId())).findFirst()
+						 .orElse(RaceEntity.builder().url("").build()).getUrl());
+			current.getRaceResults().add(raceResultDto);
 		}
 
 		Map<RaceId, Boolean> raceMap = raceRepo.findAll().stream()

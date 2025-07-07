@@ -16,6 +16,7 @@ public class RaceResultDto
 	private Long startDate;
 	private String raceGroup;
 	private String skipper;
+	private String url;
 
 	private String shipName;
 	private Integer position;

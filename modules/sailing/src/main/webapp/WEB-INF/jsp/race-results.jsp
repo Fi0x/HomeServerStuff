@@ -34,10 +34,12 @@
                 <td>${result.skipper}</td>
                 <td>${result.shipClass}</td>
                 <c:forEach items="${races}" var="race">
-                    <%--                TODO: When clicked on a race-result, open race-url and show results--%>
-                    <td id="${result.shipName.replace(' ', '')}${result.skipper.replace(' ', '')}position${race.name.replace(' ', '')}${race.raceGroup.replace(' ', '')}"
-                        class="left-line"></td>
-                    <td id="${result.shipName.replace(' ', '')}${result.skipper.replace(' ', '')}points${race.name.replace(' ', '')}${race.raceGroup.replace(' ', '')}"></td>
+                    <td onclick="window.location='${race.url}'"
+                        id="${result.shipName.replace(' ', '')}${result.skipper.replace(' ', '')}position${race.name.replace(' ', '')}${race.raceGroup.replace(' ', '')}"
+                        class="left-line clickable"></td>
+                    <td onclick="window.location='${race.url}'"
+                        id="${result.shipName.replace(' ', '')}${result.skipper.replace(' ', '')}points${race.name.replace(' ', '')}${race.raceGroup.replace(' ', '')}"
+                        class="clickable"></td>
                 </c:forEach>
                 <td id="${result.shipName.replace(' ', '')}${result.skipper.replace(' ', '')}pointsTotal"
                     class="left-line"></td>
