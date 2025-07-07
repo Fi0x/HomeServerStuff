@@ -29,6 +29,13 @@ public class OrcInformationToEntityMerger
 		} catch (NullPointerException e)
 		{
 			log.warn("Could not add scoring details to certificate '{}'", entity.getId());
+			entity.setSingleNumber(1.0);
+			entity.setTripleLongLow(1.0);
+			entity.setTripleLongMid(1.0);
+			entity.setTripleLongHigh(1.0);
+			entity.setTripleUpDownLow(1.0);
+			entity.setTripleUpDownMid(1.0);
+			entity.setTripleUpDownHigh(1.0);
 		}
 
 		return entity;
@@ -55,6 +62,9 @@ public class OrcInformationToEntityMerger
 
 	private Double getValue(Element dataElement)
 	{
+		if (dataElement == null)
+			return 1.0;
+
 		String text = dataElement.getElementsByTag("td").first().text();
 		return Double.parseDouble(text);
 	}

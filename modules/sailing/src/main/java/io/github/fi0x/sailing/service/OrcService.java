@@ -43,7 +43,6 @@ public class OrcService
 		RestTemplate restTemplate = new RestTemplate();
 		String result = restTemplate.getForObject(url, String.class);
 
-		//TODO: Adjust for AUT and SUI certificates (Maybe even more)
 		OrcOverviewXmlRowDto overviewDto = overviewConverter.convert(result);
 		if (overviewDto == null)
 		{

@@ -95,8 +95,6 @@ function fillRaceResults() {
 }
 
 function selectCertificate(certificateId) {
-    //TODO: compare times with other certificates and show verguetungs-times for all other certificates
-
     let selectedCertificate = certificates.find(c => c.id === certificateId);
 
     for (let cert of certificates) {
