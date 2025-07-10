@@ -4,6 +4,9 @@ import io.github.fi0x.util.dto.ServiceDataDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
@@ -41,9 +44,14 @@ public class HubNotifier
 		ServiceDataDto requestDto =
 				ServiceDataDto.builder().name(serviceInformation.getServiceName()).port(currentPort).build();
 
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		HttpEntity<ServiceDataDto> request = new HttpEntity<>(requestDto, headers);
+
 		try
 		{
-			restTemplate.postForObject(url, requestDto, Void.class);
+			restTemplate.postForObject(url, request, Void.class);
 		} catch(RestClientException e)
 		{
 			log.warn("Could not reach hub because of exception: {}", e.getLocalizedMessage());
