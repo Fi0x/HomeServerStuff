@@ -60,4 +60,6 @@ public class InformationController
 
 		return "race-results";
 	}
+
+	//TODO: Add a new page with a list of all races and the option to change certain details of them, like race-group
 }
