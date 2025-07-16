@@ -293,3 +293,10 @@ input {
 .thin-text {
     font-weight: normal;
 }
+
+.section {
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin: 2rem 0;
+    background-color: var(--dark-accent2);
+}
