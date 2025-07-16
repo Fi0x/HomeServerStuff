@@ -9,6 +9,7 @@
 <div class="container">
     <h1>Races</h1>
     <div>
+        <%--        TODO: Make input field longer and add margins--%>
         <input type="text" id="newRaceUrl" placeholder="https://www.manage2sail.com/...">
         <div class="btn" onclick="addRace()" title="Link to manage2sail result page">Add new race-results</div>
     </div>
@@ -22,6 +23,8 @@
             <th class="clickable" colspan="1">ORC</th>
             <th class="clickable" colspan="1">Participants</th>
             <th class="clickable" colspan="1">Score Modifier</th>
+            <%--            TODO: Add row with button to remove a race from database--%>
+            <%--            TODO: Add row with button to reload results for that race--%>
         </tr>
         </thead>
         <tbody>

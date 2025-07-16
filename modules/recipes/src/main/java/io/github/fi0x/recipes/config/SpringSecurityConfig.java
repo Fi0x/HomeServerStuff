@@ -1,7 +1,8 @@
 package io.github.fi0x.recipes.config;
 
-import io.github.fi0x.util.config.HomeServerUtilConfig;
+import io.github.fi0x.util.config.HomeServerUtilSecurityConfig;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,11 +16,9 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SpringSecurityConfig
 {
-	private static final String[] PUBLIC_URLS =
-			new String[]{"/", "/WEB-INF/jsp/recipe-list.jsp", "/recipe/*", "/WEB-INF/jsp/show-recipe.jsp"};
+	private static final String[] PUBLIC_URLS = new String[]{"/", "/WEB-INF/jsp/recipe-list.jsp", "/recipe/*", "/WEB" + "-INF/jsp/show-recipe.jsp"};
 	private static final String[] ANONYMOUS_URLS = new String[]{};
-	private static final String[] PRIVATE_URLS =
-			new String[]{"/recipe", "/recipe/*/edit", "WEB-INF/jsp/edit-recipe", "/recipe/*/delete", "/recipe/create"};
+	private static final String[] PRIVATE_URLS = new String[]{"/recipe", "/recipe/*/edit", "WEB-INF/jsp/edit-recipe", "/recipe/*/delete", "/recipe/create"};
 
 	@Bean
 	@Order(SecurityProperties.BASIC_AUTH_ORDER)
@@ -27,6 +26,11 @@ public class SpringSecurityConfig
 	{
 		log.debug("securityFilterChain() bean called");
 
-		return HomeServerUtilConfig.securityFilterChainSetup(http, PUBLIC_URLS, ANONYMOUS_URLS, PRIVATE_URLS);
+		return HomeServerUtilSecurityConfig.securityFilterChainSetup(http, ArrayUtils.addAll(PUBLIC_URLS,
+																							 HomeServerUtilSecurityConfig.PUBLIC_URLS),
+																	 ArrayUtils.addAll(ANONYMOUS_URLS,
+																					   HomeServerUtilSecurityConfig.ANONYMOUS_URLS),
+																	 ArrayUtils.addAll(PRIVATE_URLS,
+																					   HomeServerUtilSecurityConfig.PRIVATE_URLS));
 	}
 }

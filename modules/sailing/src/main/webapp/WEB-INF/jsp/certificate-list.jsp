@@ -15,6 +15,7 @@
     <label class="search-label">
         <input type="text" id="searchText" onkeyup="searchFunction()" class="search-input" placeholder="Search...">
     </label>
+    <%--    TODO: Add filter options for type and country--%>
     <table id="searchableTable" class="table sortable">
         <thead>
         <tr class="underlined-row">
@@ -29,6 +30,7 @@
             <th class="clickable">Triple Number Up Down Low</th>
             <th class="clickable">Triple Number Up Down Medium</th>
             <th class="clickable">Triple Number Up Down High</th>
+            <%--            TODO: Add column to delete an entry--%>
         </tr>
         </thead>
         <tbody>

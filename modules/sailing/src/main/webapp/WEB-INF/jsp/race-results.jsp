@@ -8,10 +8,6 @@
 <%@include file="../common/navigation.jspf" %>
 <div class="container">
     <h1>Race results</h1>
-    <div>
-        <input type="text" id="newRaceUrl" placeholder="https://www.manage2sail.com/...">
-        <div class="btn" onclick="addRace()" title="Link to manage2sail result page">Add new race-results</div>
-    </div>
     <table id="searchableTable" class="table sortable">
         <thead>
         <tr class="underlined-row">
@@ -24,6 +20,7 @@
                         class="thin-text">${race.raceGroup}</span></th>
             </c:forEach>
             <th class="clickable left-line" colspan="1">Gesamt</th>
+            <%--            TODO: Add option to delete single results--%>
         </tr>
         </thead>
         <tbody>
