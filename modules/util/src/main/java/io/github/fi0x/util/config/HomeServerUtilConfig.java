@@ -103,7 +103,7 @@ public class HomeServerUtilConfig
 	public SecurityFilterChain utilitySecurityFilterChain(HttpSecurity http) throws Exception
 	{
 		log.info("utilitySecurityFilterChain() bean called");
-
+		//TODO: Fix security filter chain, when other one exists, to avoid overriding each other in new spring version
 		return securityFilterChainSetup(http, PUBLIC_URLS, ANONYMOUS_URLS, PRIVATE_URLS);
 	}
 

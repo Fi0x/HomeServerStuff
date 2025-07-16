@@ -61,5 +61,15 @@ public class InformationController
 		return "race-results";
 	}
 
+	@GetMapping("/race-list")
+	public String showRaceList(ModelMap model)
+	{
+		log.info("showRaceList() called");
+
+		model.put("races", raceService.getAllRaces(null, null));
+
+		return "race-list";
+	}
+
 	//TODO: Add a new page with a list of all races and the option to change certain details of them, like race-group
 }
