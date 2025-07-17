@@ -1,5 +1,6 @@
 package io.github.fi0x.sailing.rest;
 
+import io.github.fi0x.sailing.db.entities.CertificateEntity;
 import io.github.fi0x.sailing.service.OrcService;
 import io.github.fi0x.sailing.service.RaceService;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -22,7 +25,11 @@ public class InformationController
 	{
 		log.info("showOrcCertificates() called");
 
-		model.put("certificates", orcService.getAllCertificates());
+		List<CertificateEntity> certificates = orcService.getAllCertificates();
+		model.put("certificates", certificates);
+		model.put("certificateTypes",
+				  certificates.stream().map(CertificateEntity::getCertificateType).distinct().toList());
+		model.put("countries", certificates.stream().map(CertificateEntity::getCountry).distinct().toList());
 
 		return "certificate-list";
 	}
@@ -70,6 +77,4 @@ public class InformationController
 
 		return "race-list";
 	}
-
-	//TODO: Add a new page with a list of all races and the option to change certain details of them, like race-group
 }

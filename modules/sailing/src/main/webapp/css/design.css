@@ -300,3 +300,40 @@ input {
     margin: 2rem 0;
     background-color: var(--dark-accent2);
 }
+
+.full-width {
+    max-width: 100%;
+}
+
+.filter-option {
+    cursor: pointer;
+    margin: 0.5rem;
+    padding: 0.3rem;
+    background-color: var(--light-accent);
+    border-radius: 0.3rem;
+    display: inline-flex;
+    color: var(--custom-black);
+}
+
+.filter-option:hover {
+    background-color: var(--light-accent2);
+}
+
+.filter-checkbox {
+    margin-left: 0.5rem;
+}
+
+input[type="checkbox"] {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+    appearance: none;
+}
+
+input[type="checkbox"]:checked {
+    background-color: var(--custom-black);
+}
+
+.filterable {
+}

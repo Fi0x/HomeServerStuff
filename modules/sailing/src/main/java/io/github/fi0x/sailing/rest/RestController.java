@@ -30,6 +30,14 @@ public class RestController
 		return orcService.saveCertificate(certificateId);
 	}
 
+	@PostMapping("/orc/remove/{certificateId}")
+	public void removeOrcCertificate(@PathVariable String certificateId)
+	{
+		log.debug("removeOrcCertificate() called with id {}", certificateId);
+
+		orcService.removeCertificate(certificateId);
+	}
+
 	@PostMapping("/race/add")
 	public List<RaceResultEntity> addRace(@RequestBody String raceUrl)
 	{

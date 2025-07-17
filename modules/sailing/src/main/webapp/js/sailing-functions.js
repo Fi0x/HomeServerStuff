@@ -97,6 +97,9 @@ function fillRaceResults() {
 function selectCertificate(certificateId) {
     let selectedCertificate = certificates.find(c => c.id === certificateId);
 
+    if (!selectedCertificate)
+        return;
+
     for (let cert of certificates) {
         let row = document.getElementById(`cert${cert.id}`);
         row.classList.remove('selection');
@@ -124,4 +127,55 @@ function setTimeDifferenceOnElements(diff, elementId) {
         element.classList = ['green-text-bold text-nowrap'];
     else
         element.classList = ['text-nowrap'];
+}
+
+function deleteCertificate(certId) {
+
+    let idx = certificates.indexOf(certificates.find(c => c.id === certId));
+    if (idx >= 0)
+        certificates.splice(idx, 1);
+
+    $.post(`${baseUrl}/orc/remove/${certId}`);
+
+    let row = document.getElementById(`cert${certId}`);
+    row.parentElement.removeChild(row);
+}
+
+function updateFilterState(gameFilter, checkbox) {
+    let allOptions = document.getElementsByClassName("filter-option");
+    let validFilters = [];
+    for (let option of allOptions) {
+        let checkbox = option.getElementsByTagName('input')[0];
+        if (checkbox.checked) {
+            validFilters.push(option.innerText);
+        }
+    }
+
+    let rows = document.getElementsByTagName("tr");
+    for (let rowIdx = 0; rowIdx < rows.length; rowIdx++) {
+        if (validFilters.length < 1) {
+            rows[rowIdx].style.display = "";
+        } else {
+            let tds = rows[rowIdx].getElementsByClassName("filterable");
+            let valid = true;
+
+            for (let filter of validFilters) {
+                let innerValid = false;
+                for (let td of tds) {
+                    let txtValue = td.innerText;
+                    if (txtValue.indexOf(filter.trim()) > -1) {
+                        innerValid = true;
+                        break;
+                    }
+                }
+                if (!innerValid)
+                    valid = false;
+            }
+
+            if (valid)
+                rows[rowIdx].style.display = "";
+            else
+                rows[rowIdx].style.display = "none";
+        }
+    }
 }

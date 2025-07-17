@@ -68,4 +68,9 @@ public class OrcService
 	{
 		return orcRepo.findById(certificateId);
 	}
+
+	public void removeCertificate(String certificateId)
+	{
+		orcRepo.deleteById(certificateId);
+	}
 }
