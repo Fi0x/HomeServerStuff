@@ -30,11 +30,13 @@ body {
     border-radius: 0.3rem;
     padding: 0.3rem;
     border-width: 0;
+    cursor: pointer;
 }
 
 .btn:hover {
     color: var(--custom-white);
     background-color: var(--dark-accent);
+    cursor: pointer;
 }
 
 .btn-success {
@@ -45,11 +47,13 @@ body {
     padding: 0.3rem;
     text-decoration: none;
     border-width: 0;
+    cursor: pointer;
 }
 
 .btn-success:hover {
     color: var(--custom-black);
     background-color: var(--custom-light-green);
+    cursor: pointer;
 }
 
 .btn-danger {
@@ -60,11 +64,13 @@ body {
     padding: 0.3rem;
     text-decoration: none;
     border-width: 0;
+    cursor: pointer;
 }
 
 .btn-danger:hover {
     color: var(--custom-black);
     background-color: var(--custom-light-red);
+    cursor: pointer;
 }
 
 .btn-edit {
@@ -76,10 +82,12 @@ body {
     text-decoration: none;
     display: inline-block;
     vertical-align: middle;
+    cursor: pointer;
 }
 
 .btn-edit:hover {
     background-color: var(--custom-light-yellow);
+    cursor: pointer;
 }
 
 .btn-hidden-light {
@@ -202,7 +210,7 @@ table {
 }
 
 .long-input {
-    width: 25rem;
+    width: 40rem;
 }
 
 .file-input {
@@ -336,4 +344,20 @@ input[type="checkbox"]:checked {
 }
 
 .filterable {
+}
+
+.vertical-align-center {
+    vertical-align: middle;
+}
+
+.top-margin {
+    margin-top: 1rem;
+}
+
+.bottom-margin {
+    margin-bottom: 1rem;
+}
+
+.align-text-center {
+    text-align: center;
 }

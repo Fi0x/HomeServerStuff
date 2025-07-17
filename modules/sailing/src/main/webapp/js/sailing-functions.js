@@ -141,6 +141,19 @@ function deleteCertificate(certId) {
     row.parentElement.removeChild(row);
 }
 
+function deleteRace(button) {
+    button.hidden = true;
+    button.parentNode.parentNode.classList.add("red");
+}
+
+function updateRace(button, name, date, group) {
+    //TODO: Delete, or update race, if changes were made
+}
+
+function reloadRace(name, date, group) {
+    //TODO: Reload result-data from website and update database
+}
+
 function updateFilterState(gameFilter, checkbox) {
     let allOptions = document.getElementsByClassName("filter-option");
     let validFilters = [];

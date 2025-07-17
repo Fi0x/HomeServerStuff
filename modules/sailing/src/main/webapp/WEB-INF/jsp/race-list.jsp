@@ -8,10 +8,12 @@
 <%@include file="../common/navigation.jspf" %>
 <div class="container">
     <h1>Races</h1>
-    <div>
-        <%--        TODO: Make input field longer and add margins--%>
-        <input type="text" id="newRaceUrl" placeholder="https://www.manage2sail.com/...">
-        <div class="btn" onclick="addRace()" title="Link to manage2sail result page">Add new race-results</div>
+    <div class="top-margin bottom-margin">
+        <input class="long-input vertical-align-center" type="text" id="newRaceUrl"
+               placeholder="https://www.manage2sail.com/...">
+        <div class="btn vertical-align-center" onclick="addRace()" title="Link to manage2sail result page">Add new
+            race-results
+        </div>
     </div>
     <table id="searchableTable" class="table sortable">
         <thead>
@@ -19,24 +21,29 @@
             <th class="clickable" colspan="1">Race Name</th>
             <th class="clickable" colspan="1">Race Group</th>
             <th class="clickable" colspan="1">Date</th>
-            <th class="clickable" colspan="1">Crossable</th>
-            <th class="clickable" colspan="1">ORC</th>
-            <th class="clickable" colspan="1">Participants</th>
-            <th class="clickable" colspan="1">Score Modifier</th>
-            <%--            TODO: Add row with button to remove a race from database--%>
-            <%--            TODO: Add row with button to reload results for that race--%>
+            <th class="clickable align-text-center" colspan="1">Crossable</th>
+            <th class="clickable align-text-center" colspan="1">ORC</th>
+            <th class="clickable align-text-center" colspan="1">Participants</th>
+            <th class="clickable align-text-center" colspan="1">Score Modifier</th>
         </tr>
         </thead>
         <tbody>
         <c:forEach items="${races}" var="race">
             <tr>
-                <td>${race.name}</td>
-                <td>${race.raceGroup}</td>
+                <td><input value="${race.name}"></td>
+                <td><input value="${race.raceGroup}"></td>
+                    <%--                TODO: Display date in readable format--%>
                 <td>${race.startDate}</td>
-                <td>${race.bufferRace}</td>
-                <td>${race.orcRace}</td>
-                <td>${race.participants}</td>
-                <td>${race.scoreModifier}</td>
+                <td class="align-text-center"><input ${race.bufferRace ? 'checked': ''} type="checkbox"></td>
+                <td class="align-text-center"><input ${race.orcRace ? 'checked' : ''} type="checkbox"></td>
+                <td class="align-text-center">${race.participants}</td>
+                <td class="align-text-center">${race.scoreModifier}</td>
+                <td class="align-content-center"><a class="btn-danger" onclick="deleteRace(this)">Delete</a></td>
+                <td class="align-content-center"><a class="btn-edit"
+                                                    onclick="updateRace(this, '${race.name}', '${race.startDate}', '${race.raceGroup}')">
+                    Save Changes</a></td>
+                <td><a class="btn" onclick="reloadRace('${race.name}', '${race.startDate}', '${race.raceGroup}')">
+                    Reload Results</a></td>
             </tr>
         </c:forEach>
         </tbody>
