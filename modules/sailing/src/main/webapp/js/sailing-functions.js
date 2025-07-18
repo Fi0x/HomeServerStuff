@@ -62,6 +62,9 @@ function fillRaceResults() {
             let raceId = singleResult.raceName.replace(/\s/g, '') + singleResult.raceGroup.replace(/\s/g, '');
             let positionElement = document.getElementById(`${combinedId}position${raceId}`);
             let scoreElement = document.getElementById(`${combinedId}points${raceId}`);
+
+            document.getElementById(`${combinedId}button${raceId}`).style = "display: ''";
+
             positionElement.innerText = singleResult.position;
             scoreElement.innerText = singleResult.score.toFixed(1).toString();
             if (singleResult.crossed) {
@@ -152,6 +155,10 @@ function updateRace(button, name, date, group) {
 
 function reloadRace(name, date, group) {
     //TODO: Reload result-data from website and update database
+}
+
+function deleteResult(raceName, date, group, skipper) {
+    //TODO: Remove a single result for a single ship
 }
 
 function updateFilterState(gameFilter, checkbox) {

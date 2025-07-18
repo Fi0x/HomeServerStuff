@@ -73,7 +73,7 @@ public class InformationController
 	{
 		log.info("showRaceList() called");
 
-		model.put("races", raceService.getAllRaces(null, null));
+		model.put("races", raceService.getAllRaces());
 
 		return "race-list";
 	}

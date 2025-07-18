@@ -16,11 +16,10 @@
             <th class="clickable" colspan="1">Skipper</th>
             <th class="clickable" colspan="1">Class</th>
             <c:forEach items="${races}" var="race">
-                <th class="clickable left-line race-name" colspan="2"><span>${race.name}</span><span
+                <th class="clickable left-line race-name" colspan="3"><span>${race.name}</span><span
                         class="thin-text">${race.raceGroup}</span></th>
             </c:forEach>
             <th class="clickable left-line" colspan="1">Gesamt</th>
-            <%--            TODO: Add option to delete single results--%>
         </tr>
         </thead>
         <tbody>
@@ -37,6 +36,11 @@
                     <td onclick="window.location='${race.url}'"
                         id="${result.shipName.replace(' ', '')}${result.skipper.replace(' ', '')}points${race.name.replace(' ', '')}${race.raceGroup.replace(' ', '')}"
                         class="clickable"></td>
+                    <td style="padding: 0 0.5rem 0 0"><a
+                            id="${result.shipName.replace(' ', '')}${result.skipper.replace(' ', '')}button${race.name.replace(' ', '')}${race.raceGroup.replace(' ', '')}"
+                            style="display: none" class="btn-danger round-button"
+                            onclick="deleteResult(`${race.name}`, `${race.startDate}`, `${race.raceGroup}`, `${result.skipper}`)">X</a>
+                    </td>
                 </c:forEach>
                 <td id="${result.shipName.replace(' ', '')}${result.skipper.replace(' ', '')}pointsTotal"
                     class="left-line"></td>

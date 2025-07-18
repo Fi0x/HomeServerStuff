@@ -111,9 +111,12 @@ body {
 }
 
 .round-button {
-    border-radius: 2rem;
-    width: 2rem;
-    height: 2rem;
+    border-radius: 1.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    display: block;
+    text-align: center;
+    padding: 0.05rem;
 }
 
 .menu-bar-image {
@@ -360,4 +363,8 @@ input[type="checkbox"]:checked {
 
 .align-text-center {
     text-align: center;
+}
+
+.no-padding {
+    padding: 0;
 }

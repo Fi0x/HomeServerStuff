@@ -5,6 +5,7 @@ import io.github.fi0x.sailing.db.RaceResultRepo;
 import io.github.fi0x.sailing.db.entities.RaceEntity;
 import io.github.fi0x.sailing.db.entities.RaceId;
 import io.github.fi0x.sailing.db.entities.RaceResultEntity;
+import io.github.fi0x.sailing.logic.converter.RaceConverter;
 import io.github.fi0x.sailing.logic.converter.RaceResultToDtoConverter;
 import io.github.fi0x.sailing.logic.dto.*;
 import lombok.RequiredArgsConstructor;
@@ -48,11 +49,17 @@ public class RaceService
 	private final RaceRepo raceRepo;
 	private final RaceResultRepo resultRepo;
 	private final RaceResultToDtoConverter raceResultConverter;
+	private final RaceConverter raceConverter;
 
 	public List<RaceEntity> getAllOrcRaces(String group, Integer year)
 	{
 		List<RaceEntity> resultEntities = raceRepo.findAllByOrcRaceOrderByStartDateAsc(true);
 		return filterYearAndGroup(resultEntities, group, year, RaceEntity.class);
+	}
+
+	public List<RaceInfoDto> getAllRaces()
+	{
+		return getAllRaces(null, null).stream().map(raceConverter::convert).toList();
 	}
 
 	public List<RaceEntity> getAllRaces(String group, Integer year)

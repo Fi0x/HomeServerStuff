@@ -32,8 +32,7 @@
             <tr>
                 <td><input value="${race.name}"></td>
                 <td><input value="${race.raceGroup}"></td>
-                    <%--                TODO: Display date in readable format--%>
-                <td>${race.startDate}</td>
+                <td><fmt:formatDate value="${race.startDate}" pattern="dd.MM.yyyy"/></td>
                 <td class="align-text-center"><input ${race.bufferRace ? 'checked': ''} type="checkbox"></td>
                 <td class="align-text-center"><input ${race.orcRace ? 'checked' : ''} type="checkbox"></td>
                 <td class="align-text-center">${race.participants}</td>
