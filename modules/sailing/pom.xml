@@ -178,5 +178,4 @@
         </dependency>
 
     </dependencies>
-    <!--TODO: Fix test-engine not working-->
 </project>
