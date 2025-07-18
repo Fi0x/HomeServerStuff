@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RaceResultRepo extends JpaRepository<RaceResultEntity, RaceResultId>
 {
+	void deleteAllByNameAndStartDateAndRaceGroup(String name, Long startDate, String raceGroup);
 }

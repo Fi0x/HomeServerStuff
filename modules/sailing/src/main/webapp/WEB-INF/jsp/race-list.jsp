@@ -42,7 +42,8 @@
                 <td class="align-content-center"><a class="btn-edit"
                                                     onclick="updateRace(${loop.index}, '${race.name}', '${race.longDate}', '${race.raceGroup}')">
                     Save Changes</a></td>
-                <td><a class="btn" onclick="reloadRace('${race.name}', '${race.startDate}', '${race.raceGroup}')">
+                <td><a class="btn"
+                       onclick="reloadRace('${race.name}', '${race.longDate}', '${race.raceGroup}', `${race.url}`, this)">
                     Reload Results</a></td>
             </tr>
         </c:forEach>

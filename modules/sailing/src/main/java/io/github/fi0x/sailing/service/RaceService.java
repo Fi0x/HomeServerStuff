@@ -5,6 +5,7 @@ import io.github.fi0x.sailing.db.RaceResultRepo;
 import io.github.fi0x.sailing.db.entities.RaceEntity;
 import io.github.fi0x.sailing.db.entities.RaceId;
 import io.github.fi0x.sailing.db.entities.RaceResultEntity;
+import io.github.fi0x.sailing.db.entities.RaceResultId;
 import io.github.fi0x.sailing.logic.converter.RaceConverter;
 import io.github.fi0x.sailing.logic.converter.RaceResultToDtoConverter;
 import io.github.fi0x.sailing.logic.dto.*;
@@ -18,6 +19,7 @@ import org.jsoup.nodes.Element;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -128,6 +130,7 @@ public class RaceService
 		return results;
 	}
 
+	@Transactional
 	public List<RaceResultEntity> saveRace(String raceResultUrl)
 	{
 		authenticator.restAuthenticate(UserRoles.ADMIN);
@@ -206,6 +209,7 @@ public class RaceService
 		return raceResultEntities;
 	}
 
+	@Transactional
 	public void deleteResult(String raceName, Long startDate, String raceGroup, String skipper)
 	{
 		authenticator.restAuthenticate(UserRoles.ADMIN);
@@ -216,14 +220,27 @@ public class RaceService
 			deleteSingleResult(raceName, startDate, raceGroup, skipper);
 	}
 
-	private void deleteSingleResult(String raceName, Long startDate, String raceGroup, String skipper)
-	{
-		//TODO: Delete either a single result of a race
-	}
-
 	private void deleteRace(String raceName, Long startDate, String raceGroup)
 	{
-		//TODO: Delete all results of a race and the race itself
+		RaceId id = new RaceId(raceName, startDate, raceGroup);
+
+		RaceEntity raceEntity = raceRepo.findById(id).orElseThrow(
+				() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Race does not exist"));
+
+		resultRepo.deleteAllByNameAndStartDateAndRaceGroup(raceName, startDate, raceGroup);
+		raceRepo.delete(raceEntity);
+
+		log.trace("Deleted race and all of its entries for race '{}' date '{}' group '{}'", raceName, startDate,
+				  raceGroup);
+	}
+
+	private void deleteSingleResult(String raceName, Long startDate, String raceGroup, String skipper)
+	{
+		RaceResultId id = new RaceResultId(raceName, startDate, raceGroup, skipper);
+
+		log.trace("Removing result for {}", id);
+
+		resultRepo.deleteById(id);
 	}
 
 	private <X extends RaceInformation> List<X> filterYearAndGroup(List<X> raceEntities, String group, Integer year,

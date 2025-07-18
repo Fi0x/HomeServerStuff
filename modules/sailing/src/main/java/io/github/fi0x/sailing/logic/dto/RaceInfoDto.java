@@ -21,4 +21,5 @@ public class RaceInfoDto
 	private Boolean orcRace;
 	private Boolean bufferRace;
 	private Integer participants;
+	private String url;
 }

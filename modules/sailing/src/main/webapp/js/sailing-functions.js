@@ -154,14 +154,34 @@ function updateRace(index, name, date, group) {
     if (deleteFlag) {
         fetch(`${baseUrl}/race/remove/${name}/${date}/${group}`, {
             method: 'DELETE'
-        }).then();
+        }).then(response => {
+            if (response.status !== 200)
+                alert("Could not delete race (" + response.status + ")");
+        });
         return;
     }
+    console.log("saving changes");
     //TODO: update race, if changes were made
 }
 
-function reloadRace(name, date, group) {
-    //TODO: Reload result-data from website and update database
+function reloadRace(name, date, group, url, button) {
+    button.style.display = 'none';
+
+    fetch(`${baseUrl}/race/remove/${name}/${date}/${group}`, {
+        method: 'DELETE'
+    }).then(response => {
+        if (response.status !== 200) {
+            alert("Could not clear database before reloading (" + response.status + ")");
+            throw response;
+        }
+
+        $.post(`${baseUrl}/race/add`, url, function () {
+            location.reload();
+        });
+    }).catch(() => {
+        console.log("Error when reloading race");
+        button.style.display = '';
+    });
 }
 
 function deleteResult(raceName, date, group, skipper, shipName, button) {
