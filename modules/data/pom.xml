@@ -6,7 +6,7 @@
 
     <groupId>io.github.Fi0x</groupId>
     <artifactId>HomeServerData</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
     <packaging>war</packaging>
 
     <parent>
@@ -149,7 +149,7 @@
         <dependency>
             <groupId>io.github.Fi0x</groupId>
             <artifactId>HomeServerUtil</artifactId>
-            <version>0.1.1</version>
+            <version>0.2.0</version>
         </dependency>
         <dependency>
             <groupId>io.github.Fi0x</groupId>
