@@ -28,7 +28,7 @@
         </tr>
         </thead>
         <tbody>
-        <c:forEach items="${races}" var="race">
+        <c:forEach items="${races}" var="race" varStatus="loop">
             <tr>
                 <td><input value="${race.name}"></td>
                 <td><input value="${race.raceGroup}"></td>
@@ -37,9 +37,10 @@
                 <td class="align-text-center"><input ${race.orcRace ? 'checked' : ''} type="checkbox"></td>
                 <td class="align-text-center">${race.participants}</td>
                 <td class="align-text-center">${race.scoreModifier}</td>
-                <td class="align-content-center"><a class="btn-danger" onclick="deleteRace(this)">Delete</a></td>
+                <td class="align-content-center"><a id="deleteButton${loop.index}" class="btn-danger"
+                                                    onclick="deleteRace(this)">Delete</a></td>
                 <td class="align-content-center"><a class="btn-edit"
-                                                    onclick="updateRace(this, '${race.name}', '${race.startDate}', '${race.raceGroup}')">
+                                                    onclick="updateRace(${loop.index}, '${race.name}', '${race.longDate}', '${race.raceGroup}')">
                     Save Changes</a></td>
                 <td><a class="btn" onclick="reloadRace('${race.name}', '${race.startDate}', '${race.raceGroup}')">
                     Reload Results</a></td>

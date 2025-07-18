@@ -1,6 +1,7 @@
 package io.github.fi0x.util.service;
 
 import io.github.fi0x.util.dto.UserDto;
+import io.github.fi0x.util.dto.UserRoles;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
@@ -35,6 +36,6 @@ public class AuthenticationService
 
 		userDetailsManager.createUser(
 				User.builder().passwordEncoder(passwordEncoder::encode).username(userDto.getUsername())
-					.password(userDto.getPassword()).roles("USER").build());
+					.password(userDto.getPassword()).roles(UserRoles.USER.name()).build());
 	}
 }

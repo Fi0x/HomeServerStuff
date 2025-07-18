@@ -8,6 +8,8 @@ import io.github.fi0x.sailing.db.entities.RaceResultEntity;
 import io.github.fi0x.sailing.logic.converter.RaceConverter;
 import io.github.fi0x.sailing.logic.converter.RaceResultToDtoConverter;
 import io.github.fi0x.sailing.logic.dto.*;
+import io.github.fi0x.util.components.Authenticator;
+import io.github.fi0x.util.dto.UserRoles;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -45,7 +47,7 @@ public class RaceService
 	}};
 	private static final List<String> INVALID_RACE_STATUS = List.of("DNS", "DNC");
 
-
+	private final Authenticator authenticator;
 	private final RaceRepo raceRepo;
 	private final RaceResultRepo resultRepo;
 	private final RaceResultToDtoConverter raceResultConverter;
@@ -128,6 +130,8 @@ public class RaceService
 
 	public List<RaceResultEntity> saveRace(String raceResultUrl)
 	{
+		authenticator.restAuthenticate(UserRoles.ADMIN);
+
 		List<RaceEntity> existingEntities = getRace(raceResultUrl);
 		if (!existingEntities.isEmpty() && existingEntities.size() > 1)
 		{
@@ -140,9 +144,6 @@ public class RaceService
 		String url = M2S_BASE_URL + "/" + m2sRaceId + "/regattaresult/" + m2sClassId;
 		RestTemplate restTemplate = new RestTemplate();
 		M2sRaceResultJsonDto result = restTemplate.getForObject(url, M2sRaceResultJsonDto.class);
-
-		if (result == null)
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Could not find any results for url: " + url);
 
 		Document page;
 		String raceName;
@@ -203,6 +204,26 @@ public class RaceService
 		}
 
 		return raceResultEntities;
+	}
+
+	public void deleteResult(String raceName, Long startDate, String raceGroup, String skipper)
+	{
+		authenticator.restAuthenticate(UserRoles.ADMIN);
+
+		if (skipper == null)
+			deleteRace(raceName, startDate, raceGroup);
+		else
+			deleteSingleResult(raceName, startDate, raceGroup, skipper);
+	}
+
+	private void deleteSingleResult(String raceName, Long startDate, String raceGroup, String skipper)
+	{
+		//TODO: Delete either a single result of a race
+	}
+
+	private void deleteRace(String raceName, Long startDate, String raceGroup)
+	{
+		//TODO: Delete all results of a race and the race itself
 	}
 
 	private <X extends RaceInformation> List<X> filterYearAndGroup(List<X> raceEntities, String group, Integer year,

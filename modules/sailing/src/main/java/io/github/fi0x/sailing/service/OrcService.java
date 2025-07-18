@@ -5,6 +5,8 @@ import io.github.fi0x.sailing.db.entities.CertificateEntity;
 import io.github.fi0x.sailing.logic.converter.OrcInformationToEntityMerger;
 import io.github.fi0x.sailing.logic.converter.StringToOrcOverviewConverter;
 import io.github.fi0x.sailing.logic.dto.OrcOverviewXmlRowDto;
+import io.github.fi0x.util.components.Authenticator;
+import io.github.fi0x.util.dto.UserRoles;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -24,6 +26,7 @@ public class OrcService
 	private static final String ORC_URL = "https://data.orc.org/public/WPub.dll?action=activecerts&refNo=";
 	private static final String ORC_DETAILS_URL = "https://data.orc.org/public/WPub.dll/CC/";
 
+	private final Authenticator authenticator;
 	private final OrcCertificateRepo orcRepo;
 	private final StringToOrcOverviewConverter overviewConverter;
 	private final OrcInformationToEntityMerger orcMerger;
@@ -35,6 +38,8 @@ public class OrcService
 
 	public CertificateEntity saveCertificate(String certificateId)
 	{
+		authenticator.restAuthenticate(UserRoles.ADMIN);
+
 		Optional<CertificateEntity> existingEntity = getCertificate(certificateId);
 		if (existingEntity.isPresent())
 			return existingEntity.get();
@@ -71,6 +76,8 @@ public class OrcService
 
 	public void removeCertificate(String certificateId)
 	{
+		authenticator.restAuthenticate(UserRoles.ADMIN);
+
 		orcRepo.deleteById(certificateId);
 	}
 }

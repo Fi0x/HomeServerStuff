@@ -12,8 +12,8 @@ public class RaceConverter
 	public RaceInfoDto convert(RaceEntity entity)
 	{
 		return RaceInfoDto.builder().name(entity.getName()).startDate(new Date(entity.getStartDate()))
-						  .raceGroup(entity.getRaceGroup()).scoreModifier(entity.getScoreModifier())
-						  .orcRace(entity.getOrcRace()).bufferRace(entity.getBufferRace())
-						  .participants(entity.getParticipants()).build();
+						  .longDate(entity.getStartDate()).raceGroup(entity.getRaceGroup())
+						  .scoreModifier(entity.getScoreModifier()).orcRace(entity.getOrcRace())
+						  .bufferRace(entity.getBufferRace()).participants(entity.getParticipants()).build();
 	}
 }

@@ -63,7 +63,7 @@ function fillRaceResults() {
             let positionElement = document.getElementById(`${combinedId}position${raceId}`);
             let scoreElement = document.getElementById(`${combinedId}points${raceId}`);
 
-            document.getElementById(`${combinedId}button${raceId}`).style = "display: ''";
+            document.getElementById(`${combinedId}button${raceId}`).style.display = '';
 
             positionElement.innerText = singleResult.position;
             scoreElement.innerText = singleResult.score.toFixed(1).toString();
@@ -149,16 +149,33 @@ function deleteRace(button) {
     button.parentNode.parentNode.classList.add("red");
 }
 
-function updateRace(button, name, date, group) {
-    //TODO: Delete, or update race, if changes were made
+function updateRace(index, name, date, group) {
+    let deleteFlag = document.getElementById(`deleteButton${index}`).hasAttribute('hidden');
+    if (deleteFlag) {
+        fetch(`${baseUrl}/race/remove/${name}/${date}/${group}`, {
+            method: 'DELETE'
+        }).then();
+        return;
+    }
+    //TODO: update race, if changes were made
 }
 
 function reloadRace(name, date, group) {
     //TODO: Reload result-data from website and update database
 }
 
-function deleteResult(raceName, date, group, skipper) {
-    //TODO: Remove a single result for a single ship
+function deleteResult(raceName, date, group, skipper, shipName, button) {
+    button.style.display = 'none';
+
+    let combinedId = shipName.replace(/\s/g, '') + skipper.replace(/\s/g, '');
+
+    let raceId = raceName.replace(/\s/g, '') + group.replace(/\s/g, '');
+    document.getElementById(`${combinedId}position${raceId}`).innerText = '';
+    document.getElementById(`${combinedId}points${raceId}`).innerText = '';
+
+    fetch(`${baseUrl}/race/remove/${raceName}/${date}/${group}?skipper=${skipper}`, {
+        method: 'DELETE'
+    }).then();
 }
 
 function updateFilterState(gameFilter, checkbox) {

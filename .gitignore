@@ -1,6 +1,5 @@
 /.idea/
 /target/
-/HomeServerStuff.iml
 /modules/util/target/
 /modules/recipes/target/
 /modules/hub/target/
@@ -8,3 +7,4 @@
 /src/
 /modules/sailing/target/
 /modules/wordle/target/
+*.iml

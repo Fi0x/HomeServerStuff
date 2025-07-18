@@ -39,7 +39,7 @@
                     <td style="padding: 0 0.5rem 0 0"><a
                             id="${result.shipName.replace(' ', '')}${result.skipper.replace(' ', '')}button${race.name.replace(' ', '')}${race.raceGroup.replace(' ', '')}"
                             style="display: none" class="btn-danger round-button"
-                            onclick="deleteResult(`${race.name}`, `${race.startDate}`, `${race.raceGroup}`, `${result.skipper}`)">X</a>
+                            onclick="deleteResult(`${race.name}`, `${race.startDate}`, `${race.raceGroup}`, `${result.skipper}`, `${result.shipName}`, this)">X</a>
                     </td>
                 </c:forEach>
                 <td id="${result.shipName.replace(' ', '')}${result.skipper.replace(' ', '')}pointsTotal"

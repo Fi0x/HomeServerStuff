@@ -2,6 +2,7 @@ package io.github.fi0x.util.config;
 
 import io.github.fi0x.util.components.Authenticator;
 import io.github.fi0x.util.components.ServiceInformation;
+import io.github.fi0x.util.dto.UserRoles;
 import io.github.fi0x.util.rest.ErrorController;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -110,9 +111,9 @@ public class HomeServerUtilConfig
 
 		JdbcUserDetailsManager manager = new JdbcUserDetailsManager(dataSource);
 
-		if(!manager.userExists(webUser))
+		if (!manager.userExists(webUser))
 		{
-			createUser(manager, webUser, webPassword, "USER", "ADMIN");
+			createUser(manager, webUser, webPassword, UserRoles.USER.name(), UserRoles.ADMIN.name());
 			log.info("User '{}' created as default admin", webUser);
 		}
 
