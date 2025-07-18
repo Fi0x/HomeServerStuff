@@ -20,14 +20,14 @@
             <label class="filter-option" title="Will include certificates from '${country}'">
                 <span class="align-content-center">${country}</span>
                 <input class="filter-checkbox" type="checkbox"
-                       onclick="updateFilterState('${country}', this)">
+                       onclick="updateFilterState()">
             </label>
         </c:forEach>
         <c:forEach items="${certificateTypes}" var="certType">
             <label class="filter-option" title="Will include certificates of type '${certType}'">
                 <span class="align-content-center">${certType}</span>
                 <input class="filter-checkbox" type="checkbox"
-                       onclick="updateFilterState('${certType}', this)">
+                       onclick="updateFilterState()">
             </label>
         </c:forEach>
     </div>

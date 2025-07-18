@@ -187,18 +187,22 @@ function reloadRace(name, date, group, url, button) {
 function deleteResult(raceName, date, group, skipper, shipName, button) {
     button.style.display = 'none';
 
-    let combinedId = shipName.replace(/\s/g, '') + skipper.replace(/\s/g, '');
-
-    let raceId = raceName.replace(/\s/g, '') + group.replace(/\s/g, '');
-    document.getElementById(`${combinedId}position${raceId}`).innerText = '';
-    document.getElementById(`${combinedId}points${raceId}`).innerText = '';
-
     fetch(`${baseUrl}/race/remove/${raceName}/${date}/${group}?skipper=${skipper}`, {
         method: 'DELETE'
-    }).then();
+    }).then(response => {
+        if (response.status !== 200) {
+            alert("Could not delete result (" + response.status + ")");
+            button.style.display = '';
+        } else {
+            let combinedId = shipName.replace(/\s/g, '') + skipper.replace(/\s/g, '');
+            let raceId = raceName.replace(/\s/g, '') + group.replace(/\s/g, '');
+            document.getElementById(`${combinedId}position${raceId}`).innerText = '';
+            document.getElementById(`${combinedId}points${raceId}`).innerText = '';
+        }
+    });
 }
 
-function updateFilterState(gameFilter, checkbox) {
+function updateFilterState() {
     let allOptions = document.getElementsByClassName("filter-option");
     let validFilters = [];
     for (let option of allOptions) {
