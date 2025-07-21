@@ -58,7 +58,7 @@ public class RestController
 		raceService.deleteResult(raceName, startDate, raceGroup, skipper);
 	}
 
-	@PutMapping("/race/update/{raceName}/{startDate}/{raceGroup}")
+	@PostMapping("/race/update/{raceName}/{startDate}/{raceGroup}")
 	public void updateRace(@PathVariable String raceName, @PathVariable Long startDate, @PathVariable String raceGroup,
 						   @RequestBody RaceInfoDto raceInfo)
 	{

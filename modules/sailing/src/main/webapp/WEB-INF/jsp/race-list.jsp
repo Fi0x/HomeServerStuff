@@ -30,13 +30,16 @@
         <tbody>
         <c:forEach items="${races}" var="race" varStatus="loop">
             <tr>
-                <td><input value="${race.name}"></td>
-                <td><input value="${race.raceGroup}"></td>
+                <td><input id="raceName${loop.index}" value="${race.name}"></td>
+                <td><input id="raceGroup${loop.index}" value="${race.raceGroup}"></td>
                 <td><fmt:formatDate value="${race.startDate}" pattern="dd.MM.yyyy"/></td>
-                <td class="align-text-center"><input ${race.bufferRace ? 'checked': ''} type="checkbox"></td>
-                <td class="align-text-center"><input ${race.orcRace ? 'checked' : ''} type="checkbox"></td>
+                <td class="align-text-center"><input id="raceBuffer${loop.index}" ${race.bufferRace ? 'checked': ''}
+                                                     type="checkbox"></td>
+                <td class="align-text-center"><input id="raceOrc${loop.index}" ${race.orcRace ? 'checked' : ''}
+                                                     type="checkbox"></td>
                 <td class="align-text-center">${race.participants}</td>
-                <td class="align-text-center"><input type="number" value="${race.scoreModifier}"></td>
+                <td class="align-text-center"><input id="raceScore${loop.index}" type="number"
+                                                     value="${race.scoreModifier}"></td>
                 <td class="align-content-center"><a id="deleteButton${loop.index}" class="btn-danger"
                                                     onclick="deleteRace(this)">Delete</a></td>
                 <td class="align-content-center"><a class="btn-edit"

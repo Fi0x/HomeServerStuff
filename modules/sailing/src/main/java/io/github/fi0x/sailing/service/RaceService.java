@@ -223,29 +223,33 @@ public class RaceService
 	@Transactional
 	public void updateRace(String raceName, Long startDate, String raceGroup, RaceInfoDto updateDto)
 	{
-		RaceEntity entity = raceRepo.findById(new RaceId(raceName, startDate, raceGroup)).orElseThrow(
+		RaceEntity originalEntity = raceRepo.findById(new RaceId(raceName, startDate, raceGroup)).orElseThrow(
 				() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
 												  "Could not update race, because no entry exists for it."));
 
-		if (updateDto.getName() != null)
-			entity.setName(updateDto.getName());
-		if (updateDto.getStartDate() != null)
-			entity.setStartDate(updateDto.getStartDate().getTime());
-		if (updateDto.getRaceGroup() != null)
-			entity.setRaceGroup(updateDto.getRaceGroup());
-		if (updateDto.getScoreModifier() != null)
-			entity.setScoreModifier(updateDto.getScoreModifier());
-		if (updateDto.getOrcRace() != null)
-			entity.setOrcRace(updateDto.getOrcRace());
-		if (updateDto.getBufferRace() != null)
-			entity.setBufferRace(updateDto.getBufferRace());
-		if (updateDto.getParticipants() != null)
-			entity.setParticipants(updateDto.getParticipants());
-		if (updateDto.getUrl() != null)
-			entity.setUrl(updateDto.getUrl());
+		RaceEntity newEntity = raceConverter.convert(updateDto);
+		if (newEntity.getName() == null)
+			newEntity.setName(originalEntity.getName());
+		if (newEntity.getStartDate() == null)
+			newEntity.setStartDate(originalEntity.getStartDate());
+		if (newEntity.getRaceGroup() == null)
+			newEntity.setRaceGroup(originalEntity.getRaceGroup());
+		if (newEntity.getScoreModifier() == null)
+			newEntity.setScoreModifier(originalEntity.getScoreModifier());
+		if (newEntity.getOrcRace() == null)
+			newEntity.setOrcRace(originalEntity.getOrcRace());
+		if (newEntity.getBufferRace() == null)
+			newEntity.setBufferRace(originalEntity.getBufferRace());
+		if (newEntity.getParticipants() == null)
+			newEntity.setParticipants(originalEntity.getParticipants());
+		if (newEntity.getUrl() == null)
+			newEntity.setUrl(originalEntity.getUrl());
 
-		raceRepo.deleteById(new RaceId(raceName, startDate, raceGroup));
-		raceRepo.save(entity);
+		raceRepo.save(newEntity);
+		if (!newEntity.getName().equals(raceName) || !newEntity.getStartDate()
+															   .equals(startDate) || !newEntity.getRaceGroup()
+																							   .equals(raceGroup))
+			raceRepo.delete(originalEntity);
 	}
 
 	private void deleteRace(String raceName, Long startDate, String raceGroup)

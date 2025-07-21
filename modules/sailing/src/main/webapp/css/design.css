@@ -346,6 +346,10 @@ input[type="checkbox"]:checked {
     background-color: var(--custom-black);
 }
 
+input[type="number"] {
+    width: 3rem;
+}
+
 .filterable {
 }
 
