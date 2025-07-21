@@ -220,6 +220,34 @@ public class RaceService
 			deleteSingleResult(raceName, startDate, raceGroup, skipper);
 	}
 
+	@Transactional
+	public void updateRace(String raceName, Long startDate, String raceGroup, RaceInfoDto updateDto)
+	{
+		RaceEntity entity = raceRepo.findById(new RaceId(raceName, startDate, raceGroup)).orElseThrow(
+				() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+												  "Could not update race, because no entry exists for it."));
+
+		if (updateDto.getName() != null)
+			entity.setName(updateDto.getName());
+		if (updateDto.getStartDate() != null)
+			entity.setStartDate(updateDto.getStartDate().getTime());
+		if (updateDto.getRaceGroup() != null)
+			entity.setRaceGroup(updateDto.getRaceGroup());
+		if (updateDto.getScoreModifier() != null)
+			entity.setScoreModifier(updateDto.getScoreModifier());
+		if (updateDto.getOrcRace() != null)
+			entity.setOrcRace(updateDto.getOrcRace());
+		if (updateDto.getBufferRace() != null)
+			entity.setBufferRace(updateDto.getBufferRace());
+		if (updateDto.getParticipants() != null)
+			entity.setParticipants(updateDto.getParticipants());
+		if (updateDto.getUrl() != null)
+			entity.setUrl(updateDto.getUrl());
+
+		raceRepo.deleteById(new RaceId(raceName, startDate, raceGroup));
+		raceRepo.save(entity);
+	}
+
 	private void deleteRace(String raceName, Long startDate, String raceGroup)
 	{
 		RaceId id = new RaceId(raceName, startDate, raceGroup);

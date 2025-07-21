@@ -36,7 +36,7 @@
                 <td class="align-text-center"><input ${race.bufferRace ? 'checked': ''} type="checkbox"></td>
                 <td class="align-text-center"><input ${race.orcRace ? 'checked' : ''} type="checkbox"></td>
                 <td class="align-text-center">${race.participants}</td>
-                <td class="align-text-center">${race.scoreModifier}</td>
+                <td class="align-text-center"><input type="number" value="${race.scoreModifier}"></td>
                 <td class="align-content-center"><a id="deleteButton${loop.index}" class="btn-danger"
                                                     onclick="deleteRace(this)">Delete</a></td>
                 <td class="align-content-center"><a class="btn-edit"

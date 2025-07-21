@@ -160,8 +160,16 @@ function updateRace(index, name, date, group) {
         });
         return;
     }
-    console.log("saving changes");
-    //TODO: update race, if changes were made
+
+    //TODO: Put race data in dto
+    //TODO: Change to post endpoint, if put is not working
+    let dto = {
+        name: null,
+        startDate: null
+    }
+    $.put(`${baseUrl}/race/update/${name}/${date}/${group}`, dto, function () {
+        location.reload();
+    })
 }
 
 function reloadRace(name, date, group, url, button) {

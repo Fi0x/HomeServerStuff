@@ -3,6 +3,7 @@ package io.github.fi0x.sailing.rest;
 
 import io.github.fi0x.sailing.db.entities.CertificateEntity;
 import io.github.fi0x.sailing.db.entities.RaceResultEntity;
+import io.github.fi0x.sailing.logic.dto.RaceInfoDto;
 import io.github.fi0x.sailing.service.OrcService;
 import io.github.fi0x.sailing.service.RaceService;
 import lombok.RequiredArgsConstructor;
@@ -55,5 +56,15 @@ public class RestController
 				  raceGroup, skipper);
 
 		raceService.deleteResult(raceName, startDate, raceGroup, skipper);
+	}
+
+	@PutMapping("/race/update/{raceName}/{startDate}/{raceGroup}")
+	public void updateRace(@PathVariable String raceName, @PathVariable Long startDate, @PathVariable String raceGroup,
+						   @RequestBody RaceInfoDto raceInfo)
+	{
+		log.debug("updateRace() called for race '{}', date '{}', group '{}', dto '{}'", raceName, startDate, raceGroup,
+				  raceInfo);
+
+		raceService.updateRace(raceName, startDate, raceGroup, raceInfo);
 	}
 }
