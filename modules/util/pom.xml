@@ -45,12 +45,12 @@
         <snapshotRepository>
             <id>maven-central-snapshots</id>
             <name>Maven Central (Snapshots)</name>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+            <url>https://ossrh-stating-api.central.sonatype.com/content/repositories/snapshots</url>
         </snapshotRepository>
         <repository>
             <id>maven-central-release</id>
             <name>Maven Central</name>
-            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <url>https://ossrh-stating-api.central.sonatype.com/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
 
