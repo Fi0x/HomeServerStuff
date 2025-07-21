@@ -135,15 +135,23 @@ public class RaceService
 	{
 		authenticator.restAuthenticate(UserRoles.ADMIN);
 
+		//TODO: Retrieve html page for URL and get div with id='classes'
+		// Get table from that div, then all tr elements that are not in the table head
+		// Get race-result IDs from href links and the names of those result groups
+		// Show the user the possible races to select (multi-select possible)
+		// Load all results the user had selected and show them after each other to the user
+		// Retrieved json should use the race-names and let the user decide which results to keep (multi-select)
+
+		//Example races:
+		// https://www.manage2sail.com/de-DE/event/7da1f04b-bd3a-4068-8d31-4ecf17bdc1bb#!/
+		// https://www.manage2sail.com/de-DE/event/6695807a-a06f-49d5-863d-39c96c82d6cf#!/
+
 		List<RaceEntity> existingEntities = getRace(raceResultUrl);
 		if (!existingEntities.isEmpty() && existingEntities.size() > 1)
 		{
 			throw new IllegalArgumentException(
 					"Multiple races with that url are already loaded. Url: " + raceResultUrl);
 		}
-
-		//TODO: Retrieve all results for all groups and open a new page to let the user select groups and results to
-		// keep
 
 		String m2sRaceId = getM2sRaceId(raceResultUrl);
 		String m2sClassId = getM2sClassId(raceResultUrl);
