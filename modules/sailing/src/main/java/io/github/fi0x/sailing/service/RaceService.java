@@ -142,6 +142,9 @@ public class RaceService
 					"Multiple races with that url are already loaded. Url: " + raceResultUrl);
 		}
 
+		//TODO: Retrieve all results for all groups and open a new page to let the user select groups and results to
+		// keep
+
 		String m2sRaceId = getM2sRaceId(raceResultUrl);
 		String m2sClassId = getM2sClassId(raceResultUrl);
 		String url = M2S_BASE_URL + "/" + m2sRaceId + "/regattaresult/" + m2sClassId;
