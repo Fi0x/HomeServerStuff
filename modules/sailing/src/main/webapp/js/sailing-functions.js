@@ -62,6 +62,9 @@ function fillRaceResults() {
             let raceId = singleResult.raceName.replace(/\s/g, '') + singleResult.raceGroup.replace(/\s/g, '');
             let positionElement = document.getElementById(`${combinedId}position${raceId}`);
             let scoreElement = document.getElementById(`${combinedId}points${raceId}`);
+
+            document.getElementById(`${combinedId}button${raceId}`).style.display = '';
+
             positionElement.innerText = singleResult.position;
             scoreElement.innerText = singleResult.score.toFixed(1).toString();
             if (singleResult.crossed) {
@@ -97,6 +100,9 @@ function fillRaceResults() {
 function selectCertificate(certificateId) {
     let selectedCertificate = certificates.find(c => c.id === certificateId);
 
+    if (!selectedCertificate)
+        return;
+
     for (let cert of certificates) {
         let row = document.getElementById(`cert${cert.id}`);
         row.classList.remove('selection');
@@ -124,4 +130,113 @@ function setTimeDifferenceOnElements(diff, elementId) {
         element.classList = ['green-text-bold text-nowrap'];
     else
         element.classList = ['text-nowrap'];
+}
+
+function deleteCertificate(certId) {
+
+    let idx = certificates.indexOf(certificates.find(c => c.id === certId));
+    if (idx >= 0)
+        certificates.splice(idx, 1);
+
+    $.post(`${baseUrl}/orc/remove/${certId}`);
+
+    let row = document.getElementById(`cert${certId}`);
+    row.parentElement.removeChild(row);
+}
+
+function deleteRace(button) {
+    button.hidden = true;
+    button.parentNode.parentNode.classList.add("red");
+}
+
+function updateRace(index, name, date, group) {
+    let deleteFlag = document.getElementById(`deleteButton${index}`).hasAttribute('hidden');
+    if (deleteFlag) {
+        fetch(`${baseUrl}/race/remove/${name}/${date}/${group}`, {
+            method: 'DELETE'
+        }).then(response => {
+            if (response.status !== 200)
+                alert("Could not delete race (" + response.status + ")");
+        });
+        return;
+    }
+    console.log("saving changes");
+    //TODO: update race, if changes were made
+}
+
+function reloadRace(name, date, group, url, button) {
+    button.style.display = 'none';
+
+    fetch(`${baseUrl}/race/remove/${name}/${date}/${group}`, {
+        method: 'DELETE'
+    }).then(response => {
+        if (response.status !== 200) {
+            alert("Could not clear database before reloading (" + response.status + ")");
+            throw response;
+        }
+
+        $.post(`${baseUrl}/race/add`, url, function () {
+            location.reload();
+        });
+    }).catch(() => {
+        console.log("Error when reloading race");
+        button.style.display = '';
+    });
+}
+
+function deleteResult(raceName, date, group, skipper, shipName, button) {
+    button.style.display = 'none';
+
+    fetch(`${baseUrl}/race/remove/${raceName}/${date}/${group}?skipper=${skipper}`, {
+        method: 'DELETE'
+    }).then(response => {
+        if (response.status !== 200) {
+            alert("Could not delete result (" + response.status + ")");
+            button.style.display = '';
+        } else {
+            let combinedId = shipName.replace(/\s/g, '') + skipper.replace(/\s/g, '');
+            let raceId = raceName.replace(/\s/g, '') + group.replace(/\s/g, '');
+            document.getElementById(`${combinedId}position${raceId}`).innerText = '';
+            document.getElementById(`${combinedId}points${raceId}`).innerText = '';
+        }
+    });
+}
+
+function updateFilterState() {
+    let allOptions = document.getElementsByClassName("filter-option");
+    let validFilters = [];
+    for (let option of allOptions) {
+        let checkbox = option.getElementsByTagName('input')[0];
+        if (checkbox.checked) {
+            validFilters.push(option.innerText);
+        }
+    }
+
+    let rows = document.getElementsByTagName("tr");
+    for (let rowIdx = 0; rowIdx < rows.length; rowIdx++) {
+        if (validFilters.length < 1) {
+            rows[rowIdx].style.display = "";
+        } else {
+            let tds = rows[rowIdx].getElementsByClassName("filterable");
+            let valid = true;
+
+            for (let filter of validFilters) {
+                let innerValid = false;
+                for (let td of tds) {
+                    let txtValue = td.innerText;
+                    if (txtValue.indexOf(filter.trim()) > -1) {
+                        innerValid = true;
+                        break;
+                    }
+                }
+                if (!innerValid)
+                    valid = false;
+            }
+
+            if (valid)
+                rows[rowIdx].style.display = "";
+            else
+                rows[rowIdx].style.display = "none";
+        }
+    }
 }

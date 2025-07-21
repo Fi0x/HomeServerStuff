@@ -4,8 +4,9 @@ import io.github.fi0x.data.components.DatabaseCleanup;
 import io.github.fi0x.data.db.DataRepo;
 import io.github.fi0x.data.db.SensorRepo;
 import io.github.fi0x.data.db.StatDataRepo;
-import io.github.fi0x.util.config.HomeServerUtilConfig;
+import io.github.fi0x.util.config.HomeServerUtilSecurityConfig;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +30,12 @@ public class SpringSecurityConfig
 	{
 		log.debug("securityFilterChain() bean called");
 
-		return HomeServerUtilConfig.securityFilterChainSetup(http, PUBLIC_URLS, ANONYMOUS_URLS, PRIVATE_URLS);
+		return HomeServerUtilSecurityConfig.securityFilterChainSetup(http, ArrayUtils.addAll(PUBLIC_URLS,
+																							 HomeServerUtilSecurityConfig.PUBLIC_URLS),
+																	 ArrayUtils.addAll(ANONYMOUS_URLS,
+																					   HomeServerUtilSecurityConfig.ANONYMOUS_URLS),
+																	 ArrayUtils.addAll(PRIVATE_URLS,
+																					   HomeServerUtilSecurityConfig.PRIVATE_URLS));
 	}
 
 	@Bean

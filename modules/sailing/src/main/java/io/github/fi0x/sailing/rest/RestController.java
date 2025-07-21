@@ -30,6 +30,14 @@ public class RestController
 		return orcService.saveCertificate(certificateId);
 	}
 
+	@PostMapping("/orc/remove/{certificateId}")
+	public void removeOrcCertificate(@PathVariable String certificateId)
+	{
+		log.debug("removeOrcCertificate() called with id {}", certificateId);
+
+		orcService.removeCertificate(certificateId);
+	}
+
 	@PostMapping("/race/add")
 	public List<RaceResultEntity> addRace(@RequestBody String raceUrl)
 	{
@@ -37,5 +45,15 @@ public class RestController
 
 		String decodedUrl = URLDecoder.decode(raceUrl, StandardCharsets.UTF_8);
 		return raceService.saveRace(decodedUrl);
+	}
+
+	@DeleteMapping("/race/remove/{raceName}/{startDate}/{raceGroup}")
+	public void removeRaceResult(@PathVariable String raceName, @PathVariable Long startDate,
+								 @PathVariable String raceGroup, @RequestParam(required = false) String skipper)
+	{
+		log.debug("removeRaceResult() called for race '{}', date '{}', group '{}', skipper '{}'", raceName, startDate,
+				  raceGroup, skipper);
+
+		raceService.deleteResult(raceName, startDate, raceGroup, skipper);
 	}
 }

@@ -5,8 +5,12 @@ import io.github.fi0x.sailing.db.RaceResultRepo;
 import io.github.fi0x.sailing.db.entities.RaceEntity;
 import io.github.fi0x.sailing.db.entities.RaceId;
 import io.github.fi0x.sailing.db.entities.RaceResultEntity;
+import io.github.fi0x.sailing.db.entities.RaceResultId;
+import io.github.fi0x.sailing.logic.converter.RaceConverter;
 import io.github.fi0x.sailing.logic.converter.RaceResultToDtoConverter;
 import io.github.fi0x.sailing.logic.dto.*;
+import io.github.fi0x.util.components.Authenticator;
+import io.github.fi0x.util.dto.UserRoles;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -15,6 +19,7 @@ import org.jsoup.nodes.Element;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -44,15 +49,21 @@ public class RaceService
 	}};
 	private static final List<String> INVALID_RACE_STATUS = List.of("DNS", "DNC");
 
-
+	private final Authenticator authenticator;
 	private final RaceRepo raceRepo;
 	private final RaceResultRepo resultRepo;
 	private final RaceResultToDtoConverter raceResultConverter;
+	private final RaceConverter raceConverter;
 
 	public List<RaceEntity> getAllOrcRaces(String group, Integer year)
 	{
 		List<RaceEntity> resultEntities = raceRepo.findAllByOrcRaceOrderByStartDateAsc(true);
 		return filterYearAndGroup(resultEntities, group, year, RaceEntity.class);
+	}
+
+	public List<RaceInfoDto> getAllRaces()
+	{
+		return getAllRaces(null, null).stream().map(raceConverter::convert).toList();
 	}
 
 	public List<RaceEntity> getAllRaces(String group, Integer year)
@@ -119,8 +130,11 @@ public class RaceService
 		return results;
 	}
 
+	@Transactional
 	public List<RaceResultEntity> saveRace(String raceResultUrl)
 	{
+		authenticator.restAuthenticate(UserRoles.ADMIN);
+
 		List<RaceEntity> existingEntities = getRace(raceResultUrl);
 		if (!existingEntities.isEmpty() && existingEntities.size() > 1)
 		{
@@ -133,9 +147,6 @@ public class RaceService
 		String url = M2S_BASE_URL + "/" + m2sRaceId + "/regattaresult/" + m2sClassId;
 		RestTemplate restTemplate = new RestTemplate();
 		M2sRaceResultJsonDto result = restTemplate.getForObject(url, M2sRaceResultJsonDto.class);
-
-		if (result == null)
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Could not find any results for url: " + url);
 
 		Document page;
 		String raceName;
@@ -196,6 +207,40 @@ public class RaceService
 		}
 
 		return raceResultEntities;
+	}
+
+	@Transactional
+	public void deleteResult(String raceName, Long startDate, String raceGroup, String skipper)
+	{
+		authenticator.restAuthenticate(UserRoles.ADMIN);
+
+		if (skipper == null)
+			deleteRace(raceName, startDate, raceGroup);
+		else
+			deleteSingleResult(raceName, startDate, raceGroup, skipper);
+	}
+
+	private void deleteRace(String raceName, Long startDate, String raceGroup)
+	{
+		RaceId id = new RaceId(raceName, startDate, raceGroup);
+
+		RaceEntity raceEntity = raceRepo.findById(id).orElseThrow(
+				() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Race does not exist"));
+
+		resultRepo.deleteAllByNameAndStartDateAndRaceGroup(raceName, startDate, raceGroup);
+		raceRepo.delete(raceEntity);
+
+		log.trace("Deleted race and all of its entries for race '{}' date '{}' group '{}'", raceName, startDate,
+				  raceGroup);
+	}
+
+	private void deleteSingleResult(String raceName, Long startDate, String raceGroup, String skipper)
+	{
+		RaceResultId id = new RaceResultId(raceName, startDate, raceGroup, skipper);
+
+		log.trace("Removing result for {}", id);
+
+		resultRepo.deleteById(id);
 	}
 
 	private <X extends RaceInformation> List<X> filterYearAndGroup(List<X> raceEntities, String group, Integer year,

@@ -6,7 +6,7 @@
 
     <groupId>io.github.Fi0x</groupId>
     <artifactId>HomeServerUtil</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
     <name>HomeServerUtil</name>
     <description>This is a Library for utility-functions for home-server modules</description>
     <url>http://github.com/Fi0x/HomeServerStuff</url>
@@ -15,7 +15,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.3</version>
+        <version>3.5.3</version>
         <relativePath/>
     </parent>
 
@@ -45,12 +45,12 @@
         <snapshotRepository>
             <id>maven-central-snapshots</id>
             <name>Maven Central (Snapshots)</name>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+            <url>https://ossrh-stating-api.central.sonatype.com/content/repositories/snapshots</url>
         </snapshotRepository>
         <repository>
             <id>maven-central-release</id>
             <name>Maven Central</name>
-            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <url>https://ossrh-stating-api.central.sonatype.com/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
 
@@ -159,19 +159,16 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.10.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-suite</artifactId>
-            <version>1.11.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.11.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -250,7 +247,5 @@
             <artifactId>jquery</artifactId>
             <version>3.7.1</version>
         </dependency>
-
     </dependencies>
-
 </project>

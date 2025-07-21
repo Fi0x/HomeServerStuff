@@ -6,15 +6,31 @@
 <%@include file="../common/head.jspf" %>
 <body>
 <%@include file="../common/navigation.jspf" %>
-<div class="container">
+<div class="container full-width">
     <h1>ORC Certificates</h1>
-    <div>
-        <input type="text" id="newCertificateText" placeholder="Certificate id">
+    <div class="top-margin">
+        <input class="vertical-align-center" type="text" id="newCertificateText" placeholder="Certificate id">
         <div class="btn" onclick="addCertificate()">Add new Certificate</div>
     </div>
-    <label class="search-label">
+    <label class="top-margin search-label">
         <input type="text" id="searchText" onkeyup="searchFunction()" class="search-input" placeholder="Search...">
     </label>
+    <div class="section">
+        <c:forEach items="${countries}" var="country">
+            <label class="filter-option" title="Will include certificates from '${country}'">
+                <span class="align-content-center">${country}</span>
+                <input class="filter-checkbox" type="checkbox"
+                       onclick="updateFilterState()">
+            </label>
+        </c:forEach>
+        <c:forEach items="${certificateTypes}" var="certType">
+            <label class="filter-option" title="Will include certificates of type '${certType}'">
+                <span class="align-content-center">${certType}</span>
+                <input class="filter-checkbox" type="checkbox"
+                       onclick="updateFilterState()">
+            </label>
+        </c:forEach>
+    </div>
     <table id="searchableTable" class="table sortable">
         <thead>
         <tr class="underlined-row">
@@ -34,10 +50,10 @@
         <tbody>
         <c:forEach items="${certificates}" var="certificate">
             <tr id="cert${certificate.id}" class="clickable-row" onclick="selectCertificate(`${certificate.id}`)">
-                <td>${certificate.country}</td>
+                <td class="filterable">${certificate.country}</td>
                 <td class="fw-bold">${certificate.shipName}</td>
                 <td>${certificate.shipClass}</td>
-                <td><a class="btn" href="${certificate.url}">${certificate.certificateType}</a></td>
+                <td><a class="btn filterable" href="${certificate.url}">${certificate.certificateType}</a></td>
                 <td><span class="fw-bold">${certificate.singleNumber}</span><br>
                     <span id="single${certificate.id}">${(certificate.singleNumber * 60).intValue()} min ${((certificate.singleNumber * 60 - (certificate.singleNumber * 60).intValue()) * 60).intValue()}s</span>
                 </td>
@@ -59,6 +75,7 @@
                 <td><span class="fw-bold">${certificate.tripleUpDownHigh}</span><br>
                     <span id="triuphigh${certificate.id}">${(certificate.tripleUpDownHigh * 60).intValue()} min ${((certificate.tripleUpDownHigh * 60 - (certificate.tripleUpDownHigh * 60).intValue()) * 60).intValue()}s</span>
                 </td>
+                <td><a class="btn-danger" onclick="deleteCertificate('${certificate.id}')">Delete</a></td>
             </tr>
         </c:forEach>
         </tbody>

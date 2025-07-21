@@ -30,11 +30,13 @@ body {
     border-radius: 0.3rem;
     padding: 0.3rem;
     border-width: 0;
+    cursor: pointer;
 }
 
 .btn:hover {
     color: var(--custom-white);
     background-color: var(--dark-accent);
+    cursor: pointer;
 }
 
 .btn-success {
@@ -45,11 +47,13 @@ body {
     padding: 0.3rem;
     text-decoration: none;
     border-width: 0;
+    cursor: pointer;
 }
 
 .btn-success:hover {
     color: var(--custom-black);
     background-color: var(--custom-light-green);
+    cursor: pointer;
 }
 
 .btn-danger {
@@ -60,11 +64,13 @@ body {
     padding: 0.3rem;
     text-decoration: none;
     border-width: 0;
+    cursor: pointer;
 }
 
 .btn-danger:hover {
     color: var(--custom-black);
     background-color: var(--custom-light-red);
+    cursor: pointer;
 }
 
 .btn-edit {
@@ -76,10 +82,12 @@ body {
     text-decoration: none;
     display: inline-block;
     vertical-align: middle;
+    cursor: pointer;
 }
 
 .btn-edit:hover {
     background-color: var(--custom-light-yellow);
+    cursor: pointer;
 }
 
 .btn-hidden-light {
@@ -103,9 +111,12 @@ body {
 }
 
 .round-button {
-    border-radius: 2rem;
-    width: 2rem;
-    height: 2rem;
+    border-radius: 1.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    display: block;
+    text-align: center;
+    padding: 0.05rem;
 }
 
 .menu-bar-image {
@@ -202,7 +213,7 @@ table {
 }
 
 .long-input {
-    width: 25rem;
+    width: 40rem;
 }
 
 .file-input {
@@ -292,4 +303,68 @@ input {
 
 .thin-text {
     font-weight: normal;
+}
+
+.section {
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin: 2rem 0;
+    background-color: var(--dark-accent2);
+}
+
+.full-width {
+    max-width: 100%;
+}
+
+.filter-option {
+    cursor: pointer;
+    margin: 0.5rem;
+    padding: 0.3rem;
+    background-color: var(--light-accent);
+    border-radius: 0.3rem;
+    display: inline-flex;
+    color: var(--custom-black);
+}
+
+.filter-option:hover {
+    background-color: var(--light-accent2);
+}
+
+.filter-checkbox {
+    margin-left: 0.5rem;
+}
+
+input[type="checkbox"] {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+    appearance: none;
+}
+
+input[type="checkbox"]:checked {
+    background-color: var(--custom-black);
+}
+
+.filterable {
+}
+
+.vertical-align-center {
+    vertical-align: middle;
+}
+
+.top-margin {
+    margin-top: 1rem;
+}
+
+.bottom-margin {
+    margin-bottom: 1rem;
+}
+
+.align-text-center {
+    text-align: center;
+}
+
+.no-padding {
+    padding: 0;
 }
