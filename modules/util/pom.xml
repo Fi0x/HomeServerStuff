@@ -94,6 +94,7 @@
                 <configuration>
                     <publishingServerId>maven-central-release</publishingServerId>
                     <autoPublish>true</autoPublish>
+                    <waitForPublishCompletion>true</waitForPublishCompletion>
                 </configuration>
             </plugin>
             <plugin>
