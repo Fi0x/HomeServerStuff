@@ -157,11 +157,32 @@ function updateRace(index, name, date, group) {
         }).then(response => {
             if (response.status !== 200)
                 alert("Could not delete race (" + response.status + ")");
+            else
+                location.reload();
         });
         return;
     }
-    console.log("saving changes");
-    //TODO: update race, if changes were made
+
+    let dto = {
+        name: `${document.getElementById('raceName' + index).value}`,
+        raceGroup: `${document.getElementById('raceGroup' + index).value}`,
+        scoreModifier: `${document.getElementById('raceScore' + index).value}`,
+        orcRace: `${document.getElementById('raceOrc' + index).checked}`,
+        bufferRace: `${document.getElementById('raceBuffer' + index).checked}`
+    };
+    fetch(`${baseUrl}/race/update/${name}/${date}/${group}`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dto)
+    }).then(response => {
+        if (!response.ok)
+            alert("Could not update race-information (" + response.status + ")");
+        else
+            location.reload();
+    })
 }
 
 function reloadRace(name, date, group, url, button) {

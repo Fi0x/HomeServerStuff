@@ -17,4 +17,11 @@ public class RaceConverter
 						  .bufferRace(entity.getBufferRace()).participants(entity.getParticipants())
 						  .url(entity.getUrl()).build();
 	}
+
+	public RaceEntity convert(RaceInfoDto dto)
+	{
+		return RaceEntity.builder().name(dto.getName()).startDate(dto.getLongDate()).raceGroup(dto.getRaceGroup())
+						 .scoreModifier(dto.getScoreModifier()).orcRace(dto.getOrcRace())
+						 .bufferRace(dto.getBufferRace()).participants(dto.getParticipants()).url(dto.getUrl()).build();
+	}
 }

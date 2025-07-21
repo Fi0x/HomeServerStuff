@@ -220,6 +220,38 @@ public class RaceService
 			deleteSingleResult(raceName, startDate, raceGroup, skipper);
 	}
 
+	@Transactional
+	public void updateRace(String raceName, Long startDate, String raceGroup, RaceInfoDto updateDto)
+	{
+		RaceEntity originalEntity = raceRepo.findById(new RaceId(raceName, startDate, raceGroup)).orElseThrow(
+				() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+												  "Could not update race, because no entry exists for it."));
+
+		RaceEntity newEntity = raceConverter.convert(updateDto);
+		if (newEntity.getName() == null)
+			newEntity.setName(originalEntity.getName());
+		if (newEntity.getStartDate() == null)
+			newEntity.setStartDate(originalEntity.getStartDate());
+		if (newEntity.getRaceGroup() == null)
+			newEntity.setRaceGroup(originalEntity.getRaceGroup());
+		if (newEntity.getScoreModifier() == null)
+			newEntity.setScoreModifier(originalEntity.getScoreModifier());
+		if (newEntity.getOrcRace() == null)
+			newEntity.setOrcRace(originalEntity.getOrcRace());
+		if (newEntity.getBufferRace() == null)
+			newEntity.setBufferRace(originalEntity.getBufferRace());
+		if (newEntity.getParticipants() == null)
+			newEntity.setParticipants(originalEntity.getParticipants());
+		if (newEntity.getUrl() == null)
+			newEntity.setUrl(originalEntity.getUrl());
+
+		raceRepo.save(newEntity);
+		if (!newEntity.getName().equals(raceName) || !newEntity.getStartDate()
+															   .equals(startDate) || !newEntity.getRaceGroup()
+																							   .equals(raceGroup))
+			raceRepo.delete(originalEntity);
+	}
+
 	private void deleteRace(String raceName, Long startDate, String raceGroup)
 	{
 		RaceId id = new RaceId(raceName, startDate, raceGroup);
