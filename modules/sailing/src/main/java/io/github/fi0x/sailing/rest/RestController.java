@@ -3,6 +3,7 @@ package io.github.fi0x.sailing.rest;
 
 import io.github.fi0x.sailing.db.entities.CertificateEntity;
 import io.github.fi0x.sailing.db.entities.RaceResultEntity;
+import io.github.fi0x.sailing.logic.dto.M2sClass;
 import io.github.fi0x.sailing.logic.dto.RaceInfoDto;
 import io.github.fi0x.sailing.service.OrcService;
 import io.github.fi0x.sailing.service.RaceService;
@@ -46,6 +47,30 @@ public class RestController
 
 		String decodedUrl = URLDecoder.decode(raceUrl, StandardCharsets.UTF_8);
 		return raceService.saveRace(decodedUrl);
+	}
+
+	@GetMapping("/race/classes")
+	public List<M2sClass> getClassListForRace(@RequestBody String raceOverviewUrl)
+	{
+		log.debug("getClassListForRace() called for URL={}", raceOverviewUrl);
+
+		//TODO: Use this endpoint instead of saving a race directly
+		// Show a selection page for the different classes in the frontend
+		String decodedUrl = URLDecoder.decode(raceOverviewUrl, StandardCharsets.UTF_8);
+		return raceService.getRaceClasses(decodedUrl);
+	}
+
+	@GetMapping("/race/load")
+	public List<Object> getRaceResultsForClass(@RequestBody M2sClass raceClass)
+	{
+		log.debug("getRaceResultsForClass() called with class={}", raceClass);
+
+		//TODO: Return list of correct object instead
+		// Use this endpoint to get results for a specific raceClass
+		// Do this for each raceClass the user has selected
+		// Show the results to the user to select, which ones to keep and how to name the raceClass
+
+		return raceService.loadSpecificRaceClassResults(raceClass);
 	}
 
 	@DeleteMapping("/race/remove/{raceName}/{startDate}/{raceGroup}")

@@ -1,5 +1,6 @@
 package io.github.fi0x.sailing.service;
 
+import io.github.fi0x.sailing.components.Manage2SailRetriever;
 import io.github.fi0x.sailing.db.RaceRepo;
 import io.github.fi0x.sailing.db.RaceResultRepo;
 import io.github.fi0x.sailing.db.entities.RaceEntity;
@@ -54,6 +55,7 @@ public class RaceService
 	private final RaceResultRepo resultRepo;
 	private final RaceResultToDtoConverter raceResultConverter;
 	private final RaceConverter raceConverter;
+	private final Manage2SailRetriever m2sRetriever;
 
 	public List<RaceEntity> getAllOrcRaces(String group, Integer year)
 	{
@@ -130,31 +132,44 @@ public class RaceService
 		return results;
 	}
 
-	@Transactional
-	public List<RaceResultEntity> saveRace(String raceResultUrl)
+	public List<M2sClass> getRaceClasses(String raceOverviewUrl)
 	{
 		authenticator.restAuthenticate(UserRoles.ADMIN);
+		try
+		{
+			return m2sRetriever.getRaceClasses(raceOverviewUrl);
+		} catch (IOException e)
+		{
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+											  "Could not retireve manage2sail details for the race", e);
+		}
+	}
 
-		//TODO: Retrieve html page for URL and get div with id='classes'
-		// Get table from that div, then all tr elements that are not in the table head
-		// Get race-result IDs from href links and the names of those result groups
-		// Show the user the possible races to select (multi-select possible)
-		// Load all results the user had selected and show them after each other to the user
-		// Retrieved json should use the race-names and let the user decide which results to keep (multi-select)
+	public List<Object> loadSpecificRaceClassResults(M2sClass selectedRaceClass)
+	{
+		//TODO: Load url and return results
 
 		//Example races:
 		// https://www.manage2sail.com/de-DE/event/7da1f04b-bd3a-4068-8d31-4ecf17bdc1bb#!/
 		// https://www.manage2sail.com/de-DE/event/6695807a-a06f-49d5-863d-39c96c82d6cf#!/
 
-		List<RaceEntity> existingEntities = getRace(raceResultUrl);
+		return null;
+	}
+
+	@Transactional
+	public List<RaceResultEntity> saveRace(String raceOverviewUrl)
+	{
+		authenticator.restAuthenticate(UserRoles.ADMIN);
+
+		List<RaceEntity> existingEntities = getRace(raceOverviewUrl);
 		if (!existingEntities.isEmpty() && existingEntities.size() > 1)
 		{
 			throw new IllegalArgumentException(
-					"Multiple races with that url are already loaded. Url: " + raceResultUrl);
+					"Multiple races with that url are already loaded. Url: " + raceOverviewUrl);
 		}
 
-		String m2sRaceId = getM2sRaceId(raceResultUrl);
-		String m2sClassId = getM2sClassId(raceResultUrl);
+		String m2sRaceId = getM2sRaceId(raceOverviewUrl);
+		String m2sClassId = getM2sClassId(raceOverviewUrl);
 		String url = M2S_BASE_URL + "/" + m2sRaceId + "/regattaresult/" + m2sClassId;
 		RestTemplate restTemplate = new RestTemplate();
 		M2sRaceResultJsonDto result = restTemplate.getForObject(url, M2sRaceResultJsonDto.class);
@@ -167,7 +182,7 @@ public class RaceService
 		boolean isOrcRace = false;
 		try
 		{
-			page = Jsoup.connect(M2S_UI_URL + "/" + getM2sRaceId(raceResultUrl)).get();
+			page = Jsoup.connect(M2S_UI_URL + "/" + getM2sRaceId(raceOverviewUrl)).get();
 			Element eventName = page.getElementsByClass("eventName").first();
 			raceName = eventName.getElementsByTag("h1").first().text();
 			String[] dates = eventName.getElementsByClass("eventDates").first().text().split(" - ");
@@ -197,7 +212,7 @@ public class RaceService
 
 		RaceEntity raceEntity = RaceEntity.builder().name(raceName).startDate(startDate)
 										  .raceGroup(getCleanedGroupName(result.getRaceGroup())).endDate(endDate)
-										  .scoreModifier(scoreModifier).url(raceResultUrl).orcRace(isOrcRace)
+										  .scoreModifier(scoreModifier).url(raceOverviewUrl).orcRace(isOrcRace)
 										  .bufferRace(!raceName.contains(FINAL_RACE_NAME))
 										  .participants(getActiveParticipants(result)).build();
 		raceRepo.save(raceEntity);
