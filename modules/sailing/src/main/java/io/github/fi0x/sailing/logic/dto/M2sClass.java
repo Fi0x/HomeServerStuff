@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class M2sClass
 {
+	private String raceEventName;
 	private String className;
 	private String classUrl;
 }
