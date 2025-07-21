@@ -165,7 +165,10 @@ function updateRace(index, name, date, group) {
     //TODO: Change to post endpoint, if put is not working
     let dto = {
         name: null,
-        startDate: null
+        raceGroup: null,
+        scoreModifier: null,
+        orcRace: null,
+        bufferRace: null
     }
     $.put(`${baseUrl}/race/update/${name}/${date}/${group}`, dto, function () {
         location.reload();

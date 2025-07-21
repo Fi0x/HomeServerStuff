@@ -25,8 +25,17 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class HomeServerUtilSecurityConfig
 {
+	/**
+	 * Urls, that should always be public
+	 */
 	public static final String[] PUBLIC_URLS = new String[]{"/error", "/WEB-INF/jsp/error.jsp", "/webjars/bootstrap/*/css/*", "/webjars/bootstrap/*/js/*", "/webjars/jquery/*/*", "/css/design.css", "/images/*"};
+	/**
+	 * Urls, that should not be available to logged-in users
+	 */
 	public static final String[] ANONYMOUS_URLS = new String[]{"/custom-login", "/WEB-INF/jsp/login.jsp", "/register", "/WEB-INF/jsp/signup.jsp"};
+	/**
+	 * Urls, that should only be available to logged-in users
+	 */
 	public static final String[] PRIVATE_URLS = new String[]{};
 
 	/**
