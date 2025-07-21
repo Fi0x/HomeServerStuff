@@ -246,10 +246,26 @@ public class RaceService
 			newEntity.setUrl(originalEntity.getUrl());
 
 		raceRepo.save(newEntity);
+
+		List<RaceResultEntity> raceResults = resultRepo.findAllByNameAndStartDateAndRaceGroup(raceName, startDate,
+																							  raceGroup);
+		List<RaceResultEntity> updatedRaceResults = new ArrayList<>();
+		raceResults.forEach(e -> {
+			RaceResultEntity e2 = e.clone();
+			e2.setName(newEntity.getName());
+			e2.setStartDate(newEntity.getStartDate());
+			e2.setRaceGroup(newEntity.getRaceGroup());
+			updatedRaceResults.add(e2);
+		});
+		resultRepo.saveAll(updatedRaceResults);
+
 		if (!newEntity.getName().equals(raceName) || !newEntity.getStartDate()
 															   .equals(startDate) || !newEntity.getRaceGroup()
 																							   .equals(raceGroup))
+		{
 			raceRepo.delete(originalEntity);
+			resultRepo.deleteAll(raceResults);
+		}
 	}
 
 	private void deleteRace(String raceName, Long startDate, String raceGroup)

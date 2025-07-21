@@ -33,8 +33,26 @@ public class RaceResultEntity implements RaceInformation
 	private Double score;
 	private String shipClass;
 
-	public RaceId getRaceId()
+	public RaceResultEntity clone()
 	{
-		return new RaceId(name, startDate, raceGroup);
+		RaceResultEntity newEntity;
+		try
+		{
+			newEntity = (RaceResultEntity) super.clone();
+		} catch (CloneNotSupportedException e)
+		{
+			newEntity = new RaceResultEntity();
+		}
+
+		newEntity.name = name;
+		newEntity.startDate = startDate;
+		newEntity.raceGroup = raceGroup;
+		newEntity.skipper = skipper;
+		newEntity.shipName = shipName;
+		newEntity.position = position;
+		newEntity.score = score;
+		newEntity.shipClass = shipClass;
+
+		return newEntity;
 	}
 }
