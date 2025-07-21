@@ -6,7 +6,7 @@
 
     <groupId>io.github.fi0x</groupId>
     <artifactId>HomeServerUtil</artifactId>
-    <version>0.2.1</version>
+    <version>0.2.0</version>
     <name>HomeServerUtil</name>
     <description>This is a Library for utility-functions for home-server modules</description>
     <url>http://github.com/Fi0x/HomeServerStuff</url>
