@@ -274,6 +274,7 @@ function reloadRace(name, date, group, url, button) {
             throw response;
         }
 
+        //TODO: Rework reload to no longer use this endpoint
         $.post(`${baseUrl}/race/add`, url, function () {
             location.reload();
         });
