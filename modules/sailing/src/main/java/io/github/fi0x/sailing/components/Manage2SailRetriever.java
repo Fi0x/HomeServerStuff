@@ -17,22 +17,27 @@ public class Manage2SailRetriever
 {
 	public List<M2sClass> getRaceClasses(String raceOverviewUrl) throws IOException
 	{
-		//TODO: Get this to work
 		Document raceOverviewPage = Jsoup.connect(raceOverviewUrl).get();
 		Element raceClassesScript = raceOverviewPage.getElementById("classes");
 		if (raceClassesScript == null)
 			return Collections.emptyList();
-		Element raceClassesDiv = raceClassesScript.getElementsByTag("div").first();
-		if (raceClassesDiv == null)
+		if (raceClassesScript.childNodeSize() == 0)
 			return Collections.emptyList();
-		Element raceClassesTable = raceClassesDiv.getElementsByTag("table").first();
+		Element raceClassesDivDoc = Jsoup.parse(raceClassesScript.data().trim());
+		Element raceClassesTable = raceClassesDivDoc.getElementsByTag("table").first();
 		if (raceClassesTable == null)
 			return Collections.emptyList();
-		Elements rows = raceClassesTable.children();
+		Element tableBody = raceClassesTable.getElementsByTag("tbody").first();
+		if (tableBody == null)
+			return Collections.emptyList();
+		Elements rows = tableBody.children();
 		rows.remove(0);
 		List<M2sClass> classes = new ArrayList<>();
 		rows.forEach(element -> classes.add(getClass(element)));
-		String eventName = raceOverviewPage.getElementsByClass("eventName").first().child(0).text();
+		Element eventNameElement = raceOverviewPage.getElementsByClass("eventName").first();
+		if (eventNameElement == null)
+			return Collections.emptyList();
+		String eventName = eventNameElement.child(0).text();
 		classes.forEach(m2sClass -> m2sClass.setRaceEventName(eventName));
 		return classes;
 	}
@@ -41,7 +46,9 @@ public class Manage2SailRetriever
 	{
 		M2sClass raceClass = new M2sClass();
 		raceClass.setClassName(row.child(0).text());
-		raceClass.setClassUrl(row.child(2).child(0).attribute("href").getValue());
+		Element resultUrlCell = row.child(2);
+		Element urlAnchor = resultUrlCell.child(0);
+		raceClass.setClassUrl(urlAnchor.attribute("href").getValue());
 		return raceClass;
 	}
 }

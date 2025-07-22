@@ -50,6 +50,32 @@ function addRace() {
     location.replace(`${baseUrlNormal}/race/new?raceOverviewUrl=${encodeURIComponent(url)}`);
 }
 
+function loadClassResults(button) {
+    button.parentNode.removeChild(button);
+    let tableParent = document.getElementById("classResultTableParent");
+    for (let i = 0; i < raceClasses.length; i++) {
+        if (document.getElementById(`classSelection${i}`).checked) {
+            //TODO: Load results for raceClass and add them to the following table
+            // Make rows selectable to decide which results to keep and which to remove
+            let table = document.createElement("table");
+            table.classList.add("table");
+            table.classList.add("top-margin");
+            let thead = document.createElement("thead");
+            let headRow = document.createElement("tr");
+            headRow.classList.add("underlined-row");
+            let topic1 = document.createElement("th");
+            topic1.innerText = "Test";
+            topic1.classList.add("align-text-center")
+            headRow.appendChild(topic1);
+            thead.appendChild(headRow);
+            table.appendChild(thead);
+            let tbody = document.createElement("tbody");
+            table.appendChild(tbody);
+            tableParent.appendChild(table);
+        }
+    }
+}
+
 function fillRaceResults() {
     let scorePairs = [];
     for (let result of raceResults) {
