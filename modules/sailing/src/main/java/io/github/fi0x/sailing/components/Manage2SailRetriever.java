@@ -32,6 +32,8 @@ public class Manage2SailRetriever
 		rows.remove(0);
 		List<M2sClass> classes = new ArrayList<>();
 		rows.forEach(element -> classes.add(getClass(element)));
+		String eventName = raceOverviewPage.getElementsByClass("eventName").first().child(0).text();
+		classes.forEach(m2sClass -> m2sClass.setRaceEventName(eventName));
 		return classes;
 	}
 
