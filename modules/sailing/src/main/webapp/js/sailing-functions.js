@@ -47,9 +47,7 @@ function addRace() {
     let textField = document.getElementById("newRaceUrl");
     let url = textField.value;
 
-    $.post(`${baseUrl}/race/add`, url, function () {
-        location.reload();
-    });
+    location.replace(`${baseUrlNormal}/race/new?raceOverviewUrl=${encodeURIComponent(url)}`);
 }
 
 function fillRaceResults() {

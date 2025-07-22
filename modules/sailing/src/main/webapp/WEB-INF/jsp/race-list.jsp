@@ -56,7 +56,8 @@
 <%@include file="../common/scripts.jspf" %>
 <script src="../../js/sailing-functions.js"></script>
 <script>
-    let baseUrl = "${pageContext.request.contextPath}/api"
+    let baseUrl = "${pageContext.request.contextPath}/api";
+    let baseUrlNormal = "${pageContext.request.contextPath}";
 </script>
 <script>
     let races = [

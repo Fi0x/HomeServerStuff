@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -16,8 +17,17 @@ public class Manage2SailRetriever
 {
 	public List<M2sClass> getRaceClasses(String raceOverviewUrl) throws IOException
 	{
+		//TODO: Get this to work
 		Document raceOverviewPage = Jsoup.connect(raceOverviewUrl).get();
-		Element raceClassesTable = raceOverviewPage.getElementById("classes").getElementsByTag("table").first();
+		Element raceClassesScript = raceOverviewPage.getElementById("classes");
+		if (raceClassesScript == null)
+			return Collections.emptyList();
+		Element raceClassesDiv = raceClassesScript.getElementsByTag("div").first();
+		if (raceClassesDiv == null)
+			return Collections.emptyList();
+		Element raceClassesTable = raceClassesDiv.getElementsByTag("table").first();
+		if (raceClassesTable == null)
+			return Collections.emptyList();
 		Elements rows = raceClassesTable.children();
 		rows.remove(0);
 		List<M2sClass> classes = new ArrayList<>();

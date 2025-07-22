@@ -49,18 +49,7 @@ public class RestController
 		return raceService.saveRace(decodedUrl);
 	}
 
-	@GetMapping("/race/classes")
-	public List<M2sClass> getClassListForRace(@RequestBody String raceOverviewUrl)
-	{
-		log.debug("getClassListForRace() called for URL={}", raceOverviewUrl);
-
-		//TODO: Use this endpoint instead of saving a race directly
-		// Show a selection page for the different classes in the frontend
-		String decodedUrl = URLDecoder.decode(raceOverviewUrl, StandardCharsets.UTF_8);
-		return raceService.getRaceClasses(decodedUrl);
-	}
-
-	@GetMapping("/race/load")
+	@PostMapping("/race/load")
 	public List<Object> getRaceResultsForClass(@RequestBody M2sClass raceClass)
 	{
 		log.debug("getRaceResultsForClass() called with class={}", raceClass);
