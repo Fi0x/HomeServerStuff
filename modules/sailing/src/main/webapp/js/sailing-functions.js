@@ -55,25 +55,39 @@ function loadClassResults(button) {
     let tableParent = document.getElementById("classResultTableParent");
     for (let i = 0; i < raceClasses.length; i++) {
         if (document.getElementById(`classSelection${i}`).checked) {
-            //TODO: Load results for raceClass and add them to the following table
-            // Make rows selectable to decide which results to keep and which to remove
+            let tableTopic = document.createElement("h3");
+            tableTopic.innerText = raceClasses[i].className;
+            tableParent.appendChild(tableTopic);
             let table = document.createElement("table");
             table.classList.add("table");
             table.classList.add("top-margin");
             let thead = document.createElement("thead");
             let headRow = document.createElement("tr");
             headRow.classList.add("underlined-row");
-            let topic1 = document.createElement("th");
-            topic1.innerText = "Test";
-            topic1.classList.add("align-text-center")
-            headRow.appendChild(topic1);
+            addTableHeader(headRow, "Ship-name");
+            addTableHeader(headRow, "Skipper");
+            addTableHeader(headRow, "Boat-class");
             thead.appendChild(headRow);
             table.appendChild(thead);
             let tbody = document.createElement("tbody");
             table.appendChild(tbody);
             tableParent.appendChild(table);
+
+            $.post(`${baseUrl}/race/load`, raceClasses[i], function (result) {
+                console.log("loaded race-class-results");
+                console.log(result);
+                //TODO: Add results to the table
+                //TODO Make rows selectable to decide which results to keep and which to remove
+            });
         }
     }
+}
+
+function addTableHeader(row, text) {
+    let topic = document.createElement("th");
+    topic.innerText = text;
+    topic.classList.add("align-text-center")
+    row.appendChild(topic);
 }
 
 function fillRaceResults() {

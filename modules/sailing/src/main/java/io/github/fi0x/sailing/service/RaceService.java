@@ -150,16 +150,13 @@ public class RaceService
 
 	public List<Object> loadSpecificRaceClassResults(M2sClass selectedRaceClass)
 	{
-		//TODO: Load url and return results
-		RestTemplate restTemplate = new RestTemplate();
-		M2sClassResultsJsonDto classResultsJson = restTemplate.getForObject(selectedRaceClass.getClassUrl(),
-																			M2sClassResultsJsonDto.class);
+		//TODO: Adjust url correctly
+		String classResultUrl = selectedRaceClass.getClassUrl();
+		return m2sRetriever.getClassResults(classResultUrl);
 
 		//Example races:
 		// https://www.manage2sail.com/de-DE/event/7da1f04b-bd3a-4068-8d31-4ecf17bdc1bb#!/
 		// https://www.manage2sail.com/de-DE/event/6695807a-a06f-49d5-863d-39c96c82d6cf#!/
-
-		return null;
 	}
 
 	@Transactional

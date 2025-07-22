@@ -54,11 +54,6 @@ public class RestController
 	{
 		log.debug("getRaceResultsForClass() called with class={}", raceClass);
 
-		//TODO: Return list of correct object instead
-		// Use this endpoint to get results for a specific raceClass
-		// Do this for each raceClass the user has selected
-		// Show the results to the user to select, which ones to keep and how to name the raceClass
-
 		return raceService.loadSpecificRaceClassResults(raceClass);
 	}
 
