@@ -1,4 +1,4 @@
-package io.github.fi0x.sailing.logic.dto;
+package io.github.fi0x.sailing.logic.dto.m2s;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

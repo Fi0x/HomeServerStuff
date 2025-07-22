@@ -64,8 +64,9 @@ function loadClassResults(button) {
             let thead = document.createElement("thead");
             let headRow = document.createElement("tr");
             headRow.classList.add("underlined-row");
-            addTableHeader(headRow, "Ship-name");
+            addTableHeader(headRow, "Group");
             addTableHeader(headRow, "Skipper");
+            addTableHeader(headRow, "Ship-name");
             addTableHeader(headRow, "Boat-class");
             thead.appendChild(headRow);
             table.appendChild(thead);
@@ -73,11 +74,21 @@ function loadClassResults(button) {
             table.appendChild(tbody);
             tableParent.appendChild(table);
 
-            $.post(`${baseUrl}/race/load`, raceClasses[i], function (result) {
-                console.log("loaded race-class-results");
-                console.log(result);
-                //TODO: Add results to the table
-                //TODO Make rows selectable to decide which results to keep and which to remove
+            fetch(`${baseUrl}/race/load`, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(raceClasses[i])
+            }).then(response => {
+                if (!response.ok)
+                    throw "Could not load results for class: " + raceClasses[i].className;
+                response.json().then(jsonResponse => {
+                    jsonResponse.forEach(element => addResultRow(tbody, element));
+                });
+            }).catch(error => {
+                alert(error);
             });
         }
     }
@@ -88,6 +99,35 @@ function addTableHeader(row, text) {
     topic.innerText = text;
     topic.classList.add("align-text-center")
     row.appendChild(topic);
+}
+
+function addResultRow(tbody, shipResult) {
+    let row = document.createElement("tr");
+
+    let group = document.createElement("td");
+    group.innerText = shipResult.raceGroup;
+    group.classList.add("align-text-center");
+    tbody.appendChild(group);
+    let skipper = document.createElement("td");
+    skipper.innerText = shipResult.skipper;
+    skipper.classList.add("align-text-center");
+    tbody.appendChild(skipper);
+    let ship = document.createElement("td");
+    ship.innerText = shipResult.shipName;
+    ship.classList.add("align-text-center");
+    tbody.appendChild(ship);
+    let boatClass = document.createElement("td");
+    boatClass.innerText = shipResult.shipClass;
+    boatClass.classList.add("align-text-center");
+    tbody.appendChild(boatClass);
+
+    //TODO Make rows selectable to decide which results to keep and which to remove
+
+    //Example races:
+    // https://www.manage2sail.com/de-DE/event/7da1f04b-bd3a-4068-8d31-4ecf17bdc1bb#!/
+    // https://www.manage2sail.com/de-DE/event/6695807a-a06f-49d5-863d-39c96c82d6cf#!/
+
+    tbody.appendChild(row);
 }
 
 function fillRaceResults() {

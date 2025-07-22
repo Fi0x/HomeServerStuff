@@ -1,4 +1,4 @@
-package io.github.fi0x.sailing.logic.dto;
+package io.github.fi0x.sailing.logic.dto.m2s;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -12,20 +12,18 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class M2sClassResultsJsonDto
+public class M2sSingleScoreResultJsonDto
 {
 	@JsonProperty("RegattaName")
 	private String className;
+	@JsonProperty("RaceCount")
+	private Integer races;
+	@JsonProperty("ScoringName")
+	private String subClassName;
 	@JsonProperty("Id")
-	private String m2sId;
+	private String id;
 	@JsonProperty("IsLowPointSystem")
-	private Boolean isLowPoint;
-	@JsonProperty("ResultReports")
-	private List<Object> raceRoundInformation;
-	@JsonProperty("LastRaceIndex")
-	private Integer lastRaceIdx;
+	private Boolean lowPointSystem;
 	@JsonProperty("EntryResults")
-	private List<Object> entries;
-	@JsonProperty("ScoringResults")
-	private List<Object> results;
+	private List<M2sEntryResultJsonDto> entries;
 }

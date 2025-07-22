@@ -10,6 +10,7 @@ import io.github.fi0x.sailing.db.entities.RaceResultId;
 import io.github.fi0x.sailing.logic.converter.RaceConverter;
 import io.github.fi0x.sailing.logic.converter.RaceResultToDtoConverter;
 import io.github.fi0x.sailing.logic.dto.*;
+import io.github.fi0x.sailing.logic.dto.m2s.M2sClass;
 import io.github.fi0x.util.components.Authenticator;
 import io.github.fi0x.util.dto.UserRoles;
 import lombok.RequiredArgsConstructor;
@@ -72,8 +73,7 @@ public class RaceService
 	{
 		List<RaceEntity> entities = raceRepo.findAll();
 		entities.sort(
-				(a, b) -> a.getStartDate() - b.getStartDate() > 0 ? 1 : a.getStartDate() - b.getStartDate() == 0 ? 0 :
-						-1);
+				(a, b) -> a.getStartDate() - b.getStartDate() > 0 ? 1 : a.getStartDate() - b.getStartDate() == 0 ? 0 : -1);
 
 		return filterYearAndGroup(entities, group, year, RaceEntity.class);
 	}
@@ -94,10 +94,10 @@ public class RaceService
 		races = filterYearAndGroup(races, group, year, RaceEntity.class);
 
 		ShipRaceResults current = null;
-		for (RaceResultEntity entity : entities)
+		for(RaceResultEntity entity : entities)
 		{
-			if (current == null || !current.getShipName().equals(entity.getShipName()) || !current.getSkipper()
-																								  .equals(entity.getSkipper()))
+			if(current == null || !current.getShipName().equals(entity.getShipName()) || !current.getSkipper()
+																								 .equals(entity.getSkipper()))
 			{
 				current = new ShipRaceResults(entity.getShipName(), entity.getSkipper(), entity.getShipClass(),
 											  new ArrayList<>());
@@ -111,21 +111,19 @@ public class RaceService
 			current.getRaceResults().add(raceResultDto);
 		}
 
-		Map<RaceId, Boolean> raceMap = raceRepo.findAll().stream()
-											   .collect(Collectors.toMap(RaceEntity::getId,
-																		 RaceEntity::getBufferRace));
-		for (ShipRaceResults shipDetails : results)
+		Map<RaceId, Boolean> raceMap =
+				raceRepo.findAll().stream().collect(Collectors.toMap(RaceEntity::getId, RaceEntity::getBufferRace));
+		for(ShipRaceResults shipDetails : results)
 		{
-			List<RaceResultDto> crossableResults = shipDetails.getRaceResults().stream()
-															  .filter(res -> raceMap.get(res.getRaceId()))
-															  .sorted((a, b) -> a.getScore() - b.getScore() == 0 ? 0 :
-																	  a.getScore() - b.getScore() > 0 ? 1 : -1)
-															  .toList();
-			if (crossableResults.size() <= 4)
+			List<RaceResultDto> crossableResults =
+					shipDetails.getRaceResults().stream().filter(res -> raceMap.get(res.getRaceId()))
+							   .sorted((a, b) -> a.getScore() - b.getScore() == 0 ? 0 : a.getScore() - b.getScore() > 0 ? 1 : -1)
+							   .toList();
+			if(crossableResults.size() <= 4)
 				continue;
 
 			crossableResults.get(0).setCrossed(true);
-			if (crossableResults.size() > 5)
+			if(crossableResults.size() > 5)
 				crossableResults.get(1).setCrossed(true);
 		}
 
@@ -138,25 +136,22 @@ public class RaceService
 		try
 		{
 			List<M2sClass> classes = m2sRetriever.getRaceClasses(raceOverviewUrl);
-			if (classes.isEmpty())
+			if(classes.isEmpty())
 				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Could not retrieve results for race");
 			return classes;
-		} catch (IOException e)
+		} catch(IOException e)
 		{
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND,
 											  "Could not retireve manage2sail details for the race", e);
 		}
 	}
 
-	public List<Object> loadSpecificRaceClassResults(M2sClass selectedRaceClass)
+	public List<RaceResultDto> loadSpecificRaceClassResults(M2sClass selectedRaceClass)
 	{
-		//TODO: Adjust url correctly
-		String classResultUrl = selectedRaceClass.getClassUrl();
+		String m2sEventId = getM2sRaceId(selectedRaceClass.getClassUrl()).split("/#!")[0];
+		String m2sClassId = getM2sClassId(selectedRaceClass.getClassUrl());
+		String classResultUrl = M2S_BASE_URL + "/" + m2sEventId + "/regattaresult/" + m2sClassId;
 		return m2sRetriever.getClassResults(classResultUrl);
-
-		//Example races:
-		// https://www.manage2sail.com/de-DE/event/7da1f04b-bd3a-4068-8d31-4ecf17bdc1bb#!/
-		// https://www.manage2sail.com/de-DE/event/6695807a-a06f-49d5-863d-39c96c82d6cf#!/
 	}
 
 	@Transactional
@@ -165,7 +160,7 @@ public class RaceService
 		authenticator.restAuthenticate(UserRoles.ADMIN);
 
 		List<RaceEntity> existingEntities = getRace(raceOverviewUrl);
-		if (!existingEntities.isEmpty() && existingEntities.size() > 1)
+		if(!existingEntities.isEmpty() && existingEntities.size() > 1)
 		{
 			throw new IllegalArgumentException(
 					"Multiple races with that url are already loaded. Url: " + raceOverviewUrl);
@@ -190,7 +185,7 @@ public class RaceService
 			raceName = eventName.getElementsByTag("h1").first().text();
 			String[] dates = eventName.getElementsByClass("eventDates").first().text().split(" - ");
 			SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
-			switch (dates.length)
+			switch(dates.length)
 			{
 				case 1:
 					startDate = dateFormatter.parse(dates[0]).getTime();
@@ -203,12 +198,12 @@ public class RaceService
 				default:
 					log.warn("Could not add a date to race with url: {}", url);
 			}
-			if (ORC_RACES.containsKey(raceName))
+			if(ORC_RACES.containsKey(raceName))
 			{
 				scoreModifier = ORC_RACES.get(raceName);
 				isOrcRace = true;
 			}
-		} catch (IOException | NullPointerException | ParseException e)
+		} catch(IOException | NullPointerException | ParseException e)
 		{
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Could not fetch race-details from manage2sail");
 		}
@@ -221,16 +216,14 @@ public class RaceService
 		raceRepo.save(raceEntity);
 
 		List<RaceResultEntity> raceResultEntities = new ArrayList<>();
-		for (M2sSingleResultJsonDto singleResult : result.getShipResults())
+		for(M2sSingleResultJsonDto singleResult : result.getShipResults())
 		{
-			RaceResultEntity resultEntity = RaceResultEntity.builder().name(raceName).startDate(startDate)
-															.raceGroup(raceEntity.getRaceGroup())
-															.skipper(singleResult.getSkipper())
-															.shipName(singleResult.getShipName())
-															.position(singleResult.getPosition())
-															.score(calculateScore(singleResult.getPosition(),
-																				  raceEntity))
-															.shipClass(singleResult.getShipClass()).build();
+			RaceResultEntity resultEntity =
+					RaceResultEntity.builder().name(raceName).startDate(startDate).raceGroup(raceEntity.getRaceGroup())
+									.skipper(singleResult.getSkipper()).shipName(singleResult.getShipName())
+									.position(singleResult.getPosition())
+									.score(calculateScore(singleResult.getPosition(), raceEntity))
+									.shipClass(singleResult.getShipClass()).build();
 			raceResultEntities.add(resultEntity);
 			resultRepo.save(resultEntity);
 		}
@@ -243,7 +236,7 @@ public class RaceService
 	{
 		authenticator.restAuthenticate(UserRoles.ADMIN);
 
-		if (skipper == null)
+		if(skipper == null)
 			deleteRace(raceName, startDate, raceGroup);
 		else
 			deleteSingleResult(raceName, startDate, raceGroup, skipper);
@@ -257,27 +250,27 @@ public class RaceService
 												  "Could not update race, because no entry exists for it."));
 
 		RaceEntity newEntity = raceConverter.convert(updateDto);
-		if (newEntity.getName() == null)
+		if(newEntity.getName() == null)
 			newEntity.setName(originalEntity.getName());
-		if (newEntity.getStartDate() == null)
+		if(newEntity.getStartDate() == null)
 			newEntity.setStartDate(originalEntity.getStartDate());
-		if (newEntity.getRaceGroup() == null)
+		if(newEntity.getRaceGroup() == null)
 			newEntity.setRaceGroup(originalEntity.getRaceGroup());
-		if (newEntity.getScoreModifier() == null)
+		if(newEntity.getScoreModifier() == null)
 			newEntity.setScoreModifier(originalEntity.getScoreModifier());
-		if (newEntity.getOrcRace() == null)
+		if(newEntity.getOrcRace() == null)
 			newEntity.setOrcRace(originalEntity.getOrcRace());
-		if (newEntity.getBufferRace() == null)
+		if(newEntity.getBufferRace() == null)
 			newEntity.setBufferRace(originalEntity.getBufferRace());
-		if (newEntity.getParticipants() == null)
+		if(newEntity.getParticipants() == null)
 			newEntity.setParticipants(originalEntity.getParticipants());
-		if (newEntity.getUrl() == null)
+		if(newEntity.getUrl() == null)
 			newEntity.setUrl(originalEntity.getUrl());
 
 		raceRepo.save(newEntity);
 
-		List<RaceResultEntity> raceResults = resultRepo.findAllByNameAndStartDateAndRaceGroup(raceName, startDate,
-																							  raceGroup);
+		List<RaceResultEntity> raceResults =
+				resultRepo.findAllByNameAndStartDateAndRaceGroup(raceName, startDate, raceGroup);
 		List<RaceResultEntity> updatedRaceResults = new ArrayList<>();
 		raceResults.forEach(e -> {
 			RaceResultEntity e2 = e.clone();
@@ -288,9 +281,9 @@ public class RaceService
 		});
 		resultRepo.saveAll(updatedRaceResults);
 
-		if (!newEntity.getName().equals(raceName) || !newEntity.getStartDate()
-															   .equals(startDate) || !newEntity.getRaceGroup()
-																							   .equals(raceGroup))
+		if(!newEntity.getName().equals(raceName) || !newEntity.getStartDate()
+															  .equals(startDate) || !newEntity.getRaceGroup()
+																							  .equals(raceGroup))
 		{
 			raceRepo.delete(originalEntity);
 			resultRepo.deleteAll(raceResults);
@@ -323,9 +316,9 @@ public class RaceService
 	private <X extends RaceInformation> List<X> filterYearAndGroup(List<X> raceEntities, String group, Integer year,
 																   Class<X> resultClass)
 	{
-		if (group != null)
+		if(group != null)
 			raceEntities = raceEntities.stream().filter(result -> result.getRaceGroup().equals(group)).toList();
-		if (year != null)
+		if(year != null)
 			raceEntities = raceEntities.stream().filter(result -> {
 				Calendar calendar = new GregorianCalendar();
 				calendar.setTime(new Date(result.getStartDate()));
@@ -354,7 +347,7 @@ public class RaceService
 	{
 		String cleaned = raceGroup.toUpperCase().replace("-", " ").replaceAll("\\(.*?\\)", "");
 		cleaned = cleaned.trim();
-		if (cleaned.endsWith("E"))
+		if(cleaned.endsWith("E"))
 			return cleaned.substring(0, cleaned.length() - 1);
 
 		return cleaned;

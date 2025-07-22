@@ -1,8 +1,8 @@
 package io.github.fi0x.sailing.logic.converter;
 
 import io.github.fi0x.sailing.db.entities.CertificateEntity;
-import io.github.fi0x.sailing.logic.dto.CertificateType;
-import io.github.fi0x.sailing.logic.dto.OrcOverviewXmlRowDto;
+import io.github.fi0x.sailing.logic.dto.orc.CertificateType;
+import io.github.fi0x.sailing.logic.dto.orc.OrcOverviewXmlRowDto;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;

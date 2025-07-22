@@ -3,8 +3,9 @@ package io.github.fi0x.sailing.rest;
 
 import io.github.fi0x.sailing.db.entities.CertificateEntity;
 import io.github.fi0x.sailing.db.entities.RaceResultEntity;
-import io.github.fi0x.sailing.logic.dto.M2sClass;
 import io.github.fi0x.sailing.logic.dto.RaceInfoDto;
+import io.github.fi0x.sailing.logic.dto.RaceResultDto;
+import io.github.fi0x.sailing.logic.dto.m2s.M2sClass;
 import io.github.fi0x.sailing.service.OrcService;
 import io.github.fi0x.sailing.service.RaceService;
 import lombok.RequiredArgsConstructor;
@@ -50,7 +51,7 @@ public class RestController
 	}
 
 	@PostMapping("/race/load")
-	public List<Object> getRaceResultsForClass(@RequestBody M2sClass raceClass)
+	public List<RaceResultDto> getRaceResultsForClass(@RequestBody M2sClass raceClass)
 	{
 		log.debug("getRaceResultsForClass() called with class={}", raceClass);
 

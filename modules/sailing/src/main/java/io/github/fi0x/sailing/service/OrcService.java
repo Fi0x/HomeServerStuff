@@ -4,7 +4,7 @@ import io.github.fi0x.sailing.db.OrcCertificateRepo;
 import io.github.fi0x.sailing.db.entities.CertificateEntity;
 import io.github.fi0x.sailing.logic.converter.OrcInformationToEntityMerger;
 import io.github.fi0x.sailing.logic.converter.StringToOrcOverviewConverter;
-import io.github.fi0x.sailing.logic.dto.OrcOverviewXmlRowDto;
+import io.github.fi0x.sailing.logic.dto.orc.OrcOverviewXmlRowDto;
 import io.github.fi0x.util.components.Authenticator;
 import io.github.fi0x.util.dto.UserRoles;
 import lombok.RequiredArgsConstructor;

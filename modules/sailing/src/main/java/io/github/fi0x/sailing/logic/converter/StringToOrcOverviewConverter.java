@@ -2,8 +2,8 @@ package io.github.fi0x.sailing.logic.converter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import io.github.fi0x.sailing.logic.dto.OrcOverviewXmlDto;
-import io.github.fi0x.sailing.logic.dto.OrcOverviewXmlRowDto;
+import io.github.fi0x.sailing.logic.dto.orc.OrcOverviewXmlDto;
+import io.github.fi0x.sailing.logic.dto.orc.OrcOverviewXmlRowDto;
 import org.springframework.stereotype.Component;
 
 @Component
