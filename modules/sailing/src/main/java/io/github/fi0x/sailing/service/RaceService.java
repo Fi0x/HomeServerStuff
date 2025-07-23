@@ -9,25 +9,22 @@ import io.github.fi0x.sailing.db.entities.RaceResultEntity;
 import io.github.fi0x.sailing.db.entities.RaceResultId;
 import io.github.fi0x.sailing.logic.converter.RaceConverter;
 import io.github.fi0x.sailing.logic.converter.RaceResultToDtoConverter;
-import io.github.fi0x.sailing.logic.dto.*;
+import io.github.fi0x.sailing.logic.dto.RaceInfoDto;
+import io.github.fi0x.sailing.logic.dto.RaceInformation;
+import io.github.fi0x.sailing.logic.dto.RaceResultDto;
+import io.github.fi0x.sailing.logic.dto.ShipRaceResults;
 import io.github.fi0x.sailing.logic.dto.m2s.M2sClass;
 import io.github.fi0x.util.components.Authenticator;
 import io.github.fi0x.util.dto.UserRoles;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -37,19 +34,6 @@ import java.util.stream.Collectors;
 public class RaceService
 {
 	private static final String M2S_BASE_URL = "https://www.manage2sail.com/api/event";
-	private static final String M2S_UI_URL = "https://www.manage2sail.com/de-DE/event";
-	private static final String FINAL_RACE_NAME = "RVB Final Race";
-	private static final Map<String, Double> ORC_RACES = new HashMap<>()
-	{{
-		put("39. Internationaler Drei-Länder-Cup 2025", 3.0);
-		put("Graf-Zeppelin-Regatta", 3.0);
-		put("74. RUND UM 2025", 3.3);
-		put("West - Ost 2025", 3.3);
-		put("53. Altnauer TagNacht Regatta", 3.0);
-		put("Blue Planet Flug Trophy", 3.0);
-		put(FINAL_RACE_NAME, 3.0);
-	}};
-	private static final List<String> INVALID_RACE_STATUS = List.of("DNS", "DNC");
 
 	private final Authenticator authenticator;
 	private final RaceRepo raceRepo;
@@ -155,94 +139,43 @@ public class RaceService
 		String m2sClassId = getM2sClassId(selectedRaceClass.getClassUrl());
 		String classResultUrl = M2S_BASE_URL + "/" + m2sEventId + "/regattaresult/" + m2sClassId;
 		return m2sRetriever.getClassResults(classResultUrl, selectedRaceClass.getRaceEventName(),
-											selectedRaceClass.getStartDate());
+											selectedRaceClass.getStartDate(), selectedRaceClass.getEndDate(),
+											selectedRaceClass.getEventUrl());
 	}
 
 	@Transactional
 	public void saveRaceResults(List<RaceResultDto> raceResults)
 	{
-		log.info("Content: {}", raceResults);
-		//TODO: Delete any existing race-information for race, save race information, save result information
-	}
-
-	@Deprecated
-	@Transactional
-	public List<RaceResultEntity> saveRace(String raceOverviewUrl)
-	{
 		authenticator.restAuthenticate(UserRoles.ADMIN);
 
-		List<RaceEntity> existingEntities = getRace(raceOverviewUrl);
-		if (!existingEntities.isEmpty() && existingEntities.size() > 1)
-		{
-			throw new IllegalArgumentException(
-					"Multiple races with that url are already loaded. Url: " + raceOverviewUrl);
-		}
+		List<RaceResultEntity> resultEntities = new ArrayList<>();
 
-		String m2sRaceId = getM2sRaceId(raceOverviewUrl);
-		String m2sClassId = getM2sClassId(raceOverviewUrl);
-		String url = M2S_BASE_URL + "/" + m2sRaceId + "/regattaresult/" + m2sClassId;
-		RestTemplate restTemplate = new RestTemplate();
-		M2sRaceResultJsonDto result = restTemplate.getForObject(url, M2sRaceResultJsonDto.class);
-
-		Document page;
-		String raceName;
-		long startDate = 0;
-		long endDate = 0;
-		double scoreModifier = 1.0;
-		boolean isOrcRace = false;
-		try
+		raceResults.sort(Comparator.comparing(RaceResultDto::getName).thenComparing(RaceResultDto::getStartDate)
+								   .thenComparing(RaceResultDto::getRaceGroup));
+		RaceEntity currentRace = new RaceEntity();
+		for (RaceResultDto result : raceResults)
 		{
-			page = Jsoup.connect(M2S_UI_URL + "/" + m2sRaceId).get();
-			Element eventName = page.getElementsByClass("eventName").first();
-			raceName = eventName.getElementsByTag("h1").first().text();
-			String[] dates = eventName.getElementsByClass("eventDates").first().text().split(" - ");
-			SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
-			switch (dates.length)
+			if (!result.getRaceId().equals(currentRace.getId()))
 			{
-				case 1:
-					startDate = dateFormatter.parse(dates[0]).getTime();
-					endDate = dateFormatter.parse(dates[0]).getTime();
-					break;
-				case 2:
-					startDate = dateFormatter.parse(dates[0]).getTime();
-					endDate = dateFormatter.parse(dates[1]).getTime();
-					break;
-				default:
-					log.warn("Could not add a date to race with url: {}", url);
+				long participants = raceResults.stream().filter(r -> r.getRaceId().equals(result.getRaceId())).count();
+				currentRace = RaceEntity.builder().name(result.getName()).startDate(result.getStartDate())
+										.raceGroup(result.getRaceGroup()).endDate(result.getEndDate())
+										.scoreModifier(1.0).url(result.getUrl()).orcRace(false).bufferRace(true)
+										.participants((int) participants).build();
+				raceRepo.save(currentRace);
 			}
-			if (ORC_RACES.containsKey(raceName))
-			{
-				scoreModifier = ORC_RACES.get(raceName);
-				isOrcRace = true;
-			}
-		} catch (IOException | NullPointerException | ParseException e)
-		{
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Could not fetch race-details from manage2sail");
+
+			//TODO: Check, if DNS or DNC entries need to be filtered out
+			Double score = calculateScore(result.getPosition(), currentRace);
+			RaceResultEntity resultEntity = RaceResultEntity.builder().name(result.getName())
+															.startDate(result.getStartDate())
+															.raceGroup(result.getRaceGroup())
+															.skipper(result.getSkipper()).shipName(result.getShipName())
+															.position(result.getPosition()).score(score)
+															.shipClass(result.getShipClass()).build();
+			resultEntities.add(resultEntity);
 		}
-
-		RaceEntity raceEntity = RaceEntity.builder().name(raceName).startDate(startDate)
-										  .raceGroup(getCleanedGroupName(result.getRaceGroup())).endDate(endDate)
-										  .scoreModifier(scoreModifier).url(raceOverviewUrl).orcRace(isOrcRace)
-										  .bufferRace(!raceName.contains(FINAL_RACE_NAME))
-										  .participants(getActiveParticipants(result)).build();
-		raceRepo.save(raceEntity);
-
-		List<RaceResultEntity> raceResultEntities = new ArrayList<>();
-		for (M2sSingleResultJsonDto singleResult : result.getShipResults())
-		{
-			RaceResultEntity resultEntity = RaceResultEntity.builder().name(raceName).startDate(startDate)
-															.raceGroup(raceEntity.getRaceGroup())
-															.skipper(singleResult.getSkipper())
-															.shipName(singleResult.getShipName())
-															.position(singleResult.getPosition())
-															.score(calculateScore(singleResult.getPosition(),
-																				  raceEntity))
-															.shipClass(singleResult.getShipClass()).build();
-			raceResultEntities.add(resultEntity);
-			resultRepo.save(resultEntity);
-		}
-
-		return raceResultEntities;
+		resultRepo.saveAll(resultEntities);
 	}
 
 	@Transactional
@@ -283,6 +216,7 @@ public class RaceService
 
 		raceRepo.save(newEntity);
 
+		//TODO: Find out why this sometimes fails
 		List<RaceResultEntity> raceResults = resultRepo.findAllByNameAndStartDateAndRaceGroup(raceName, startDate,
 																							  raceGroup);
 		List<RaceResultEntity> updatedRaceResults = new ArrayList<>();
@@ -343,12 +277,6 @@ public class RaceService
 		return raceEntities;
 	}
 
-	@Deprecated
-	private List<RaceEntity> getRace(String url)
-	{
-		return raceRepo.findAllByUrl(url);
-	}
-
 	private String getM2sRaceId(String url)
 	{
 		return url.split("event/")[1].split("#!/")[0];
@@ -357,25 +285,6 @@ public class RaceService
 	private String getM2sClassId(String url)
 	{
 		return url.split("/?classId=")[1];
-	}
-
-	@Deprecated
-	private String getCleanedGroupName(String raceGroup)
-	{
-		String cleaned = raceGroup.toUpperCase().replace("-", " ").replaceAll("\\(.*?\\)", "");
-		cleaned = cleaned.trim();
-		if (cleaned.endsWith("E"))
-			return cleaned.substring(0, cleaned.length() - 1);
-
-		return cleaned;
-	}
-
-	@Deprecated
-	private Integer getActiveParticipants(M2sRaceResultJsonDto results)
-	{
-		return results.getShipResults().stream().filter(participant -> participant.getRaceEntries().stream().anyMatch(
-				singleRace -> singleRace.getRaceStatus() == null || !INVALID_RACE_STATUS.contains(
-						singleRace.getRaceStatus()))).toList().size();
 	}
 
 

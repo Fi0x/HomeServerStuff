@@ -80,18 +80,18 @@ public class Manage2SailRetriever
 		}
 		String eventName = eventNameElement.child(0).text();
 		Elements rows = tableBody.children();
-		rows.remove(0);
 
 		List<M2sClass> classes = new ArrayList<>();
 		rows.forEach(element -> {
-			M2sClass m2sClass = getClass(element, eventName, startDate, endDate);
+			M2sClass m2sClass = getClass(element, eventName, startDate, endDate, raceOverviewUrl);
 			if (m2sClass != null)
 				classes.add(m2sClass);
 		});
 		return classes;
 	}
 
-	public List<RaceResultDto> getClassResults(String classUrl, String eventName, Long startDate)
+	public List<RaceResultDto> getClassResults(String classUrl, String eventName, Long startDate, Long endDate,
+											   String eventUrl)
 	{
 		RestTemplate restTemplate = new RestTemplate();
 		M2sClassResultsJsonDto classResultsJson = restTemplate.getForObject(classUrl, M2sClassResultsJsonDto.class);
@@ -102,10 +102,11 @@ public class Manage2SailRetriever
 			String groupName = classResultsJson.getClassName();
 			classResultsJson.getEntries().forEach(m2sEntryResultJsonDto -> resultList.add(
 					RaceResultDto.builder().name(eventName).startDate(startDate).raceGroup(groupName)
-								 .skipper(m2sEntryResultJsonDto.getSkipperName())
+								 .skipper(m2sEntryResultJsonDto.getSkipperName()).endDate(endDate).url(eventUrl)
 								 .shipName(m2sEntryResultJsonDto.getShipName())
 								 .position(m2sEntryResultJsonDto.getPosition())
-								 .shipClass(Objects.requireNonNullElse(m2sEntryResultJsonDto.getShipClass(), groupName))
+								 .shipClass(Objects.requireNonNullElse(m2sEntryResultJsonDto.getShipClass(),
+																	   groupName))
 								 .build()));
 		} else
 		{
@@ -113,8 +114,8 @@ public class Manage2SailRetriever
 				String subName = m2sScoreResultJsonDto.getName();
 				m2sScoreResultJsonDto.getResult().getEntries().forEach(subEntry -> resultList.add(
 						RaceResultDto.builder().name(eventName).startDate(startDate).raceGroup(subName)
-									 .skipper(subEntry.getSkipperName()).shipName(subEntry.getShipName())
-									 .position(subEntry.getPosition())
+									 .skipper(subEntry.getSkipperName()).endDate(endDate).url(eventUrl)
+									 .shipName(subEntry.getShipName()).position(subEntry.getPosition())
 									 .shipClass(Objects.requireNonNullElse(subEntry.getShipClass(), subName)).build()));
 			});
 		}
@@ -122,18 +123,20 @@ public class Manage2SailRetriever
 		return resultList;
 	}
 
-	private M2sClass getClass(Element row, String eventName, Long startDate, Long endDate)
+	private M2sClass getClass(Element row, String eventName, Long startDate, Long endDate, String eventUrl)
 	{
-		M2sClass raceClass = new M2sClass();
-		raceClass.setClassName(row.child(0).text());
 		Element resultUrlCell = row.child(2);
 		if (resultUrlCell.children().isEmpty())
 			return null;
+
 		Element urlAnchor = resultUrlCell.child(0);
+		M2sClass raceClass = new M2sClass();
+		raceClass.setClassName(row.child(0).text());
 		raceClass.setClassUrl(urlAnchor.attribute("href").getValue());
 		raceClass.setRaceEventName(eventName);
 		raceClass.setStartDate(startDate);
 		raceClass.setEndDate(endDate);
+		raceClass.setEventUrl(eventUrl);
 		return raceClass;
 	}
 }

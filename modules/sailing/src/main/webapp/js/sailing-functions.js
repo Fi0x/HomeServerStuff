@@ -50,6 +50,10 @@ function addRace() {
     location.replace(`${baseUrlNormal}/race/new?raceOverviewUrl=${encodeURIComponent(url)}`);
 }
 
+function addRaceManually() {
+    //TODO: Open new page where user can enter all race information and results manually
+}
+
 function fillRaceResults() {
     let scorePairs = [];
     for (let result of raceResults) {

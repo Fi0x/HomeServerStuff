@@ -11,8 +11,12 @@
     <div class="top-margin bottom-margin">
         <input class="long-input vertical-align-center" type="text" id="newRaceUrl"
                placeholder="https://www.manage2sail.com/...">
-        <div class="btn vertical-align-center" onclick="addRace()" title="Link to manage2sail result page">Add new
-            race-results
+        <div class="btn btn-success vertical-align-center" onclick="addRace()" title="Link to manage2sail result page">
+            Add
+            new race-results
+        </div>
+        <div class="btn btn-edit vertical-align-center" onclick="addRaceManually()"
+             title="Type in all the values for a race that is not on manage2sail">Add new Results manually
         </div>
     </div>
     <table id="searchableTable" class="table sortable">
@@ -29,6 +33,7 @@
         </thead>
         <tbody>
         <c:forEach items="${races}" var="race" varStatus="loop">
+            <%--            TODO: Split the table into sections for the different years--%>
             <tr>
                 <td><input id="raceName${loop.index}" value="${race.name}"></td>
                 <td><input id="raceGroup${loop.index}" value="${race.raceGroup}"></td>

@@ -49,7 +49,7 @@ public class RestController
 	@PostMapping("/race/save")
 	public void saveRaceResults(@RequestBody List<RaceResultDto> raceResultDtos)
 	{
-		log.debug("saveRaceResults() called with dtos: {}", raceResultDtos);
+		log.debug("saveRaceResults() called with {} dtos", raceResultDtos.size());
 
 		raceService.saveRaceResults(raceResultDtos);
 	}

@@ -44,7 +44,8 @@
             className: "${raceClass.className}",
             classUrl: "${raceClass.classUrl}",
             startDate: ${raceClass.startDate},
-            endDate: ${raceClass.endDate}
+            endDate: ${raceClass.endDate},
+            eventUrl: "${raceClass.eventUrl}"
         }${loop.last ? '' : ','}
         </c:forEach>
     ]
