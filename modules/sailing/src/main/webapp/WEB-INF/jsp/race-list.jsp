@@ -15,9 +15,9 @@
             Add
             new race-results
         </div>
-        <div class="btn btn-edit vertical-align-center" onclick="addRaceManually()"
-             title="Type in all the values for a race that is not on manage2sail">Add new Results manually
-        </div>
+        <a class="btn-edit vertical-align-center" href="${pageContext.request.contextPath}/race/manual"
+           title="Type in all the values for a race that is not on manage2sail">Add new Results manually
+        </a>
     </div>
     <table id="racesTable" class="table sortable">
         <thead>

@@ -90,4 +90,12 @@ public class InformationController
 
 		return "new-race-class-list";
 	}
+
+	@GetMapping("/race/manual")
+	public String addNewRaceManually()
+	{
+		log.info("addNewRaceManually() called");
+
+		return "add-race-manually";
+	}
 }
