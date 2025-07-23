@@ -19,7 +19,7 @@
              title="Type in all the values for a race that is not on manage2sail">Add new Results manually
         </div>
     </div>
-    <table id="searchableTable" class="table sortable">
+    <table id="racesTable" class="table sortable">
         <thead>
         <tr class="underlined-row">
             <th class="clickable" colspan="1">Race Name</th>
@@ -31,29 +31,6 @@
             <th class="clickable align-text-center" colspan="1">Score Modifier</th>
         </tr>
         </thead>
-        <tbody>
-        <c:forEach items="${races}" var="race" varStatus="loop">
-            <%--            TODO: Split the table into sections for the different years--%>
-            <tr>
-                <td><input id="raceName${loop.index}" value="${race.name}"></td>
-                <td><input id="raceGroup${loop.index}" value="${race.raceGroup}"></td>
-                <td><fmt:formatDate value="${race.startDate}" pattern="dd.MM.yyyy"/></td>
-                <td class="align-text-center"><input id="raceBuffer${loop.index}" ${race.bufferRace ? 'checked': ''}
-                                                     type="checkbox"></td>
-                <td class="align-text-center"><input id="raceOrc${loop.index}" ${race.orcRace ? 'checked' : ''}
-                                                     type="checkbox"></td>
-                <td class="align-text-center">${race.participants}</td>
-                <td class="align-text-center"><input id="raceScore${loop.index}" type="number"
-                                                     value="${race.scoreModifier}"></td>
-                <td class="align-content-center"><a id="deleteButton${loop.index}" class="btn-danger"
-                                                    onclick="deleteRace(this)">Delete</a></td>
-                <td class="align-content-center"><a class="btn-edit"
-                                                    onclick="updateRace(${loop.index}, '${race.name}', '${race.longDate}', '${race.raceGroup}')">
-                    Save Changes</a></td>
-                <td><a class="btn" onclick="reloadRace(`${race.url}`)">Reload Results</a></td>
-            </tr>
-        </c:forEach>
-        </tbody>
     </table>
 </div>
 <%@include file="../common/scripts.jspf" %>
@@ -67,6 +44,8 @@
         <c:forEach items="${races}" var="race" varStatus="loop">
         {
             raceName: "${race.name}",
+            startDate: "<fmt:formatDate value="${race.startDate}" pattern="dd.MM.yyyy"/>",
+            longDate: ${race.longDate},
             raceGroup: "${race.raceGroup}",
             scoreModifier: ${race.scoreModifier},
             orcRace: ${race.orcRace},
@@ -79,6 +58,7 @@
 <script>
     onload = function () {
         loadNavBar();
+        loadRaceList();
     }
 </script>
 </body>
