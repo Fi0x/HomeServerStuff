@@ -25,19 +25,26 @@
         </tbody>
     </table>
     <a class="btn-success" onclick="loadClassResults(this)">Load results for selected classes</a>
-    <div id="classResultTableParent"></div>
+    <div class="full-width" id="classResultTableParent"></div>
+    <a id="saveSelectedButton" class="btn-success" style="display: none" onclick="saveSelectedResults(this)">Save
+        selected results</a>
 </div>
 <%@include file="../common/scripts.jspf" %>
 <script src="../../js/sailing-functions.js"></script>
+<script src="../../js/new-race-functions.js"></script>
 <script>
     let baseUrl = "${pageContext.request.contextPath}/api"
+    let baseUrlNormal = "${pageContext.request.contextPath}"
 </script>
 <script>
     let raceClasses = [
         <c:forEach items="${raceClasses}" var="raceClass" varStatus="loop">
         {
+            raceEventName: "${raceClass.raceEventName}",
             className: "${raceClass.className}",
-            classUrl: "${raceClass.classUrl}"
+            classUrl: "${raceClass.classUrl}",
+            startDate: ${raceClass.startDate},
+            endDate: ${raceClass.endDate}
         }${loop.last ? '' : ','}
         </c:forEach>
     ]

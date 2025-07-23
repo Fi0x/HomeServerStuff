@@ -3,6 +3,7 @@ package io.github.fi0x.sailing.components;
 import io.github.fi0x.sailing.logic.dto.RaceResultDto;
 import io.github.fi0x.sailing.logic.dto.m2s.M2sClass;
 import io.github.fi0x.sailing.logic.dto.m2s.M2sClassResultsJsonDto;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -11,10 +12,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
+@Slf4j
 @Component
 public class Manage2SailRetriever
 {
@@ -22,69 +27,113 @@ public class Manage2SailRetriever
 	{
 		Document raceOverviewPage = Jsoup.connect(raceOverviewUrl).get();
 		Element raceClassesScript = raceOverviewPage.getElementById("classes");
-		if(raceClassesScript == null)
+		if (raceClassesScript == null)
+		{
+			log.debug("raceClassesScript could not be found in html page");
 			return Collections.emptyList();
-		if(raceClassesScript.childNodeSize() == 0)
+		}
+		if (raceClassesScript.childNodeSize() == 0)
+		{
+			log.debug("raceClassesScript does not contain any elements");
 			return Collections.emptyList();
+		}
 		Element raceClassesDivDoc = Jsoup.parse(raceClassesScript.data().trim());
 		Element raceClassesTable = raceClassesDivDoc.getElementsByTag("table").first();
-		if(raceClassesTable == null)
+		if (raceClassesTable == null)
+		{
+			log.debug("raceClassesTable could not be found in script on html page");
 			return Collections.emptyList();
+		}
 		Element tableBody = raceClassesTable.getElementsByTag("tbody").first();
-		if(tableBody == null)
+		if (tableBody == null)
+		{
+			log.debug("Could not find a body in the classes-table");
 			return Collections.emptyList();
+		}
+		Element dateElement = raceOverviewPage.getElementsByClass("eventDates").first();
+		if (dateElement == null)
+		{
+			log.debug("Could not find a date element on the html-page");
+			return Collections.emptyList();
+		}
+		String[] dateStrings = dateElement.text().split(" - ");
+		SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
+		long startDate;
+		long endDate;
+		try
+		{
+			startDate = dateFormatter.parse(dateStrings[0]).getTime();
+			if (dateStrings.length > 1)
+				endDate = dateFormatter.parse(dateStrings[1]).getTime();
+			else
+				endDate = startDate;
+		} catch (ParseException e)
+		{
+			log.debug("Could not convert the date-String to a valid start- or end-date");
+			return Collections.emptyList();
+		}
+		Element eventNameElement = raceOverviewPage.getElementsByClass("eventName").first();
+		if (eventNameElement == null)
+		{
+			log.debug("Could not find an element for the event-name on the html-page");
+			return Collections.emptyList();
+		}
+		String eventName = eventNameElement.child(0).text();
 		Elements rows = tableBody.children();
 		rows.remove(0);
+
 		List<M2sClass> classes = new ArrayList<>();
 		rows.forEach(element -> {
-			M2sClass m2sClass = getClass(element);
-			if(m2sClass != null)
+			M2sClass m2sClass = getClass(element, eventName, startDate, endDate);
+			if (m2sClass != null)
 				classes.add(m2sClass);
 		});
-		Element eventNameElement = raceOverviewPage.getElementsByClass("eventName").first();
-		if(eventNameElement == null)
-			return Collections.emptyList();
-		String eventName = eventNameElement.child(0).text();
-		classes.forEach(m2sClass -> m2sClass.setRaceEventName(eventName));
 		return classes;
 	}
 
-	public List<RaceResultDto> getClassResults(String classUrl)
+	public List<RaceResultDto> getClassResults(String classUrl, String eventName, Long startDate)
 	{
 		RestTemplate restTemplate = new RestTemplate();
 		M2sClassResultsJsonDto classResultsJson = restTemplate.getForObject(classUrl, M2sClassResultsJsonDto.class);
 
 		List<RaceResultDto> resultList = new ArrayList<>();
-		if(classResultsJson.getResults().isEmpty())
+		if (classResultsJson.getResults().isEmpty())
 		{
+			String groupName = classResultsJson.getClassName();
 			classResultsJson.getEntries().forEach(m2sEntryResultJsonDto -> resultList.add(
-					RaceResultDto.builder().raceGroup(classResultsJson.getClassName())
+					RaceResultDto.builder().name(eventName).startDate(startDate).raceGroup(groupName)
 								 .skipper(m2sEntryResultJsonDto.getSkipperName())
 								 .shipName(m2sEntryResultJsonDto.getShipName())
-								 .shipClass(m2sEntryResultJsonDto.getShipClass()).build()));
-		}
-		else
+								 .position(m2sEntryResultJsonDto.getPosition())
+								 .shipClass(Objects.requireNonNullElse(m2sEntryResultJsonDto.getShipClass(), groupName))
+								 .build()));
+		} else
 		{
 			classResultsJson.getResults().forEach(m2sScoreResultJsonDto -> {
 				String subName = m2sScoreResultJsonDto.getName();
 				m2sScoreResultJsonDto.getResult().getEntries().forEach(subEntry -> resultList.add(
-						RaceResultDto.builder().raceGroup(subName).skipper(subEntry.getSkipperName())
-									 .shipName(subEntry.getShipName()).shipClass(subEntry.getShipClass()).build()));
+						RaceResultDto.builder().name(eventName).startDate(startDate).raceGroup(subName)
+									 .skipper(subEntry.getSkipperName()).shipName(subEntry.getShipName())
+									 .position(subEntry.getPosition())
+									 .shipClass(Objects.requireNonNullElse(subEntry.getShipClass(), subName)).build()));
 			});
 		}
 
 		return resultList;
 	}
 
-	private M2sClass getClass(Element row)
+	private M2sClass getClass(Element row, String eventName, Long startDate, Long endDate)
 	{
 		M2sClass raceClass = new M2sClass();
 		raceClass.setClassName(row.child(0).text());
 		Element resultUrlCell = row.child(2);
-		if(resultUrlCell.children().isEmpty())
+		if (resultUrlCell.children().isEmpty())
 			return null;
 		Element urlAnchor = resultUrlCell.child(0);
 		raceClass.setClassUrl(urlAnchor.attribute("href").getValue());
+		raceClass.setRaceEventName(eventName);
+		raceClass.setStartDate(startDate);
+		raceClass.setEndDate(endDate);
 		return raceClass;
 	}
 }

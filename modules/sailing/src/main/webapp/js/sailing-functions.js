@@ -1,5 +1,5 @@
 function searchFunction() {
-    var input, filter, table, rows, tds, i, txtValue;
+    let input, filter, table, rows, tds, i, txtValue;
     input = document.getElementById("searchText");
     filter = input.value.toUpperCase();
     table = document.getElementById("searchableTable");
@@ -48,86 +48,6 @@ function addRace() {
     let url = textField.value;
 
     location.replace(`${baseUrlNormal}/race/new?raceOverviewUrl=${encodeURIComponent(url)}`);
-}
-
-function loadClassResults(button) {
-    button.parentNode.removeChild(button);
-    let tableParent = document.getElementById("classResultTableParent");
-    for (let i = 0; i < raceClasses.length; i++) {
-        if (document.getElementById(`classSelection${i}`).checked) {
-            let tableTopic = document.createElement("h3");
-            tableTopic.innerText = raceClasses[i].className;
-            tableParent.appendChild(tableTopic);
-            let table = document.createElement("table");
-            table.classList.add("table");
-            table.classList.add("top-margin");
-            let thead = document.createElement("thead");
-            let headRow = document.createElement("tr");
-            headRow.classList.add("underlined-row");
-            addTableHeader(headRow, "Group");
-            addTableHeader(headRow, "Skipper");
-            addTableHeader(headRow, "Ship-name");
-            addTableHeader(headRow, "Boat-class");
-            thead.appendChild(headRow);
-            table.appendChild(thead);
-            let tbody = document.createElement("tbody");
-            table.appendChild(tbody);
-            tableParent.appendChild(table);
-
-            fetch(`${baseUrl}/race/load`, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(raceClasses[i])
-            }).then(response => {
-                if (!response.ok)
-                    throw "Could not load results for class: " + raceClasses[i].className;
-                response.json().then(jsonResponse => {
-                    jsonResponse.forEach(element => addResultRow(tbody, element));
-                });
-            }).catch(error => {
-                alert(error);
-            });
-        }
-    }
-}
-
-function addTableHeader(row, text) {
-    let topic = document.createElement("th");
-    topic.innerText = text;
-    topic.classList.add("align-text-center")
-    row.appendChild(topic);
-}
-
-function addResultRow(tbody, shipResult) {
-    let row = document.createElement("tr");
-
-    let group = document.createElement("td");
-    group.innerText = shipResult.raceGroup;
-    group.classList.add("align-text-center");
-    tbody.appendChild(group);
-    let skipper = document.createElement("td");
-    skipper.innerText = shipResult.skipper;
-    skipper.classList.add("align-text-center");
-    tbody.appendChild(skipper);
-    let ship = document.createElement("td");
-    ship.innerText = shipResult.shipName;
-    ship.classList.add("align-text-center");
-    tbody.appendChild(ship);
-    let boatClass = document.createElement("td");
-    boatClass.innerText = shipResult.shipClass;
-    boatClass.classList.add("align-text-center");
-    tbody.appendChild(boatClass);
-
-    //TODO Make rows selectable to decide which results to keep and which to remove
-
-    //Example races:
-    // https://www.manage2sail.com/de-DE/event/7da1f04b-bd3a-4068-8d31-4ecf17bdc1bb#!/
-    // https://www.manage2sail.com/de-DE/event/6695807a-a06f-49d5-863d-39c96c82d6cf#!/
-
-    tbody.appendChild(row);
 }
 
 function fillRaceResults() {
@@ -263,25 +183,8 @@ function updateRace(index, name, date, group) {
     })
 }
 
-function reloadRace(name, date, group, url, button) {
-    button.style.display = 'none';
-
-    fetch(`${baseUrl}/race/remove/${name}/${date}/${group}`, {
-        method: 'DELETE'
-    }).then(response => {
-        if (response.status !== 200) {
-            alert("Could not clear database before reloading (" + response.status + ")");
-            throw response;
-        }
-
-        //TODO: Rework reload to no longer use this endpoint
-        $.post(`${baseUrl}/race/add`, url, function () {
-            location.reload();
-        });
-    }).catch(() => {
-        console.log("Error when reloading race");
-        button.style.display = '';
-    });
+function reloadRace(url) {
+    location.replace(`${baseUrlNormal}/race/new?raceOverviewUrl=${encodeURIComponent(url)}`);
 }
 
 function deleteResult(raceName, date, group, skipper, shipName, button) {

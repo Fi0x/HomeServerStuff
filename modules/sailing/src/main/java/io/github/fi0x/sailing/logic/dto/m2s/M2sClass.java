@@ -14,4 +14,6 @@ public class M2sClass
 	private String raceEventName;
 	private String className;
 	private String classUrl;
+	private Long startDate;
+	private Long endDate;
 }
