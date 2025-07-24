@@ -9,9 +9,7 @@ import io.github.fi0x.sailing.service.OrcService;
 import io.github.fi0x.sailing.service.RaceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -53,10 +51,7 @@ public class RestController
 	{
 		log.debug("saveRaceInfo() called with dto {}", raceDto);
 
-		//TODO: verify and save race info (inputs might be invalid, so throw an error then)
-		// startDate gets replaced by longDate
-		// url will be empty and should stay empty
-		throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "WIP, not done yet");
+		raceService.saveRaceInformation(raceDto);
 	}
 
 	@PostMapping("/race/save")

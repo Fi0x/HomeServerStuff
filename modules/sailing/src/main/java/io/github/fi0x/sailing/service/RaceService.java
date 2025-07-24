@@ -150,6 +150,24 @@ public class RaceService
 	}
 
 	@Transactional
+	public void saveRaceInformation(RaceInfoDto raceInfoDto)
+	{
+		authenticator.restAuthenticate(UserRoles.ADMIN);
+
+		if(raceInfoDto.getName() == null)
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Race-name must not be null");
+		if(raceInfoDto.getLongDate() == null)
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start-Date must not be null");
+		if(raceInfoDto.getRaceGroup() == null)
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Race-Group must not be null");
+
+		RaceEntity entity = raceConverter.convert(raceInfoDto);
+		entity.setEndDate(raceInfoDto.getEndDate());
+
+		raceRepo.save(entity);
+	}
+
+	@Transactional
 	public void saveRaceResults(List<RaceResultDto> raceResults)
 	{
 		authenticator.restAuthenticate(UserRoles.ADMIN);

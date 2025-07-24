@@ -5,7 +5,11 @@ function loadDateFields() {
 }
 
 function saveNewRaceInfo() {
-    let dto = getRaceInfoDto();
+    let raceName = document.getElementById("raceName").value;
+    let raceGroup = document.getElementById("raceGroup").value;
+    let startDate = new Date(document.getElementById("startDate").value).getTime();
+
+    let dto = getRaceInfoDto(raceName, startDate, raceGroup);
 
     fetch(`${baseUrl}/race/save/info`, {
         method: 'POST',
@@ -24,10 +28,7 @@ function saveNewRaceInfo() {
     });
 }
 
-function getRaceInfoDto() {
-    let raceName = document.getElementById("raceName").value;
-    let raceGroup = document.getElementById("raceGroup").value;
-    let startDate = new Date(document.getElementById("startDate").value).getTime();
+function getRaceInfoDto(raceName, startDate, raceGroup) {
     let endDate = new Date(document.getElementById("endDate").value).getTime();
     let bufferRace = document.getElementById("bufferRace").checked;
     let orcRace = document.getElementById("orcRace").checked;
