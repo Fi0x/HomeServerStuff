@@ -6,7 +6,7 @@
 <%@include file="../common/head.jspf" %>
 <body>
 <%@include file="../common/navigation.jspf" %>
-<div class="container">
+<div class="container full-width">
     <h1>Race results</h1>
     <table id="searchableTable" class="table sortable">
         <thead>

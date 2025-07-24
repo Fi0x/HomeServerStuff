@@ -6,7 +6,7 @@
 <%@include file="../common/head.jspf" %>
 <body>
 <%@include file="../common/navigation.jspf" %>
-<div class="container">
+<div class="container full-width">
     <h1>Races</h1>
     <div class="top-margin bottom-margin">
         <input class="long-input vertical-align-center" type="text" id="newRaceUrl"

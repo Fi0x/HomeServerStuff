@@ -9,11 +9,12 @@ function loadRaceList() {
             tbody.id = tbodyId;
             table.appendChild(tbody);
             let headerRow = document.createElement("tr");
+            headerRow.classList.add("table-section");
             tbody.appendChild(headerRow);
             let subtitle = document.createElement("th");
             subtitle.innerText = tbodyId;
-            subtitle.colSpan = 10;
-            subtitle.classList.add("align-text-center")
+            subtitle.colSpan = 11;
+            subtitle.classList.add("align-text-center");
             headerRow.appendChild(subtitle);
         }
         createRaceRow(tbody, race, i);
@@ -41,6 +42,11 @@ function createRaceRow(tbody, race, index) {
     };
     let updateButton = createButtonCell(row, `updateButton${index}`, "btn-edit", "Save Changes");
     updateButton.onclick = () => updateRace(index, `${race.raceName}`, `${race.longDate}`, `${race.raceGroup}`);
+    let editButton = createButtonCell(row, `editButton${index}`, "btn-edit", "Modify Results");
+    editButton.onclick = () => {
+        //TODO: Open page to edit results of the race
+        console.log("Not yet implemented");
+    }
     if (race.url !== null) {
         let reloadButton = createButtonCell(row, `reloadButton${index}`, "btn", "Reload Results");
         reloadButton.onclick = () => location.replace(`${baseUrlNormal}/race/new?raceOverviewUrl=${encodeURIComponent(race.url)}`);

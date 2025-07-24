@@ -7,10 +7,10 @@
 <body>
 <%@include file="../common/navigation.jspf" %>
 <div class="container">
-    <h1>New Race</h1>
-    <%--    TODO: Add inputs to enter general race data--%>
-    <%--    TODO: Save the race-info and then open modify-race-results page--%>
-    <a class="btn-success">Save Race Information</a>
+    <h1>Edit results for '????????????'</h1>
+    <%--    TODO: Add inputs to modify existing results for the race or delete individual ones--%>
+    <%--    TODO: Add button to add new result--%>
+    <%--    TODO: Add a save button to save all changes--%>
 </div>
 <%@include file="../common/scripts.jspf" %>
 <script src="../../js/sailing-functions.js"></script>
