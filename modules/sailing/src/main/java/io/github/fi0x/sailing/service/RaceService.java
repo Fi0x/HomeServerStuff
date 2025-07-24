@@ -68,6 +68,12 @@ public class RaceService
 		return raceRepo.findAll().stream().map(RaceEntity::getGroupAndYear).distinct().toList();
 	}
 
+	public List<RaceResultDto> getAllResults(String raceName, Long startDate, String raceGroup)
+	{
+		return resultRepo.findAllByNameAndStartDateAndRaceGroup(raceName, startDate, raceGroup).stream()
+						 .map(raceResultConverter::convert).toList();
+	}
+
 	public List<ShipRaceResults> getAllResults(String group, Integer year)
 	{
 		List<ShipRaceResults> results = new ArrayList<>();
@@ -153,7 +159,6 @@ public class RaceService
 		raceResults.sort(Comparator.comparing(RaceResultDto::getName).thenComparing(RaceResultDto::getStartDate)
 								   .thenComparing(RaceResultDto::getRaceGroup));
 
-		//TODO: Check, if DNS or DNC entries need to be filtered out
 		RaceEntity currentRace = new RaceEntity();
 		for (RaceResultDto result : raceResults)
 		{
@@ -217,7 +222,6 @@ public class RaceService
 
 		raceRepo.save(newEntity);
 
-		//TODO: Find out why this sometimes fails
 		List<RaceResultEntity> raceResults = resultRepo.findAllByNameAndStartDateAndRaceGroup(raceName, startDate,
 																							  raceGroup);
 		List<RaceResultEntity> updatedRaceResults = new ArrayList<>();

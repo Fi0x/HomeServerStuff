@@ -8,6 +8,38 @@
 <%@include file="../common/navigation.jspf" %>
 <div class="container">
     <h1>New Race</h1>
+    <table>
+        <tbody>
+        <tr>
+            <td>Race Name</td>
+            <td><input></td>
+        </tr>
+        <tr>
+            <td>Race Group</td>
+            <td><input></td>
+        </tr>
+        <tr>
+            <td>Start Date</td>
+            <td><input></td>
+        </tr>
+        <tr>
+            <td>End Date</td>
+            <td><input></td>
+        </tr>
+        <tr>
+            <td>Crossable</td>
+            <td><input type="checkbox"></td>
+        </tr>
+        <tr>
+            <td>ORC</td>
+            <td><input type="checkbox"></td>
+        </tr>
+        <tr>
+            <td>Participants</td>
+            <td><input type="number"></td>
+        </tr>
+        </tbody>
+    </table>
     <%--    TODO: Add inputs to enter general race data--%>
     <%--    TODO: Save the race-info and then open modify-race-results page--%>
     <a class="btn-success">Save Race Information</a>
