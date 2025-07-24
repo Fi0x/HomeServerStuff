@@ -8,7 +8,9 @@
 <%@include file="../common/navigation.jspf" %>
 <div class="container">
     <h1>New Race</h1>
-    <%--    TODO: Add inputs to enter general race data and individual results--%>
+    <%--    TODO: Add inputs to enter general race data--%>
+    <%--    TODO: Save the race-info and then display options to add individual results--%>
+    <a class="btn-success">Save Race Information</a>
 </div>
 <%@include file="../common/scripts.jspf" %>
 <script src="../../js/sailing-functions.js"></script>
