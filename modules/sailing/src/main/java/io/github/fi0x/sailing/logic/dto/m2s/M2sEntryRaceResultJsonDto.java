@@ -16,6 +16,8 @@ public class M2sEntryRaceResultJsonDto
 	private String raceId;
 	@JsonProperty("Points")
 	private String points;
+	@JsonProperty("RaceStatusCode")
+	private RaceResultStatusCode raceStatusCode;
 	@JsonProperty("Rank")
 	private Integer position;
 	@JsonProperty("OverallRaceIndex")

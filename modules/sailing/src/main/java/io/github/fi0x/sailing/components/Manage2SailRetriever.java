@@ -105,6 +105,7 @@ public class Manage2SailRetriever
 								 .skipper(m2sEntryResultJsonDto.getSkipperName()).endDate(endDate).url(eventUrl)
 								 .shipName(m2sEntryResultJsonDto.getShipName())
 								 .position(m2sEntryResultJsonDto.getPosition())
+								 .resultStatusCode(m2sEntryResultJsonDto.getResultEntries().get(0).getRaceStatusCode())
 								 .shipClass(Objects.requireNonNullElse(m2sEntryResultJsonDto.getShipClass(),
 																	   groupName))
 								 .build()));
@@ -116,6 +117,7 @@ public class Manage2SailRetriever
 						RaceResultDto.builder().name(eventName).startDate(startDate).raceGroup(subName)
 									 .skipper(subEntry.getSkipperName()).endDate(endDate).url(eventUrl)
 									 .shipName(subEntry.getShipName()).position(subEntry.getPosition())
+									 .resultStatusCode(subEntry.getResultEntries().get(0).getRaceStatusCode())
 									 .shipClass(Objects.requireNonNullElse(subEntry.getShipClass(), subName)).build()));
 			});
 		}

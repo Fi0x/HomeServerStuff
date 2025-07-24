@@ -1,6 +1,7 @@
 package io.github.fi0x.sailing.logic.dto;
 
 import io.github.fi0x.sailing.db.entities.RaceId;
+import io.github.fi0x.sailing.logic.dto.m2s.RaceResultStatusCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,6 +23,7 @@ public class RaceResultDto
 
 	private String shipName;
 	private Integer position;
+	private RaceResultStatusCode resultStatusCode;
 	private Double score;
 	private String shipClass;
 	private Boolean crossed;

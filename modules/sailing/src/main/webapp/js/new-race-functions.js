@@ -21,6 +21,8 @@ function loadClassResults(button) {
             addTableHeader(headRow, "Skipper");
             addTableHeader(headRow, "Ship-name");
             addTableHeader(headRow, "Boat-class");
+            let emptyTopicCell = document.createElement("th");
+            headRow.appendChild(emptyTopicCell);
             let checkmarkTopicCell = document.createElement("th");
             checkmarkTopicCell.classList.add("align-text-center")
             let tbody = document.createElement("tbody");
@@ -75,6 +77,7 @@ function addResultRow(tbody, shipResult) {
     addCell(row, shipResult.skipper);
     addCell(row, shipResult.shipName);
     addCell(row, shipResult.shipClass);
+    addCell(row, shipResult.resultStatusCode);
     let checkmarkCell = document.createElement("td");
     checkmarkCell.classList.add("align-text-center");
     let checkmark = document.createElement("input");

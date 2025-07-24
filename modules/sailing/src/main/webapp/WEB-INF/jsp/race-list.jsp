@@ -51,7 +51,8 @@
             scoreModifier: ${race.scoreModifier},
             orcRace: ${race.orcRace},
             bufferRace: ${race.bufferRace},
-            participants: ${race.participants}
+            participants: ${race.participants},
+            url: "${race.url}"
         }${not loop.last ? ',' : ''}
         </c:forEach>
     ]

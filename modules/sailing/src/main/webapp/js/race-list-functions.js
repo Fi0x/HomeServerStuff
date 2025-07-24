@@ -28,7 +28,9 @@ function createRaceRow(tbody, race, index) {
     createTextCell(row, race.startDate);
     createCheckboxCell(row, `raceBuffer${index}`, race.bufferRace);
     createCheckboxCell(row, `raceOrc${index}`, race.orcRace);
-    createTextCell(row, race.participants).classList.add("align-text-center");
+    let participantCell = createInputCell(row, `raceParticipants${index}`, race.participants);
+    participantCell.classList.add("align-text-center");
+    participantCell.children[0].type = "number";
     let scoreCell = createInputCell(row, `raceScore${index}`, race.scoreModifier);
     scoreCell.classList.add("align-text-center");
     scoreCell.children[0].type = "number";
@@ -105,7 +107,8 @@ function updateRace(index, name, date, group) {
         raceGroup: `${document.getElementById('raceGroup' + index).value}`,
         scoreModifier: `${document.getElementById('raceScore' + index).value}`,
         orcRace: `${document.getElementById('raceOrc' + index).checked}`,
-        bufferRace: `${document.getElementById('raceBuffer' + index).checked}`
+        bufferRace: `${document.getElementById('raceBuffer' + index).checked}`,
+        participants: `${document.getElementById('raceParticipants' + index).value}`
     };
     fetch(`${baseUrl}/race/update/${name}/${date}/${group}`, {
         method: 'POST',

@@ -152,6 +152,8 @@ public class RaceService
 
 		raceResults.sort(Comparator.comparing(RaceResultDto::getName).thenComparing(RaceResultDto::getStartDate)
 								   .thenComparing(RaceResultDto::getRaceGroup));
+
+		//TODO: Check, if DNS or DNC entries need to be filtered out
 		RaceEntity currentRace = new RaceEntity();
 		for (RaceResultDto result : raceResults)
 		{
@@ -165,7 +167,6 @@ public class RaceService
 				raceRepo.save(currentRace);
 			}
 
-			//TODO: Check, if DNS or DNC entries need to be filtered out
 			Double score = calculateScore(result.getPosition(), currentRace);
 			RaceResultEntity resultEntity = RaceResultEntity.builder().name(result.getName())
 															.startDate(result.getStartDate())
