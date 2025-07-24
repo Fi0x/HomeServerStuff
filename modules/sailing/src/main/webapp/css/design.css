@@ -382,3 +382,9 @@ input[type="number"] {
 .table-section {
     background-color: var(--dark-accent2);
 }
+
+.centered {
+    align-self: center;
+    margin-right: auto;
+    margin-left: auto;
+}
