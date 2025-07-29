@@ -17,4 +17,5 @@ public class M2sClass
 	private Long startDate;
 	private Long endDate;
 	private String eventUrl;
+	private String eventId;
 }

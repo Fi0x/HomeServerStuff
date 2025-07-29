@@ -141,7 +141,7 @@ public class RaceService
 
 	public List<RaceResultDto> loadSpecificRaceClassResults(M2sClass selectedRaceClass)
 	{
-		String m2sEventId = getM2sRaceId(selectedRaceClass.getClassUrl()).split("/#!")[0];
+		String m2sEventId = selectedRaceClass.getEventId();
 		String m2sClassId = getM2sClassId(selectedRaceClass.getClassUrl());
 		String classResultUrl = M2S_BASE_URL + "/" + m2sEventId + "/regattaresult/" + m2sClassId;
 		return m2sRetriever.getClassResults(classResultUrl, selectedRaceClass.getRaceEventName(),
@@ -298,11 +298,6 @@ public class RaceService
 			}).toList();
 
 		return raceEntities;
-	}
-
-	private String getM2sRaceId(String url)
-	{
-		return url.split("event/")[1].split("#!/")[0];
 	}
 
 	private String getM2sClassId(String url)

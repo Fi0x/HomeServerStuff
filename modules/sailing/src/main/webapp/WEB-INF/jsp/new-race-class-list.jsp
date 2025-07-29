@@ -45,7 +45,8 @@
             classUrl: "${raceClass.classUrl}",
             startDate: ${raceClass.startDate},
             endDate: ${raceClass.endDate},
-            eventUrl: "${raceClass.eventUrl}"
+            eventUrl: "${raceClass.eventUrl}",
+            eventId: "${raceClass.eventId}"
         }${loop.last ? '' : ','}
         </c:forEach>
     ]
