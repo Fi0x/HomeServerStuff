@@ -65,7 +65,7 @@ public class OrcInformationToEntityMerger
 		if (dataElement == null)
 			return 1.0;
 
-		String text = dataElement.getElementsByTag("td").first().text();
+		String text = dataElement.getElementsByTag("td").last().text();
 		return Double.parseDouble(text);
 	}
 }
