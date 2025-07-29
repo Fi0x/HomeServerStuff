@@ -106,6 +106,7 @@ public class InformationController
 	{
 		log.info("editRaceResultsManually() called");
 
+		map.put("raceInfo", raceService.getRace(raceName, startDate, raceGroup));
 		map.put("raceResults", raceService.getAllResults(raceName, startDate, raceGroup));
 
 		return "modify-race-results";

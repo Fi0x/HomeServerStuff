@@ -44,8 +44,7 @@ function createRaceRow(tbody, race, index) {
     updateButton.onclick = () => updateRace(index, `${race.raceName}`, `${race.longDate}`, `${race.raceGroup}`);
     let editButton = createButtonCell(row, `editButton${index}`, "btn-edit", "Modify Results");
     editButton.onclick = () => {
-        //TODO: Open page to edit results of the race
-        console.log("Not yet implemented");
+        window.location.replace(`${baseUrlNormal}/race/${race.raceName}/${race.longDate}/${race.raceGroup}/edit`);
     }
     if (race.url !== null) {
         let reloadButton = createButtonCell(row, `reloadButton${index}`, "btn", "Reload Results");

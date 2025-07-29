@@ -74,7 +74,7 @@ function fillRaceResults() {
     }
 }
 
-function deleteResult(raceName, date, group, skipper, shipName, button) {
+function deleteResult(raceName, date, group, skipper, shipName, button, deleteRow = false) {
     button.style.display = 'none';
 
     fetch(`${baseUrl}/race/remove/${raceName}/${date}/${group}?skipper=${skipper}`, {
@@ -84,10 +84,14 @@ function deleteResult(raceName, date, group, skipper, shipName, button) {
             alert("Could not delete result (" + response.status + ")");
             button.style.display = '';
         } else {
-            let combinedId = shipName.replace(/\s/g, '') + skipper.replace(/\s/g, '');
-            let raceId = raceName.replace(/\s/g, '') + group.replace(/\s/g, '');
-            document.getElementById(`${combinedId}position${raceId}`).innerText = '';
-            document.getElementById(`${combinedId}points${raceId}`).innerText = '';
+            if (deleteRow) {
+                button.parent.parent.parent.removeChild(button.parent.parent);
+            } else {
+                let combinedId = shipName.replace(/\s/g, '') + skipper.replace(/\s/g, '');
+                let raceId = raceName.replace(/\s/g, '') + group.replace(/\s/g, '');
+                document.getElementById(`${combinedId}position${raceId}`).innerText = '';
+                document.getElementById(`${combinedId}points${raceId}`).innerText = '';
+            }
         }
     });
 }

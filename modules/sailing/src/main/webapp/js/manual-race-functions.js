@@ -46,3 +46,75 @@ function getRaceInfoDto(raceName, startDate, raceGroup) {
         participants: participants,
     };
 }
+
+function saveModifiedResults() {
+    let tableBody = document.getElementById("resultTableBody");
+    let dtoList = [];
+    for (let row of tableBody.children) {
+        let inputs = row.getElementsByTagName("input");
+
+        let dto = {
+            name: `${raceInfo.name}`,
+            startDate: `${raceInfo.startDate}`,
+            raceGroup: `${inputs[3].value}`,
+            skipper: `${inputs[1].value}`,
+            endDate: `${raceInfo.endDate}`,
+            url: `${raceInfo.url}`,
+            shipName: `${inputs[0].value}`,
+            position: `${inputs[4].value}`,
+            shipClass: `${inputs[2].value}`
+        };
+        dtoList.push(dto);
+    }
+
+    console.log(dtoList);
+
+    fetch(`${baseUrl}/race/save`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dtoList)
+    }).then(response => {
+        if (!response.ok)
+            throw "Could not save updated race-results";
+        location.replace(`${baseUrlNormal}/race-list`);
+    }).catch(error => {
+        alert(error);
+    });
+}
+
+function createNewResultRow() {
+    let body = document.getElementById("resultTableBody");
+    let row = document.createElement("tr");
+    body.appendChild(row);
+    createTextInput(row, "Ship Name");
+    createTextInput(row, "Skipper Name");
+    createTextInput(row, "Ship Class");
+    let raceGroupInput = createTextInput(row, "Race Group");
+    raceGroupInput.value = raceInfo.raceGroup;
+    let positionInput = createTextInput(row, "1");
+    positionInput.value = "1";
+    positionInput.type = "number";
+    let deleteButtonCell = document.createElement("td");
+    let deleteButton = document.createElement("a");
+    deleteButton.classList.add("btn");
+    deleteButton.classList.add("btn-danger")
+    deleteButton.innerText = "Delete";
+    deleteButton.onclick = () => {
+        row.parentElement.removeChild(row);
+    }
+    deleteButtonCell.appendChild(deleteButton);
+    row.appendChild(deleteButtonCell);
+}
+
+function createTextInput(parent, placeholder) {
+    let cell = document.createElement("td");
+    let inputElement = document.createElement("input");
+    inputElement.placeholder = placeholder;
+    cell.appendChild(inputElement);
+    parent.appendChild(cell);
+
+    return inputElement;
+}
