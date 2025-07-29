@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Locale;
 
 @Data
 @Builder
@@ -35,7 +36,7 @@ public class M2sEntryResultJsonDto
 
 	public String getSkipperName()
 	{
-		return skipperDto.firstName + " " + skipperDto.lastName;
+		return skipperDto.firstName + " " + skipperDto.lastName.toUpperCase(Locale.ROOT);
 	}
 
 	private static class SkipperDto
