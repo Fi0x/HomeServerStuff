@@ -1,5 +1,6 @@
 package io.github.fi0x.sailing.components;
 
+import io.github.fi0x.sailing.config.SpringSecurityConfig;
 import io.github.fi0x.sailing.db.RaceRepo;
 import io.github.fi0x.sailing.db.RaceResultRepo;
 import io.github.fi0x.sailing.db.entities.RaceResultEntity;
@@ -51,5 +52,11 @@ public class TestRaceCleanup
 		verify(raceRepo, times(1)).findAll();
 		verify(resultRepo, times(1)).findAll();
 		verify(resultRepo, times(1)).deleteAll(any());
+	}
+
+	@Test
+	void test_beanCreation()
+	{
+		Assertions.assertNotNull(new SpringSecurityConfig().raceCleanup(null, null));
 	}
 }
