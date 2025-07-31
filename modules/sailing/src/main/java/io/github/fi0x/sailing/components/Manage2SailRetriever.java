@@ -23,30 +23,32 @@ import java.util.Objects;
 @Component
 public class Manage2SailRetriever
 {
+	private final RestTemplate restTemplate = new RestTemplate();
+
 	public List<M2sClass> getRaceClasses(String raceOverviewUrl) throws IOException
 	{
 		Document raceOverviewPage = Jsoup.connect(raceOverviewUrl).get();
 		Element raceClassesScript = raceOverviewPage.getElementById("classes");
-		if(raceClassesScript == null)
+		if (raceClassesScript == null)
 		{
 			log.debug("raceClassesScript could not be found in html page");
 			return Collections.emptyList();
 		}
 		Element raceClassesDivDoc = Jsoup.parse(raceClassesScript.data().trim());
 		Element raceClassesTable = raceClassesDivDoc.getElementsByTag("table").first();
-		if(raceClassesTable == null)
+		if (raceClassesTable == null)
 		{
 			log.debug("raceClassesTable could not be found in script on html page");
 			return Collections.emptyList();
 		}
 		Element tableBody = raceClassesTable.getElementsByTag("tbody").first();
-		if(tableBody == null)
+		if (tableBody == null)
 		{
 			log.debug("Could not find a body in the classes-table");
 			return Collections.emptyList();
 		}
 		Element dateElement = raceOverviewPage.getElementsByClass("eventDates").first();
-		if(dateElement == null)
+		if (dateElement == null)
 		{
 			log.debug("Could not find a date element on the html-page");
 			return Collections.emptyList();
@@ -58,17 +60,17 @@ public class Manage2SailRetriever
 		try
 		{
 			startDate = dateFormatter.parse(dateStrings[0]).getTime();
-			if(dateStrings.length > 1)
+			if (dateStrings.length > 1)
 				endDate = dateFormatter.parse(dateStrings[1]).getTime();
 			else
 				endDate = startDate;
-		} catch(ParseException e)
+		} catch (ParseException e)
 		{
 			log.debug("Could not convert the date-String to a valid start- or end-date");
 			return Collections.emptyList();
 		}
 		Element eventNameElement = raceOverviewPage.getElementsByClass("eventName").first();
-		if(eventNameElement == null)
+		if (eventNameElement == null)
 		{
 			log.debug("Could not find an element for the event-name on the html-page");
 			return Collections.emptyList();
@@ -76,7 +78,7 @@ public class Manage2SailRetriever
 		String eventName = eventNameElement.child(0).text();
 
 		Element detailsScript = raceOverviewPage.getElementById("details");
-		if(detailsScript == null || detailsScript.childNodeSize() == 0)
+		if (detailsScript == null || detailsScript.childNodeSize() == 0)
 		{
 			log.debug("Could not find details-script or its children");
 			return Collections.emptyList();
@@ -84,19 +86,19 @@ public class Manage2SailRetriever
 		Element detailsDivElement = Jsoup.parse(detailsScript.data().trim());
 
 		Element infoTable = detailsDivElement.getElementsByClass("table-info").first();
-		if(infoTable == null)
+		if (infoTable == null)
 		{
 			log.debug("Could not find an element for the table-info on the html-page");
 			return Collections.emptyList();
 		}
 		Element infoTableBody = infoTable.children().last();
-		if(infoTableBody == null)
+		if (infoTableBody == null)
 		{
 			log.debug("Could not find a body for the info-table");
 			return Collections.emptyList();
 		}
 		Element idElement = infoTableBody.children().last();
-		if(idElement == null)
+		if (idElement == null)
 		{
 			log.debug("Could not find an element for the id on the html-page");
 			return Collections.emptyList();
@@ -108,7 +110,7 @@ public class Manage2SailRetriever
 		List<M2sClass> classes = new ArrayList<>();
 		rows.forEach(element -> {
 			M2sClass m2sClass = getClass(element, eventId, eventName, startDate, endDate, raceOverviewUrl);
-			if(m2sClass != null)
+			if (m2sClass != null)
 				classes.add(m2sClass);
 		});
 		return classes;
@@ -117,11 +119,10 @@ public class Manage2SailRetriever
 	public List<RaceResultDto> getClassResults(String classUrl, String eventName, Long startDate, Long endDate,
 											   String eventUrl)
 	{
-		RestTemplate restTemplate = new RestTemplate();
 		M2sClassResultsJsonDto classResultsJson = restTemplate.getForObject(classUrl, M2sClassResultsJsonDto.class);
 
 		List<RaceResultDto> resultList = new ArrayList<>();
-		if(classResultsJson.getResults().isEmpty())
+		if (classResultsJson.getResults().isEmpty())
 		{
 			String groupName = classResultsJson.getClassName();
 			classResultsJson.getEntries().forEach(m2sEntryResultJsonDto -> resultList.add(
@@ -130,10 +131,10 @@ public class Manage2SailRetriever
 								 .shipName(m2sEntryResultJsonDto.getShipName())
 								 .position(m2sEntryResultJsonDto.getPosition())
 								 .resultStatusCode(m2sEntryResultJsonDto.getResultEntries().get(0).getRaceStatusCode())
-								 .shipClass(Objects.requireNonNullElse(m2sEntryResultJsonDto.getShipClass(), groupName))
+								 .shipClass(Objects.requireNonNullElse(m2sEntryResultJsonDto.getShipClass(),
+																	   groupName))
 								 .build()));
-		}
-		else
+		} else
 		{
 			classResultsJson.getResults().forEach(m2sScoreResultJsonDto -> {
 				String subName = m2sScoreResultJsonDto.getName();
@@ -153,7 +154,7 @@ public class Manage2SailRetriever
 							  String eventUrl)
 	{
 		Element resultUrlCell = row.child(2);
-		if(resultUrlCell.children().isEmpty())
+		if (resultUrlCell.children().isEmpty())
 			return null;
 
 		Element urlAnchor = resultUrlCell.child(0);

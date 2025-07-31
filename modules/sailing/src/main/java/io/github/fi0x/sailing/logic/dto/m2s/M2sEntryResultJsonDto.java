@@ -39,7 +39,9 @@ public class M2sEntryResultJsonDto
 		return skipperDto.firstName + " " + skipperDto.lastName.toUpperCase(Locale.ROOT);
 	}
 
-	private static class SkipperDto
+	@NoArgsConstructor
+	@AllArgsConstructor
+	public static class SkipperDto
 	{
 		@JsonProperty("FirstName")
 		private String firstName;

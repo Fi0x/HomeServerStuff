@@ -1,6 +1,7 @@
 package io.github.fi0x.sailing.components;
 
-import io.github.fi0x.sailing.logic.dto.m2s.M2sClass;
+import io.github.fi0x.sailing.logic.dto.RaceResultDto;
+import io.github.fi0x.sailing.logic.dto.m2s.*;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -12,11 +13,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -39,16 +43,20 @@ public class TestManage2SailRetriever
 	private static final String OVERVIEW_HTML_FILE_NO_ID = "overviewNoId.html";
 	private static final String EVENT_NAME = "74. RUND UM 2025";
 	private static final String FIRST_CLASS_NAME = "Mehrrumpfboote YSZ kleiner gleich 79 (SG0)";
-	private static final String FIRST_CLASS_URL = "/de-DE/event/41eb060f-4eef-4406-a1bf-dd839852a42e/#!results?classId" +
-			"=d446b41b-9d00-4590-9e7f-becd7fadccf0";
+	private static final String FIRST_CLASS_URL = "/de-DE/event/41eb060f-4eef-4406-a1bf-dd839852a42e/#!results?classId"
+			+ "=d446b41b-9d00-4590-9e7f-becd7fadccf0";
 	private static final Long START_DATE = 1750284000000L;
 	private static final Long END_DATE = 1750456800000L;
 	private static final String EVENT_ID = "41eb060f-4eef-4406-a1bf-dd839852a42e";
 	private static final Integer CLASSES = 4;
+	private static final String SKIPPER_NAME = "Hans Walter";
+	private static final String FIRST_SHIP_CLASS = "Esse 850";
 
 	private MockedStatic<Jsoup> staticMock;
 	@Mock
 	private Connection connection;
+	@Mock
+	private RestTemplate restMock;
 	@InjectMocks
 	private Manage2SailRetriever component;
 
@@ -205,10 +213,72 @@ public class TestManage2SailRetriever
 		Assertions.assertTrue(results.isEmpty());
 	}
 
+	@Test
+	void test_getClassResults_successEntries()
+	{
+		ReflectionTestUtils.setField(component, "restTemplate", restMock);
+		when(restMock.getForObject(FIRST_CLASS_URL, M2sClassResultsJsonDto.class)).thenReturn(
+				getResultsDto(getEntryDtos(), Collections.emptyList()));
+
+		List<RaceResultDto> results = component.getClassResults(FIRST_CLASS_URL, EVENT_NAME, START_DATE, END_DATE,
+																OVERVIEW_PAGE_URL);
+		Assertions.assertFalse(results.isEmpty());
+	}
+
+	@Test
+	void test_getClassResults_successResults()
+	{
+		ReflectionTestUtils.setField(component, "restTemplate", restMock);
+		when(restMock.getForObject(FIRST_CLASS_URL, M2sClassResultsJsonDto.class)).thenReturn(
+				getResultsDto(getEntryDtos(), getResultDtos()));
+
+		List<RaceResultDto> results = component.getClassResults(FIRST_CLASS_URL, EVENT_NAME, START_DATE, END_DATE,
+																OVERVIEW_PAGE_URL);
+		Assertions.assertFalse(results.isEmpty());
+	}
+
+	@Test
+	void test_getClassResults_successEmpty()
+	{
+		ReflectionTestUtils.setField(component, "restTemplate", restMock);
+		when(restMock.getForObject(FIRST_CLASS_URL, M2sClassResultsJsonDto.class)).thenReturn(
+				getResultsDto(Collections.emptyList(), Collections.emptyList()));
+
+		List<RaceResultDto> results = component.getClassResults(FIRST_CLASS_URL, EVENT_NAME, START_DATE, END_DATE,
+																OVERVIEW_PAGE_URL);
+		Assertions.assertTrue(results.isEmpty());
+	}
+
 	private Document getOverviewDocument(String fileName) throws URISyntaxException, IOException
 	{
 		URL fileUrl = getClass().getClassLoader().getResource(fileName);
 		File file = new File(Objects.requireNonNull(fileUrl).toURI());
 		return Jsoup.parse(file);
+	}
+
+	private M2sClassResultsJsonDto getResultsDto(List<M2sEntryResultJsonDto> entries,
+												 List<M2sScoreResultJsonDto> results)
+	{
+		return M2sClassResultsJsonDto.builder().results(results).entries(entries).build();
+	}
+
+	private List<M2sEntryResultJsonDto> getEntryDtos()
+	{
+		return List.of(M2sEntryResultJsonDto.builder().skipperDto(getSkipperDto())
+											.resultEntries(List.of(M2sEntryRaceResultJsonDto.builder().build()))
+											.shipClass(FIRST_SHIP_CLASS).build());
+	}
+
+	private List<M2sScoreResultJsonDto> getResultDtos()
+	{
+		return List.of(M2sScoreResultJsonDto.builder().result(M2sSingleScoreResultJsonDto.builder().entries(
+				List.of(M2sEntryResultJsonDto.builder().skipperDto(getSkipperDto())
+											 .resultEntries(List.of(M2sEntryRaceResultJsonDto.builder().build()))
+											 .shipClass(FIRST_SHIP_CLASS).build())).build()).build());
+	}
+
+	private M2sEntryResultJsonDto.SkipperDto getSkipperDto()
+	{
+		return new M2sEntryResultJsonDto.SkipperDto(SKIPPER_NAME.split(" ")[0], SKIPPER_NAME.split(" ")[1]);
 	}
 }
