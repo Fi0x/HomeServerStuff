@@ -66,9 +66,7 @@ function saveModifiedResults() {
         };
         dtoList.push(dto);
     }
-
-    console.log(dtoList);
-
+    //TODO: Ensure, that general race information is not overwritten (buffer, scoreModifier)
     fetch(`${baseUrl}/race/save`, {
         method: 'POST',
         headers: {
