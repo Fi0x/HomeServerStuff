@@ -32,11 +32,6 @@ public class Manage2SailRetriever
 			log.debug("raceClassesScript could not be found in html page");
 			return Collections.emptyList();
 		}
-		if(raceClassesScript.childNodeSize() == 0)
-		{
-			log.debug("raceClassesScript does not contain any elements");
-			return Collections.emptyList();
-		}
 		Element raceClassesDivDoc = Jsoup.parse(raceClassesScript.data().trim());
 		Element raceClassesTable = raceClassesDivDoc.getElementsByTag("table").first();
 		if(raceClassesTable == null)
