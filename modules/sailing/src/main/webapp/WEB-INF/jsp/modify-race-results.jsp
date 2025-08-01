@@ -27,8 +27,7 @@
                 <td><input value="${raceResult.raceGroup}"></td>
                 <td><input type="number" value="${raceResult.position}"></td>
                 <td><a class="btn btn-danger"
-                       onclick="deleteResult(${raceInfo.name}, ${raceInfo.startDate}, ${raceResult.raceGroup}, ${raceResult.skipper}, ${raceResult.shipName}, this, true)">Delete</a>
-                        <%--                    TODO: Find out why the row does not get deleted--%>
+                       onclick="deleteResult(`${raceInfo.name}`, `${raceInfo.startDate}`, `${raceResult.raceGroup}`, `${raceResult.skipper}`, `${raceResult.shipName}`, this, true)">Delete</a>
                 </td>
             </tr>
         </c:forEach>

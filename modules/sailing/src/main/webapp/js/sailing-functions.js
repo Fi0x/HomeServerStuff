@@ -85,7 +85,7 @@ function deleteResult(raceName, date, group, skipper, shipName, button, deleteRo
             button.style.display = '';
         } else {
             if (deleteRow) {
-                button.parent.parent.parent.removeChild(button.parent.parent);
+                button.parentElement.parentElement.remove();
             } else {
                 let combinedId = shipName.replace(/\s/g, '') + skipper.replace(/\s/g, '');
                 let raceId = raceName.replace(/\s/g, '') + group.replace(/\s/g, '');
