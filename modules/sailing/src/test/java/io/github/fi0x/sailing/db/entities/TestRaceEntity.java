@@ -32,4 +32,18 @@ public class TestRaceEntity
 
 		Assertions.assertEquals(expected, entity.getGroupAndYear());
 	}
+
+	@Test
+	void test_getBooleans()
+	{
+		RaceEntity entity11 = RaceEntity.builder().orcRace(true).bufferRace(true).build();
+		RaceEntity entity01 = RaceEntity.builder().orcRace(true).bufferRace(false).build();
+		RaceEntity entity10 = RaceEntity.builder().orcRace(false).bufferRace(true).build();
+		RaceEntity entity00 = RaceEntity.builder().orcRace(false).bufferRace(false).build();
+
+		Assertions.assertEquals(3, entity11.getBooleans());
+		Assertions.assertEquals(2, entity10.getBooleans());
+		Assertions.assertEquals(1, entity01.getBooleans());
+		Assertions.assertEquals(0, entity00.getBooleans());
+	}
 }

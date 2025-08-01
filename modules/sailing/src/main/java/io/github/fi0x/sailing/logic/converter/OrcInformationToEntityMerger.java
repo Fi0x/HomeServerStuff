@@ -23,7 +23,7 @@ public class OrcInformationToEntityMerger
 			Element body = detailsPage.getElementsByTag("html").first().getElementsByTag("body").first();
 			Element scores = body.getElementsByClass("page").get(1).getElementById("country" + entity.getCountry());
 			Element tripleNumbers = scores.getElementsByClass("countryScoring").first().getElementsByClass("p3group")
-										  .first().getElementsByTag("table").first().getElementsByTag("tbody").first();
+					.first().getElementsByTag("table").first().getElementsByTag("tbody").first();
 
 			addTripleNumbers(entity, tripleNumbers);
 		} catch (NullPointerException e)
@@ -43,10 +43,10 @@ public class OrcInformationToEntityMerger
 
 	private CertificateEntity toEntity(OrcOverviewXmlRowDto rowDto)
 	{
-		return CertificateEntity.builder().id(rowDto.getRefNo()).shipName(rowDto.getYachtName()).certificateType(
-										CertificateType.valueOf(rowDto.getCertName().toUpperCase().replace(" ", "_")))
-								.country(rowDto.getCountryId()).shipClass(rowDto.getShipClass())
-								.url(URL_BASE + rowDto.getDxtID()).build();
+		return CertificateEntity.builder().id(rowDto.getRefNo()).shipName(rowDto.getYachtName())
+				.certificateType(CertificateType.valueOf(rowDto.getCertName().toUpperCase().replace(" ", "_")))
+				.country(rowDto.getCountryId()).shipClass(rowDto.getShipClass()).url(URL_BASE + rowDto.getDxtID())
+				.build();
 	}
 
 	private void addTripleNumbers(CertificateEntity entity, Element tripleNumbers)
