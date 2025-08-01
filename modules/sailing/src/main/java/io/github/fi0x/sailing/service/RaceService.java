@@ -109,13 +109,15 @@ public class RaceService
 			current.getRaceResults().add(raceResultDto);
 		}
 
-		Map<RaceId, Boolean> raceMap = raceRepo.findAll().stream()
-				.collect(Collectors.toMap(RaceEntity::getId, RaceEntity::getBufferRace));
+		Map<RaceId, Integer> raceMap = raceRepo.findAll().stream()
+				.collect(Collectors.toMap(RaceEntity::getId, RaceEntity::getBooleans));
 		for (ShipRaceResults shipDetails : results)
 		{
-			List<RaceResultDto> crossableResults = shipDetails.getRaceResults().stream()
-					.filter(res -> raceMap.get(res.getRaceId()))
-					.sorted((a, b) -> a.getScore() - b.getScore() == 0 ? 0 : a.getScore() - b.getScore() > 0 ? 1 : -1)
+			List<RaceResultDto> crossableResults = shipDetails.getRaceResults().stream().filter(res -> {
+						Integer booleans = raceMap.get(res.getRaceId());
+						return (booleans & 3) == 3;
+					}).sorted((a, b) -> a.getScore() - b.getScore() == 0 ? 0 : a.getScore() - b.getScore() > 0 ? 1 :
+							-1)
 					.toList();
 			if (crossableResults.size() <= 4)
 				continue;
@@ -313,6 +315,9 @@ public class RaceService
 
 	private Double calculateScore(Integer position, RaceEntity race)
 	{
-		return ((double) (race.getParticipants() - position + 1)) / ((double) (race.getParticipants() + 1)) * 100.0 * race.getScoreModifier();
+		if (race.getOrcRace())
+			return ((double) (race.getParticipants() - position + 1)) / ((double) (race.getParticipants() + 1)) * 100.0 * race.getScoreModifier();
+		else
+			return 0.0;
 	}
 }

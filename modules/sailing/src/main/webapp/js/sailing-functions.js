@@ -95,3 +95,11 @@ function deleteResult(raceName, date, group, skipper, shipName, button, deleteRo
         }
     });
 }
+
+function toggleOrcRaces(checkbox) {
+    let state = checkbox.checked ? 'none' : '';
+    let orcCells = document.getElementsByClassName("orcfalse");
+    for (let cell of orcCells) {
+        cell.style.display = state;
+    }
+}
