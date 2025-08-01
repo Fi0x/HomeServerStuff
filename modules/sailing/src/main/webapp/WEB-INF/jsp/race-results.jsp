@@ -8,6 +8,7 @@
 <%@include file="../common/navigation.jspf" %>
 <div class="container full-width">
     <h1>Race results</h1>
+    <%--    TODO: Add button, to filter for orc-race and hide others--%>
     <table id="searchableTable" class="table sortable">
         <thead>
         <tr class="underlined-row">
