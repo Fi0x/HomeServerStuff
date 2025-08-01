@@ -45,8 +45,8 @@ public class TestManage2SailRetriever
 	private static final String FIRST_CLASS_NAME = "Mehrrumpfboote YSZ kleiner gleich 79 (SG0)";
 	private static final String FIRST_CLASS_URL = "/de-DE/event/41eb060f-4eef-4406-a1bf-dd839852a42e/#!results?classId"
 			+ "=d446b41b-9d00-4590-9e7f-becd7fadccf0";
-	private static final Long START_DATE = 1750284000000L;
-	private static final Long END_DATE = 1750456800000L;
+	private static final Long START_DATE = 1750291200000L;
+	private static final Long END_DATE = 1750464000000L;
 	private static final String EVENT_ID = "41eb060f-4eef-4406-a1bf-dd839852a42e";
 	private static final Integer CLASSES = 4;
 	private static final String SKIPPER_NAME = "Hans Walter";

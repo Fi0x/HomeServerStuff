@@ -14,10 +14,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -55,6 +52,7 @@ public class Manage2SailRetriever
 		}
 		String[] dateStrings = dateElement.text().split(" - ");
 		SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
+		dateFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
 		long startDate;
 		long endDate;
 		try
