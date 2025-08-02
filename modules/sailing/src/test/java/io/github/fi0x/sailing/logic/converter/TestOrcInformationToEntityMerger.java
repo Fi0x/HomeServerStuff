@@ -54,11 +54,12 @@ public class TestOrcInformationToEntityMerger
 		addNumbers(expected);
 
 		Document document = new Document(BASE_URL);
-		Element html = add(document, "html", Collections.emptyList(), null, Collections.emptyMap());
-		Element body = add(html, "body", Collections.emptyList(), null, Collections.emptyMap());
-		add(body, "div", List.of("page"), null, Collections.emptyMap());
-		Element page1 = add(body, "div", List.of("page"), null, Collections.emptyMap());
-		Element country = add(page1, "div", Collections.emptyList(), "country" + COUNTRY, Collections.emptyMap());
+		Element html = addElement(document, "html", Collections.emptyList(), null, Collections.emptyMap());
+		Element body = addElement(html, "body", Collections.emptyList(), null, Collections.emptyMap());
+		addElement(body, "div", List.of("page"), null, Collections.emptyMap());
+		Element page1 = addElement(body, "div", List.of("page"), null, Collections.emptyMap());
+		Element country =
+				addElement(page1, "div", Collections.emptyList(), "country" + COUNTRY, Collections.emptyMap());
 		Element scoring = new Element("div");
 		scoring.addClass("countryScoring");
 		country.appendChild(scoring);
@@ -69,36 +70,54 @@ public class TestOrcInformationToEntityMerger
 		p3group.appendChild(table);
 		Element tbody = new Element("tbody");
 		table.appendChild(tbody);
-		add(tbody, "tr", Collections.emptyList(), null, new HashMap<>()
-		{{
-			put("code", "OC");
-		}});
-		add(tbody, "tr", Collections.emptyList(), null, new HashMap<>()
-		{{
-			put("code", "TNOL");
-		}});
-		add(tbody, "tr", Collections.emptyList(), null, new HashMap<>()
-		{{
-			put("code", "TNOM");
-		}});
-		add(tbody, "tr", Collections.emptyList(), null, new HashMap<>()
-		{{
-			put("code", "TNOH");
-		}});
-		add(tbody, "tr", Collections.emptyList(), null, new HashMap<>()
-		{{
-			put("code", "TNIL");
-		}});
-		add(tbody, "tr", Collections.emptyList(), null, new HashMap<>()
-		{{
-			put("code", "TNIM");
-		}});
-		add(tbody, "tr", Collections.emptyList(), null, new HashMap<>()
-		{{
-			put("code", "TNIH");
-		}});
-		OrcOverviewXmlRowDto rowDto = OrcOverviewXmlRowDto.builder().refNo(CERT_ID).YachtName(SHIP_NAME)
-				.CertName(CERT_NAME).CountryId(COUNTRY).shipClass(SHIP_CLASS).dxtID(URL_ID).build();
+		addNumberElements(tbody);
+		OrcOverviewXmlRowDto rowDto =
+				OrcOverviewXmlRowDto.builder().refNo(CERT_ID).YachtName(SHIP_NAME).CertName(CERT_NAME)
+									.CountryId(COUNTRY).shipClass(SHIP_CLASS).dxtID(URL_ID).build();
+
+		Assertions.assertEquals(expected, merger.merge(rowDto, document));
+	}
+
+	@Test
+	void test_merge_NPEFromMissingTag()
+	{
+		CertificateEntity expected = getExpectedCertEntity();
+		addNumbers(expected, 1.0);
+
+		Document document = new Document(BASE_URL);
+		OrcOverviewXmlRowDto rowDto =
+				OrcOverviewXmlRowDto.builder().refNo(CERT_ID).YachtName(SHIP_NAME).CertName(CERT_NAME)
+									.CountryId(COUNTRY).shipClass(SHIP_CLASS).dxtID(URL_ID).build();
+
+		Assertions.assertEquals(expected, merger.merge(rowDto, document));
+	}
+
+	@Test
+	void test_merge_noValues()
+	{
+		CertificateEntity expected = getExpectedCertEntity();
+		addNumbers(expected, 1.0);
+
+		Document document = new Document(BASE_URL);
+		Element html = addElement(document, "html", Collections.emptyList(), null, Collections.emptyMap());
+		Element body = addElement(html, "body", Collections.emptyList(), null, Collections.emptyMap());
+		addElement(body, "div", List.of("page"), null, Collections.emptyMap());
+		Element page1 = addElement(body, "div", List.of("page"), null, Collections.emptyMap());
+		Element country =
+				addElement(page1, "div", Collections.emptyList(), "country" + COUNTRY, Collections.emptyMap());
+		Element scoring = new Element("div");
+		scoring.addClass("countryScoring");
+		country.appendChild(scoring);
+		Element p3group = new Element("div");
+		p3group.addClass("p3group");
+		scoring.appendChild(p3group);
+		Element table = new Element("table");
+		p3group.appendChild(table);
+		Element tbody = new Element("tbody");
+		table.appendChild(tbody);
+		OrcOverviewXmlRowDto rowDto =
+				OrcOverviewXmlRowDto.builder().refNo(CERT_ID).YachtName(SHIP_NAME).CertName(CERT_NAME)
+									.CountryId(COUNTRY).shipClass(SHIP_CLASS).dxtID(URL_ID).build();
 
 		Assertions.assertEquals(expected, merger.merge(rowDto, document));
 	}
@@ -106,7 +125,7 @@ public class TestOrcInformationToEntityMerger
 	private CertificateEntity getExpectedCertEntity()
 	{
 		return CertificateEntity.builder().id(CERT_ID).shipName(SHIP_NAME).certificateType(CERT_TYPE).country(COUNTRY)
-				.shipClass(SHIP_CLASS).url(ORC_BASE_URL + URL_ID).build();
+								.shipClass(SHIP_CLASS).url(ORC_BASE_URL + URL_ID).build();
 	}
 
 	private void addNumbers(CertificateEntity entity)
@@ -120,17 +139,50 @@ public class TestOrcInformationToEntityMerger
 		entity.setTripleUpDownHigh(TRI_UP_DOWN_HIGH);
 	}
 
-	private Element add(Element parent, String tag, List<String> classes, String id, Map<String, String> attributes)
+	private void addNumbers(CertificateEntity entity, Double valueForAll)
+	{
+		entity.setSingleNumber(valueForAll);
+		entity.setTripleLongLow(valueForAll);
+		entity.setTripleLongMid(valueForAll);
+		entity.setTripleLongHigh(valueForAll);
+		entity.setTripleUpDownLow(valueForAll);
+		entity.setTripleUpDownMid(valueForAll);
+		entity.setTripleUpDownHigh(valueForAll);
+	}
+
+	private void addNumberElements(Element parent)
+	{
+		addNumberValueElement(parent, SINGLE_NUMBER, "OC");
+		addNumberValueElement(parent, TRI_LONG_LOW, "TNOL");
+		addNumberValueElement(parent, TRI_LONG_MID, "TNOM");
+		addNumberValueElement(parent, TRI_LONG_HIGH, "TNOH");
+		addNumberValueElement(parent, TRI_UP_DOWN_LOW, "TNIL");
+		addNumberValueElement(parent, TRI_UP_DOWN_MID, "TNIM");
+		addNumberValueElement(parent, TRI_UP_DOWN_HIGH, "TNIH");
+	}
+
+	private void addNumberValueElement(Element parent, Double value, String code)
+	{
+		Element row = addElement(parent, "tr", Collections.emptyList(), null, new HashMap<>()
+		{{
+			put("code", code);
+		}});
+		Element cell = addElement(row, "td", Collections.emptyList(), null, Collections.emptyMap());
+		cell.text(value.toString());
+	}
+
+	private Element addElement(Element parent, String tag, List<String> classes, String id,
+							   Map<String, String> attributes)
 	{
 		Element e = new Element(tag);
 
-		for (String clazz : classes)
+		for(String clazz : classes)
 		{
 			e.addClass(clazz);
 		}
-		if (id != null)
+		if(id != null)
 			e.id(id);
-		for (Map.Entry<String, String> entry : attributes.entrySet())
+		for(Map.Entry<String, String> entry : attributes.entrySet())
 		{
 			e.attr(entry.getKey(), entry.getValue());
 		}
