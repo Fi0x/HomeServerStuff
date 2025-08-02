@@ -27,7 +27,7 @@ public class TestStringToOrcOverviewConverter
 	private static final String DXT_ID = "217242";
 	private static final String REF_NO = "03520003KD9";
 	private static final String SHIP_NAME = "ALL IN";
-	private static final String SAIL_NUMBER = "FII   99";
+	private static final String SAIL_NUMBER = "FII 99";
 	private static final String SHIP_CLASS = "FIRST CLASS FIGARO 2";
 	private static final String CERTIFICATE_NAME = "DH Club";
 
