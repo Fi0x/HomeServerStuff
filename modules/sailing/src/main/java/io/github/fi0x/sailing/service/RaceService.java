@@ -222,6 +222,8 @@ public class RaceService
 	@Transactional
 	public void updateRace(String raceName, Long startDate, String raceGroup, RaceInfoDto updateDto)
 	{
+		authenticator.restAuthenticate(UserRoles.ADMIN);
+
 		RaceEntity originalEntity = raceRepo.findById(new RaceId(raceName, startDate, raceGroup)).orElseThrow(
 				() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
 						"Could not update race, because no entry exists for it."));

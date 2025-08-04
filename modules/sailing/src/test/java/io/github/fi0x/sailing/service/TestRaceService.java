@@ -605,9 +605,40 @@ public class TestRaceService
 	}
 
 	@Test
-	void test_saveRaceResults()
+	void test_saveRaceResults_success()
 	{
-		Assertions.fail();
+		RaceResultDto dto1 = RaceResultDto.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(RACE_GROUP)
+				.build();
+		RaceResultDto dto2 = RaceResultDto.builder().name(RACE_NAME2).startDate(WRONG_DATE).raceGroup(RACE_GROUP)
+				.build();
+		RaceResultDto dto3 = RaceResultDto.builder().name(RACE_NAME).startDate(WRONG_DATE).raceGroup(WRONG_GROUP)
+				.build();
+		RaceResultDto dto4 = RaceResultDto.builder().name(RACE_NAME3).startDate(START_DATE).raceGroup(WRONG_GROUP)
+				.build();
+		List<RaceResultDto> input = new ArrayList<>();
+		input.add(dto1);
+		input.add(dto2);
+		input.add(dto3);
+		input.add(dto4);
+
+		Assertions.assertDoesNotThrow(() -> service.saveRaceResults(input));
+		verify(authenticator, times(1)).restAuthenticate(UserRoles.ADMIN);
+		verify(raceRepo, times(4)).findById(any(RaceId.class));
+		verify(raceRepo, times(4)).save(any(RaceEntity.class));
+		verify(resultRepo, times(1)).saveAll(any());
+	}
+
+	@Test
+	void test_saveRaceResults_unauthorized()
+	{
+		doThrow(new ResponseStatusException(HttpStatus.FORBIDDEN)).when(authenticator)
+				.restAuthenticate(UserRoles.ADMIN);
+
+		Assertions.assertThrows(ResponseStatusException.class, () -> service.saveRaceResults(Collections.emptyList()));
+		verify(authenticator, times(1)).restAuthenticate(UserRoles.ADMIN);
+		verify(raceRepo, times(0)).findById(any(RaceId.class));
+		verify(raceRepo, times(0)).save(any(RaceEntity.class));
+		verify(resultRepo, times(0)).saveAll(any());
 	}
 
 	@Test
@@ -655,8 +686,43 @@ public class TestRaceService
 	}
 
 	@Test
-	void test_updateRace()
+	void test_updateRace_successEmpty()
 	{
-		Assertions.fail();
+		RaceEntity originalEntity = RaceEntity.builder().name(RACE_NAME2).startDate(START_DATE).raceGroup(RACE_GROUP)
+				.orcRace(true).participants(8).scoreModifier(9.2).build();
+		when(raceRepo.findById(new RaceId(RACE_NAME, START_DATE, RACE_GROUP))).thenReturn(Optional.of(originalEntity));
+		RaceInfoDto input = RaceInfoDto.builder().build();
+		RaceEntity newEntity = RaceEntity.builder().build();
+		when(raceConverter.convert(input)).thenReturn(newEntity);
+		RaceResultEntity resultEntity = RaceResultEntity.builder().position(2).build();
+		when(resultRepo.findAllByNameAndStartDateAndRaceGroup(RACE_NAME, START_DATE, RACE_GROUP)).thenReturn(
+				List.of(resultEntity));
+
+		Assertions.assertDoesNotThrow(() -> service.updateRace(RACE_NAME, START_DATE, RACE_GROUP, input));
+		verify(authenticator, times(1)).restAuthenticate(UserRoles.ADMIN);
+		verify(raceConverter, times(1)).convert(input);
+		verify(raceRepo, times(1)).save(newEntity);
+		verify(resultRepo, times(1)).findAllByNameAndStartDateAndRaceGroup(RACE_NAME, START_DATE, RACE_GROUP);
+		verify(resultRepo, times(1)).saveAll(any());
+	}
+
+	@Test
+	void test_updateRace_unauthorized()
+	{
+		doThrow(new ResponseStatusException(HttpStatus.FORBIDDEN)).when(authenticator)
+				.restAuthenticate(UserRoles.ADMIN);
+		RaceInfoDto input = RaceInfoDto.builder().build();
+
+		Assertions.assertThrows(ResponseStatusException.class,
+				() -> service.updateRace(RACE_NAME, START_DATE, RACE_GROUP, input));
+	}
+
+	@Test
+	void test_updateRace_notFound()
+	{
+		RaceInfoDto input = RaceInfoDto.builder().build();
+
+		Assertions.assertThrows(ResponseStatusException.class,
+				() -> service.updateRace(RACE_NAME, START_DATE, RACE_GROUP, input));
 	}
 }
