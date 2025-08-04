@@ -11,6 +11,8 @@ import io.github.fi0x.sailing.logic.converter.RaceConverter;
 import io.github.fi0x.sailing.logic.converter.RaceResultToDtoConverter;
 import io.github.fi0x.sailing.logic.dto.RaceInfoDto;
 import io.github.fi0x.sailing.logic.dto.RaceResultDto;
+import io.github.fi0x.sailing.logic.dto.ShipRaceResults;
+import io.github.fi0x.sailing.logic.dto.m2s.M2sClass;
 import io.github.fi0x.util.components.Authenticator;
 import io.github.fi0x.util.dto.UserRoles;
 import org.junit.jupiter.api.Assertions;
@@ -20,10 +22,12 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.*;
 
 import static org.mockito.Mockito.*;
@@ -33,11 +37,19 @@ public class TestRaceService
 {
 	private static final String RACE_NAME = "Fast race";
 	private static final String WRONG_RACE = "Slow race";
+	private static final String RACE_NAME2 = "Race 2";
+	private static final String RACE_NAME3 = "Race 3";
+	private static final String RACE_NAME4 = "Race 4";
+	private static final String RACE_NAME5 = "Race 5";
 	private static final Long START_DATE = 324089L;
 	private static final Long WRONG_DATE = 2239049203498L;
 	private static final String RACE_GROUP = "Fast group";
 	private static final String WRONG_GROUP = "Slow ships";
 	private static final String SKIPPER = "Hans Olaf";
+	private static final String SKIPPER2 = "Klaus Dieter";
+	private static final String RACE_URL = "someUrl.com";
+	private static final String SHIP_NAME = "Falcon";
+	private static final String SHIP_CLASS = "Psaros 33";
 
 	@Mock
 	private Authenticator authenticator;
@@ -76,7 +88,7 @@ public class TestRaceService
 		when(raceRepo.findById(new RaceId(RACE_NAME, START_DATE, RACE_GROUP))).thenReturn(Optional.empty());
 
 		Assertions.assertThrows(ResponseStatusException.class,
-								() -> service.getRace(RACE_NAME, START_DATE, RACE_GROUP));
+				() -> service.getRace(RACE_NAME, START_DATE, RACE_GROUP));
 	}
 
 	@Test
@@ -222,8 +234,7 @@ public class TestRaceService
 		Calendar c2 = new GregorianCalendar();
 		c2.setTime(new Date(WRONG_DATE));
 		List<String> expected = List.of(RACE_GROUP + " - " + c1.get(Calendar.YEAR),
-										WRONG_GROUP + " - " + c1.get(Calendar.YEAR),
-										RACE_GROUP + " - " + c2.get(Calendar.YEAR));
+				WRONG_GROUP + " - " + c1.get(Calendar.YEAR), RACE_GROUP + " - " + c2.get(Calendar.YEAR));
 		RaceEntity e1 = RaceEntity.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(RACE_GROUP).build();
 		RaceEntity e2 = RaceEntity.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(WRONG_GROUP).build();
 		RaceEntity e3 = RaceEntity.builder().name(RACE_NAME).startDate(WRONG_DATE).raceGroup(RACE_GROUP).build();
@@ -250,15 +261,282 @@ public class TestRaceService
 	}
 
 	@Test
-	void test_getAllResults()
+	void test_getAllResults_success()
 	{
-		Assertions.fail();
+		List<ShipRaceResults> expected = List.of(
+				ShipRaceResults.builder().shipName(SHIP_NAME).skipper(SKIPPER).shipClass(SHIP_CLASS).raceResults(
+						List.of(RaceResultDto.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(RACE_GROUP)
+								.skipper(SKIPPER).build())).build(),
+				ShipRaceResults.builder().shipName(SHIP_NAME).skipper(SKIPPER2).shipClass(SHIP_CLASS).raceResults(
+						List.of(RaceResultDto.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(RACE_GROUP)
+								.skipper(SKIPPER2).build())).build());
+		RaceResultEntity raceResultEntity1 = RaceResultEntity.builder().name(RACE_NAME).raceGroup(RACE_GROUP)
+				.startDate(START_DATE).skipper(SKIPPER).shipName(SHIP_NAME).shipClass(SHIP_CLASS).build();
+		RaceResultEntity raceResultEntity2 = RaceResultEntity.builder().name(RACE_NAME).raceGroup(RACE_GROUP)
+				.startDate(START_DATE).skipper(SKIPPER2).shipName(SHIP_NAME).shipClass(SHIP_CLASS).build();
+		List<RaceResultEntity> resultEntities = List.of(raceResultEntity1, raceResultEntity2,
+				RaceResultEntity.builder().name(RACE_NAME).raceGroup(RACE_GROUP).startDate(WRONG_DATE).skipper(SKIPPER)
+						.shipName(SHIP_NAME).shipClass(SHIP_CLASS).build(),
+				RaceResultEntity.builder().name(RACE_NAME).raceGroup(WRONG_GROUP).startDate(START_DATE).skipper(SKIPPER)
+						.shipName(SHIP_NAME).shipClass(SHIP_CLASS).build());
+		when(resultRepo.findAll(any(Sort.class))).thenReturn(resultEntities);
+		RaceResultDto resultDto1 = RaceResultDto.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(RACE_GROUP)
+				.skipper(SKIPPER).build();
+		RaceResultDto resultDto2 = RaceResultDto.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(RACE_GROUP)
+				.skipper(SKIPPER2).build();
+		when(raceResultConverter.convert(raceResultEntity1)).thenReturn(resultDto1);
+		when(raceResultConverter.convert(raceResultEntity2)).thenReturn(resultDto2);
+		RaceEntity re1 = RaceEntity.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(RACE_GROUP)
+				.bufferRace(false).orcRace(false).build();
+		RaceEntity re2 = RaceEntity.builder().name(RACE_NAME).startDate(WRONG_DATE).raceGroup(RACE_GROUP)
+				.bufferRace(false).orcRace(false).build();
+		RaceEntity re3 = RaceEntity.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(WRONG_GROUP)
+				.bufferRace(false).orcRace(false).build();
+		when(raceRepo.findAll()).thenReturn(List.of(re1, re2, re3));
+
+		Calendar c = new GregorianCalendar();
+		c.setTime(new Date(START_DATE));
+		Assertions.assertEquals(expected, service.getAllResults(RACE_GROUP, c.get(Calendar.YEAR)));
 	}
 
 	@Test
-	void test_getRaceClasses()
+	void test_getAllResults_noGroup()
 	{
-		Assertions.fail();
+		List<ShipRaceResults> expected = List.of(
+				ShipRaceResults.builder().shipName(SHIP_NAME).skipper(SKIPPER).shipClass(SHIP_CLASS).raceResults(
+						List.of(RaceResultDto.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(RACE_GROUP)
+								.skipper(SKIPPER).build())).build(),
+				ShipRaceResults.builder().shipName(SHIP_NAME).skipper(SKIPPER2).shipClass(SHIP_CLASS).raceResults(
+						List.of(RaceResultDto.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(RACE_GROUP)
+								.skipper(SKIPPER2).build())).build(),
+				ShipRaceResults.builder().shipName(SHIP_NAME).skipper(SKIPPER).shipClass(SHIP_CLASS).raceResults(
+						List.of(RaceResultDto.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(WRONG_GROUP)
+								.skipper(SKIPPER).build())).build());
+		RaceResultEntity raceResultEntity1 = RaceResultEntity.builder().name(RACE_NAME).raceGroup(RACE_GROUP)
+				.startDate(START_DATE).skipper(SKIPPER).shipName(SHIP_NAME).shipClass(SHIP_CLASS).build();
+		RaceResultEntity raceResultEntity2 = RaceResultEntity.builder().name(RACE_NAME).raceGroup(RACE_GROUP)
+				.startDate(START_DATE).skipper(SKIPPER2).shipName(SHIP_NAME).shipClass(SHIP_CLASS).build();
+		RaceResultEntity raceResultEntity3 = RaceResultEntity.builder().name(RACE_NAME).raceGroup(RACE_GROUP)
+				.startDate(WRONG_DATE).skipper(SKIPPER).shipName(SHIP_NAME).shipClass(SHIP_CLASS).build();
+		RaceResultEntity raceResultEntity4 = RaceResultEntity.builder().name(RACE_NAME).raceGroup(WRONG_GROUP)
+				.startDate(START_DATE).skipper(SKIPPER).shipName(SHIP_NAME).shipClass(SHIP_CLASS).build();
+		List<RaceResultEntity> resultEntities = List.of(raceResultEntity1, raceResultEntity2, raceResultEntity3,
+				raceResultEntity4);
+		when(resultRepo.findAll(any(Sort.class))).thenReturn(resultEntities);
+		RaceResultDto resultDto1 = RaceResultDto.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(RACE_GROUP)
+				.skipper(SKIPPER).build();
+		RaceResultDto resultDto2 = RaceResultDto.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(RACE_GROUP)
+				.skipper(SKIPPER2).build();
+		RaceResultDto resultDto3 = RaceResultDto.builder().name(RACE_NAME).startDate(WRONG_DATE).raceGroup(RACE_GROUP)
+				.skipper(SKIPPER).build();
+		RaceResultDto resultDto4 = RaceResultDto.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(WRONG_GROUP)
+				.skipper(SKIPPER).build();
+		when(raceResultConverter.convert(raceResultEntity1)).thenReturn(resultDto1);
+		when(raceResultConverter.convert(raceResultEntity2)).thenReturn(resultDto2);
+		when(raceResultConverter.convert(raceResultEntity3)).thenReturn(resultDto3);
+		when(raceResultConverter.convert(raceResultEntity4)).thenReturn(resultDto4);
+		RaceEntity re1 = RaceEntity.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(RACE_GROUP)
+				.bufferRace(false).orcRace(false).build();
+		RaceEntity re2 = RaceEntity.builder().name(RACE_NAME).startDate(WRONG_DATE).raceGroup(RACE_GROUP)
+				.bufferRace(false).orcRace(false).build();
+		RaceEntity re3 = RaceEntity.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(WRONG_GROUP)
+				.bufferRace(false).orcRace(false).build();
+		when(raceRepo.findAll()).thenReturn(List.of(re1, re2, re3));
+
+		Calendar c = new GregorianCalendar();
+		c.setTime(new Date(START_DATE));
+		Assertions.assertEquals(expected, service.getAllResults(null, c.get(Calendar.YEAR)));
+	}
+
+	@Test
+	void test_getAllResults_noYear()
+	{
+		List<ShipRaceResults> expected = List.of(
+				ShipRaceResults.builder().shipName(SHIP_NAME).skipper(SKIPPER).shipClass(SHIP_CLASS).raceResults(
+						List.of(RaceResultDto.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(RACE_GROUP)
+								.skipper(SKIPPER).build())).build(),
+				ShipRaceResults.builder().shipName(SHIP_NAME).skipper(SKIPPER2).shipClass(SHIP_CLASS).raceResults(
+						List.of(RaceResultDto.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(RACE_GROUP)
+								.skipper(SKIPPER2).build())).build(),
+				ShipRaceResults.builder().shipName(SHIP_NAME).skipper(SKIPPER).shipClass(SHIP_CLASS).raceResults(
+						List.of(RaceResultDto.builder().name(RACE_NAME).startDate(WRONG_DATE).raceGroup(RACE_GROUP)
+								.skipper(SKIPPER).build())).build());
+		RaceResultEntity raceResultEntity1 = RaceResultEntity.builder().name(RACE_NAME).raceGroup(RACE_GROUP)
+				.startDate(START_DATE).skipper(SKIPPER).shipName(SHIP_NAME).shipClass(SHIP_CLASS).build();
+		RaceResultEntity raceResultEntity2 = RaceResultEntity.builder().name(RACE_NAME).raceGroup(RACE_GROUP)
+				.startDate(START_DATE).skipper(SKIPPER2).shipName(SHIP_NAME).shipClass(SHIP_CLASS).build();
+		RaceResultEntity raceResultEntity3 = RaceResultEntity.builder().name(RACE_NAME).raceGroup(RACE_GROUP)
+				.startDate(WRONG_DATE).skipper(SKIPPER).shipName(SHIP_NAME).shipClass(SHIP_CLASS).build();
+		RaceResultEntity raceResultEntity4 = RaceResultEntity.builder().name(RACE_NAME).raceGroup(WRONG_GROUP)
+				.startDate(START_DATE).skipper(SKIPPER).shipName(SHIP_NAME).shipClass(SHIP_CLASS).build();
+		List<RaceResultEntity> resultEntities = List.of(raceResultEntity1, raceResultEntity2, raceResultEntity3,
+				raceResultEntity4);
+		when(resultRepo.findAll(any(Sort.class))).thenReturn(resultEntities);
+		RaceResultDto resultDto1 = RaceResultDto.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(RACE_GROUP)
+				.skipper(SKIPPER).build();
+		RaceResultDto resultDto2 = RaceResultDto.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(RACE_GROUP)
+				.skipper(SKIPPER2).build();
+		RaceResultDto resultDto3 = RaceResultDto.builder().name(RACE_NAME).startDate(WRONG_DATE).raceGroup(RACE_GROUP)
+				.skipper(SKIPPER).build();
+		RaceResultDto resultDto4 = RaceResultDto.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(WRONG_GROUP)
+				.skipper(SKIPPER).build();
+		when(raceResultConverter.convert(raceResultEntity1)).thenReturn(resultDto1);
+		when(raceResultConverter.convert(raceResultEntity2)).thenReturn(resultDto2);
+		when(raceResultConverter.convert(raceResultEntity3)).thenReturn(resultDto3);
+		when(raceResultConverter.convert(raceResultEntity4)).thenReturn(resultDto4);
+		RaceEntity re1 = RaceEntity.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(RACE_GROUP)
+				.bufferRace(false).orcRace(false).build();
+		RaceEntity re2 = RaceEntity.builder().name(RACE_NAME).startDate(WRONG_DATE).raceGroup(RACE_GROUP)
+				.bufferRace(false).orcRace(false).build();
+		RaceEntity re3 = RaceEntity.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(WRONG_GROUP)
+				.bufferRace(false).orcRace(false).build();
+		when(raceRepo.findAll()).thenReturn(List.of(re1, re2, re3));
+
+		Calendar c = new GregorianCalendar();
+		c.setTime(new Date(START_DATE));
+		Assertions.assertEquals(expected, service.getAllResults(RACE_GROUP, null));
+	}
+
+	@Test
+	void test_getAllResults_noYearOrGroup()
+	{
+		List<ShipRaceResults> expected = List.of(
+				ShipRaceResults.builder().shipName(SHIP_NAME).skipper(SKIPPER).shipClass(SHIP_CLASS).raceResults(
+						List.of(RaceResultDto.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(RACE_GROUP)
+								.skipper(SKIPPER).build())).build(),
+				ShipRaceResults.builder().shipName(SHIP_NAME).skipper(SKIPPER2).shipClass(SHIP_CLASS).raceResults(
+						List.of(RaceResultDto.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(RACE_GROUP)
+								.skipper(SKIPPER2).build())).build(),
+				ShipRaceResults.builder().shipName(SHIP_NAME).skipper(SKIPPER).shipClass(SHIP_CLASS).raceResults(
+						List.of(RaceResultDto.builder().name(RACE_NAME).startDate(WRONG_DATE).raceGroup(RACE_GROUP)
+										.skipper(SKIPPER).build(),
+								RaceResultDto.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(WRONG_GROUP)
+										.skipper(SKIPPER).build())).build());
+		RaceResultEntity raceResultEntity1 = RaceResultEntity.builder().name(RACE_NAME).raceGroup(RACE_GROUP)
+				.startDate(START_DATE).skipper(SKIPPER).shipName(SHIP_NAME).shipClass(SHIP_CLASS).build();
+		RaceResultEntity raceResultEntity2 = RaceResultEntity.builder().name(RACE_NAME).raceGroup(RACE_GROUP)
+				.startDate(START_DATE).skipper(SKIPPER2).shipName(SHIP_NAME).shipClass(SHIP_CLASS).build();
+		RaceResultEntity raceResultEntity3 = RaceResultEntity.builder().name(RACE_NAME).raceGroup(RACE_GROUP)
+				.startDate(WRONG_DATE).skipper(SKIPPER).shipName(SHIP_NAME).shipClass(SHIP_CLASS).build();
+		RaceResultEntity raceResultEntity4 = RaceResultEntity.builder().name(RACE_NAME).raceGroup(WRONG_GROUP)
+				.startDate(START_DATE).skipper(SKIPPER).shipName(SHIP_NAME).shipClass(SHIP_CLASS).build();
+		List<RaceResultEntity> resultEntities = List.of(raceResultEntity1, raceResultEntity2, raceResultEntity3,
+				raceResultEntity4);
+		when(resultRepo.findAll(any(Sort.class))).thenReturn(resultEntities);
+		RaceResultDto resultDto1 = RaceResultDto.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(RACE_GROUP)
+				.skipper(SKIPPER).build();
+		RaceResultDto resultDto2 = RaceResultDto.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(RACE_GROUP)
+				.skipper(SKIPPER2).build();
+		RaceResultDto resultDto3 = RaceResultDto.builder().name(RACE_NAME).startDate(WRONG_DATE).raceGroup(RACE_GROUP)
+				.skipper(SKIPPER).build();
+		RaceResultDto resultDto4 = RaceResultDto.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(WRONG_GROUP)
+				.skipper(SKIPPER).build();
+		when(raceResultConverter.convert(raceResultEntity1)).thenReturn(resultDto1);
+		when(raceResultConverter.convert(raceResultEntity2)).thenReturn(resultDto2);
+		when(raceResultConverter.convert(raceResultEntity3)).thenReturn(resultDto3);
+		when(raceResultConverter.convert(raceResultEntity4)).thenReturn(resultDto4);
+		RaceEntity re1 = RaceEntity.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(RACE_GROUP)
+				.bufferRace(false).orcRace(false).build();
+		RaceEntity re2 = RaceEntity.builder().name(RACE_NAME).startDate(WRONG_DATE).raceGroup(RACE_GROUP)
+				.bufferRace(false).orcRace(false).build();
+		RaceEntity re3 = RaceEntity.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(WRONG_GROUP)
+				.bufferRace(false).orcRace(false).build();
+		when(raceRepo.findAll()).thenReturn(List.of(re1, re2, re3));
+
+		Calendar c = new GregorianCalendar();
+		c.setTime(new Date(START_DATE));
+		Assertions.assertEquals(expected, service.getAllResults(null, null));
+	}
+
+	@Test
+	void test_getAllResults_withCrossed()
+	{
+		RaceResultDto race1 = RaceResultDto.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(RACE_GROUP)
+				.skipper(SKIPPER).score(1.0).build();
+		RaceResultDto race2 = RaceResultDto.builder().name(WRONG_RACE).startDate(START_DATE).raceGroup(RACE_GROUP)
+				.skipper(SKIPPER).score(1.0).build();
+		RaceResultDto race3 = RaceResultDto.builder().name(RACE_NAME2).startDate(START_DATE).raceGroup(RACE_GROUP)
+				.skipper(SKIPPER).score(10.0).build();
+		RaceResultDto race4 = RaceResultDto.builder().name(RACE_NAME3).startDate(START_DATE).raceGroup(RACE_GROUP)
+				.skipper(SKIPPER).score(9.0).build();
+		RaceResultDto race5 = RaceResultDto.builder().name(RACE_NAME4).startDate(START_DATE).raceGroup(RACE_GROUP)
+				.skipper(SKIPPER).score(5.0).build();
+		RaceResultDto race6 = RaceResultDto.builder().name(RACE_NAME5).startDate(START_DATE).raceGroup(RACE_GROUP)
+				.skipper(SKIPPER).score(7.0).build();
+		List<ShipRaceResults> expected = List.of(
+				ShipRaceResults.builder().shipName(SHIP_NAME).skipper(SKIPPER).shipClass(SHIP_CLASS)
+						.raceResults(List.of(race1, race2, race3, race4, race5, race6)).build());
+		RaceResultEntity raceResultEntity1 = RaceResultEntity.builder().name(RACE_NAME).raceGroup(RACE_GROUP)
+				.startDate(START_DATE).skipper(SKIPPER).shipName(SHIP_NAME).shipClass(SHIP_CLASS).score(1.0).build();
+		RaceResultEntity raceResultEntity2 = RaceResultEntity.builder().name(WRONG_RACE).raceGroup(RACE_GROUP)
+				.startDate(START_DATE).skipper(SKIPPER).shipName(SHIP_NAME).shipClass(SHIP_CLASS).score(1.0).build();
+		RaceResultEntity raceResultEntity3 = RaceResultEntity.builder().name(RACE_NAME2).raceGroup(RACE_GROUP)
+				.startDate(START_DATE).skipper(SKIPPER).shipName(SHIP_NAME).shipClass(SHIP_CLASS).score(10.0).build();
+		RaceResultEntity raceResultEntity4 = RaceResultEntity.builder().name(RACE_NAME3).raceGroup(RACE_GROUP)
+				.startDate(START_DATE).skipper(SKIPPER).shipName(SHIP_NAME).shipClass(SHIP_CLASS).score(9.0).build();
+		RaceResultEntity raceResultEntity5 = RaceResultEntity.builder().name(RACE_NAME4).raceGroup(RACE_GROUP)
+				.startDate(START_DATE).skipper(SKIPPER).shipName(SHIP_NAME).shipClass(SHIP_CLASS).score(5.0).build();
+		RaceResultEntity raceResultEntity6 = RaceResultEntity.builder().name(RACE_NAME5).raceGroup(RACE_GROUP)
+				.startDate(START_DATE).skipper(SKIPPER).shipName(SHIP_NAME).shipClass(SHIP_CLASS).score(7.0).build();
+		List<RaceResultEntity> resultEntities = List.of(raceResultEntity1, raceResultEntity2, raceResultEntity3,
+				raceResultEntity4, raceResultEntity5, raceResultEntity6);
+		when(resultRepo.findAll(any(Sort.class))).thenReturn(resultEntities);
+		when(raceResultConverter.convert(raceResultEntity1)).thenReturn(race1);
+		when(raceResultConverter.convert(raceResultEntity2)).thenReturn(race2);
+		when(raceResultConverter.convert(raceResultEntity3)).thenReturn(race3);
+		when(raceResultConverter.convert(raceResultEntity4)).thenReturn(race4);
+		when(raceResultConverter.convert(raceResultEntity5)).thenReturn(race5);
+		when(raceResultConverter.convert(raceResultEntity6)).thenReturn(race6);
+		RaceEntity re1 = RaceEntity.builder().name(RACE_NAME).startDate(START_DATE).raceGroup(RACE_GROUP)
+				.bufferRace(true).orcRace(true).build();
+		RaceEntity re2 = RaceEntity.builder().name(WRONG_RACE).startDate(START_DATE).raceGroup(RACE_GROUP)
+				.bufferRace(true).orcRace(true).build();
+		RaceEntity re3 = RaceEntity.builder().name(RACE_NAME2).startDate(START_DATE).raceGroup(RACE_GROUP)
+				.bufferRace(true).orcRace(true).build();
+		RaceEntity re4 = RaceEntity.builder().name(RACE_NAME3).startDate(START_DATE).raceGroup(RACE_GROUP)
+				.bufferRace(true).orcRace(true).build();
+		RaceEntity re5 = RaceEntity.builder().name(RACE_NAME4).startDate(START_DATE).raceGroup(RACE_GROUP)
+				.bufferRace(true).orcRace(true).build();
+		RaceEntity re6 = RaceEntity.builder().name(RACE_NAME5).startDate(START_DATE).raceGroup(RACE_GROUP)
+				.bufferRace(true).orcRace(true).build();
+		when(raceRepo.findAll()).thenReturn(List.of(re1, re2, re3, re4, re5, re6));
+
+		Calendar c = new GregorianCalendar();
+		c.setTime(new Date(START_DATE));
+		Assertions.assertEquals(expected, service.getAllResults(RACE_GROUP, c.get(Calendar.YEAR)));
+	}
+
+	@Test
+	void test_getRaceClasses_success() throws IOException
+	{
+		List<M2sClass> expected = List.of(M2sClass.builder().build());
+		when(m2sRetriever.getRaceClasses(RACE_URL)).thenReturn(expected);
+
+		Assertions.assertEquals(expected, service.getRaceClasses(RACE_URL));
+	}
+
+	@Test
+	void test_getRaceClasses_unauthorized() throws IOException
+	{
+		doThrow(new ResponseStatusException(HttpStatus.FORBIDDEN)).when(authenticator).restAuthenticate();
+
+		Assertions.assertThrows(ResponseStatusException.class, () -> service.getRaceClasses(RACE_URL));
+	}
+
+	@Test
+	void test_getRaceClasses_noResults() throws IOException
+	{
+		when(m2sRetriever.getRaceClasses(RACE_URL)).thenReturn(Collections.emptyList());
+
+		Assertions.assertThrows(ResponseStatusException.class, () -> service.getRaceClasses(RACE_URL));
+	}
+
+	@Test
+	void test_getRaceClasses_ioException() throws IOException
+	{
+		when(m2sRetriever.getRaceClasses(RACE_URL)).thenThrow(new IOException());
+
+		Assertions.assertThrows(ResponseStatusException.class, () -> service.getRaceClasses(RACE_URL));
 	}
 
 	@Test
@@ -305,7 +583,7 @@ public class TestRaceService
 		when(raceRepo.findById(new RaceId(RACE_NAME, START_DATE, RACE_GROUP))).thenReturn(Optional.empty());
 
 		Assertions.assertThrows(ResponseStatusException.class,
-								() -> service.deleteResult(RACE_NAME, START_DATE, RACE_GROUP, null));
+				() -> service.deleteResult(RACE_NAME, START_DATE, RACE_GROUP, null));
 		verify(authenticator, times(1)).restAuthenticate(UserRoles.ADMIN);
 		verify(raceRepo, times(1)).findById(any());
 		verify(resultRepo, never()).deleteAllByNameAndStartDateAndRaceGroup(anyString(), anyLong(), anyString());
@@ -319,7 +597,7 @@ public class TestRaceService
 				.restAuthenticate(UserRoles.ADMIN);
 
 		Assertions.assertThrows(ResponseStatusException.class,
-								() -> service.deleteResult(RACE_NAME, START_DATE, RACE_GROUP, SKIPPER));
+				() -> service.deleteResult(RACE_NAME, START_DATE, RACE_GROUP, SKIPPER));
 		verify(authenticator, times(1)).restAuthenticate(UserRoles.ADMIN);
 	}
 

@@ -46,7 +46,7 @@ public class RaceService
 	{
 		return raceRepo.findById(new RaceId(eventName, startDate, group)).orElseThrow(
 				() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-												  "Could not find any race with the requested id"));
+						"Could not find any race with the requested id"));
 	}
 
 	public List<RaceEntity> getAllOrcRaces(String group, Integer year)
@@ -98,7 +98,7 @@ public class RaceService
 					.equals(entity.getSkipper()))
 			{
 				current = new ShipRaceResults(entity.getShipName(), entity.getSkipper(), entity.getShipClass(),
-											  new ArrayList<>());
+						new ArrayList<>());
 				results.add(current);
 			}
 
@@ -142,7 +142,7 @@ public class RaceService
 		} catch (IOException e)
 		{
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-											  "Could not retireve manage2sail details for the race", e);
+					"Could not retireve manage2sail details for the race", e);
 		}
 	}
 
@@ -152,8 +152,7 @@ public class RaceService
 		String m2sClassId = getM2sClassId(selectedRaceClass.getClassUrl());
 		String classResultUrl = M2S_BASE_URL + "/" + m2sEventId + "/regattaresult/" + m2sClassId;
 		return m2sRetriever.getClassResults(classResultUrl, selectedRaceClass.getRaceEventName(),
-											selectedRaceClass.getStartDate(), selectedRaceClass.getEndDate(),
-											selectedRaceClass.getEventUrl());
+				selectedRaceClass.getStartDate(), selectedRaceClass.getEndDate(), selectedRaceClass.getEventUrl());
 	}
 
 	@Transactional
@@ -182,7 +181,7 @@ public class RaceService
 		List<RaceResultEntity> resultEntities = new ArrayList<>();
 
 		raceResults.sort(Comparator.comparing(RaceResultDto::getName).thenComparing(RaceResultDto::getStartDate)
-								 .thenComparing(RaceResultDto::getRaceGroup));
+				.thenComparing(RaceResultDto::getRaceGroup));
 
 		RaceEntity currentRace = new RaceEntity();
 		for (RaceResultDto result : raceResults)
@@ -193,9 +192,8 @@ public class RaceService
 						.count();
 				currentRace = raceRepo.findById(result.getRaceId())
 						.orElse(RaceEntity.builder().name(result.getName()).startDate(result.getStartDate())
-										.raceGroup(result.getRaceGroup()).endDate(result.getEndDate())
-										.scoreModifier(1.0).url(result.getUrl()).orcRace(false).bufferRace(true)
-										.build());
+								.raceGroup(result.getRaceGroup()).endDate(result.getEndDate()).scoreModifier(1.0)
+								.url(result.getUrl()).orcRace(false).bufferRace(true).build());
 				currentRace.setParticipants(participants);
 				raceRepo.save(currentRace);
 			}
@@ -226,7 +224,7 @@ public class RaceService
 	{
 		RaceEntity originalEntity = raceRepo.findById(new RaceId(raceName, startDate, raceGroup)).orElseThrow(
 				() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-												  "Could not update race, because no entry exists for it."));
+						"Could not update race, because no entry exists for it."));
 
 		RaceEntity newEntity = raceConverter.convert(updateDto);
 		if (newEntity.getName() == null)
@@ -249,7 +247,7 @@ public class RaceService
 		raceRepo.save(newEntity);
 
 		List<RaceResultEntity> raceResults = resultRepo.findAllByNameAndStartDateAndRaceGroup(raceName, startDate,
-																							  raceGroup);
+				raceGroup);
 		List<RaceResultEntity> updatedRaceResults = new ArrayList<>();
 		raceResults.forEach(e -> {
 			RaceResultEntity e2 = e.clone();
@@ -280,7 +278,7 @@ public class RaceService
 		raceRepo.delete(raceEntity);
 
 		log.trace("Deleted race and all of its entries for race '{}' date '{}' group '{}'", raceName, startDate,
-				  raceGroup);
+				raceGroup);
 	}
 
 	private void deleteSingleResult(String raceName, Long startDate, String raceGroup, String skipper)
