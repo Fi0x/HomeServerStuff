@@ -48,8 +48,12 @@ public class TestRaceService
 	private static final String SKIPPER = "Hans Olaf";
 	private static final String SKIPPER2 = "Klaus Dieter";
 	private static final String RACE_URL = "someUrl.com";
+	private static final String M2S_CLASS_ID = "2390847";
+	private static final String CLASS_URL = "someUrl.com/?classId=" + M2S_CLASS_ID;
 	private static final String SHIP_NAME = "Falcon";
 	private static final String SHIP_CLASS = "Psaros 33";
+	private static final String M2S_EVENT_ID = "029384";
+	private static final String M2S_BASE_URL = "https://www.manage2sail.com/api/event";
 
 	@Mock
 	private Authenticator authenticator;
@@ -516,7 +520,7 @@ public class TestRaceService
 	}
 
 	@Test
-	void test_getRaceClasses_unauthorized() throws IOException
+	void test_getRaceClasses_unauthorized()
 	{
 		doThrow(new ResponseStatusException(HttpStatus.FORBIDDEN)).when(authenticator).restAuthenticate();
 
@@ -542,13 +546,62 @@ public class TestRaceService
 	@Test
 	void test_loadSpecificRaceClassResults()
 	{
-		Assertions.fail();
+		List<RaceResultDto> expected = List.of(RaceResultDto.builder().build());
+		M2sClass input = M2sClass.builder().eventId(M2S_EVENT_ID).classUrl(CLASS_URL).raceEventName(RACE_NAME)
+				.startDate(START_DATE).endDate(START_DATE).eventUrl(RACE_URL).build();
+		when(m2sRetriever.getClassResults(M2S_BASE_URL + "/" + M2S_EVENT_ID + "/regattaresult/" + M2S_CLASS_ID,
+				RACE_NAME, START_DATE, START_DATE, RACE_URL)).thenReturn(expected);
+
+		Assertions.assertEquals(expected, service.loadSpecificRaceClassResults(input));
 	}
 
 	@Test
-	void test_saveRaceInformation()
+	void test_saveRaceInformation_success()
 	{
-		Assertions.fail();
+		RaceInfoDto input = RaceInfoDto.builder().name(RACE_NAME).longDate(START_DATE).raceGroup(RACE_GROUP)
+				.endDate(START_DATE).build();
+		RaceEntity entity = RaceEntity.builder().build();
+		when(raceConverter.convert(input)).thenReturn(entity);
+
+		Assertions.assertDoesNotThrow(() -> service.saveRaceInformation(input));
+		entity.setEndDate(START_DATE);
+		verify(raceRepo, times(1)).save(entity);
+	}
+
+	@Test
+	void test_saveRaceInformation_unauthorized()
+	{
+		doThrow(new ResponseStatusException(HttpStatus.FORBIDDEN)).when(authenticator)
+				.restAuthenticate(UserRoles.ADMIN);
+		RaceInfoDto input = RaceInfoDto.builder().name(RACE_NAME).longDate(START_DATE).raceGroup(RACE_GROUP)
+				.endDate(START_DATE).build();
+
+		Assertions.assertThrows(ResponseStatusException.class, () -> service.saveRaceInformation(input));
+	}
+
+	@Test
+	void test_saveRaceInformation_noName()
+	{
+		RaceInfoDto input = RaceInfoDto.builder().longDate(START_DATE).raceGroup(RACE_GROUP).endDate(START_DATE)
+				.build();
+
+		Assertions.assertThrows(ResponseStatusException.class, () -> service.saveRaceInformation(input));
+	}
+
+	@Test
+	void test_saveRaceInformation_noDate()
+	{
+		RaceInfoDto input = RaceInfoDto.builder().name(RACE_NAME).raceGroup(RACE_GROUP).endDate(START_DATE).build();
+
+		Assertions.assertThrows(ResponseStatusException.class, () -> service.saveRaceInformation(input));
+	}
+
+	@Test
+	void test_saveRaceInformation_noGroup()
+	{
+		RaceInfoDto input = RaceInfoDto.builder().name(RACE_NAME).longDate(START_DATE).endDate(START_DATE).build();
+
+		Assertions.assertThrows(ResponseStatusException.class, () -> service.saveRaceInformation(input));
 	}
 
 	@Test
