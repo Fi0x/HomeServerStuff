@@ -4,7 +4,7 @@ import io.github.fi0x.sailing.db.OrcCertificateRepo;
 import io.github.fi0x.sailing.db.entities.CertificateEntity;
 import io.github.fi0x.sailing.logic.converter.OrcInformationToEntityMerger;
 import io.github.fi0x.sailing.logic.converter.StringToOrcOverviewConverter;
-import io.github.fi0x.sailing.logic.dto.OrcOverviewXmlRowDto;
+import io.github.fi0x.sailing.logic.dto.orc.OrcOverviewXmlRowDto;
 import io.github.fi0x.util.components.Authenticator;
 import io.github.fi0x.util.dto.UserRoles;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +26,8 @@ public class OrcService
 	private static final String ORC_URL = "https://data.orc.org/public/WPub.dll?action=activecerts&refNo=";
 	private static final String ORC_DETAILS_URL = "https://data.orc.org/public/WPub.dll/CC/";
 
+	private final RestTemplate restTemplate = new RestTemplate();
+
 	private final Authenticator authenticator;
 	private final OrcCertificateRepo orcRepo;
 	private final StringToOrcOverviewConverter overviewConverter;
@@ -45,7 +47,6 @@ public class OrcService
 			return existingEntity.get();
 
 		String url = ORC_URL + certificateId;
-		RestTemplate restTemplate = new RestTemplate();
 		String result = restTemplate.getForObject(url, String.class);
 
 		OrcOverviewXmlRowDto overviewDto = overviewConverter.convert(result);

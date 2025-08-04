@@ -10,6 +10,7 @@ import java.util.List;
 
 @Data
 @Builder
+@Deprecated
 @NoArgsConstructor
 @AllArgsConstructor
 public class M2sRaceResultJsonDto

@@ -1,5 +1,5 @@
 function searchFunction() {
-    var input, filter, table, rows, tds, i, txtValue;
+    let input, filter, table, rows, tds, i, txtValue;
     input = document.getElementById("searchText");
     filter = input.value.toUpperCase();
     table = document.getElementById("searchableTable");
@@ -27,29 +27,6 @@ function searchFunction() {
             rows[i].style.display = "none";
         }
     }
-}
-
-function addCertificate() {
-    let textField = document.getElementById("newCertificateText");
-    let certificateId = textField.value;
-
-    $.ajax({
-        type: 'GET',
-        url: `${baseUrl}/orc/add/${certificateId}`,
-        dataType: 'json',
-        success: function () {
-            location.reload();
-        }
-    });
-}
-
-function addRace() {
-    let textField = document.getElementById("newRaceUrl");
-    let url = textField.value;
-
-    $.post(`${baseUrl}/race/add`, url, function () {
-        location.reload();
-    });
 }
 
 function fillRaceResults() {
@@ -97,115 +74,7 @@ function fillRaceResults() {
     }
 }
 
-function selectCertificate(certificateId) {
-    let selectedCertificate = certificates.find(c => c.id === certificateId);
-
-    if (!selectedCertificate)
-        return;
-
-    for (let cert of certificates) {
-        let row = document.getElementById(`cert${cert.id}`);
-        row.classList.remove('selection');
-
-        setTimeDifferenceOnElements(selectedCertificate.singleNumber - cert.singleNumber, `single${cert.id}`);
-        setTimeDifferenceOnElements(selectedCertificate.tripleLongLow - cert.tripleLongLow, `trilolow${cert.id}`);
-        setTimeDifferenceOnElements(selectedCertificate.tripleLongMid - cert.tripleLongMid, `trilomid${cert.id}`);
-        setTimeDifferenceOnElements(selectedCertificate.tripleLongHigh - cert.tripleLongHigh, `trilohigh${cert.id}`);
-        setTimeDifferenceOnElements(selectedCertificate.tripleUpDownLow - cert.tripleUpDownLow, `triuplow${cert.id}`);
-        setTimeDifferenceOnElements(selectedCertificate.tripleUpDownMid - cert.tripleUpDownMid, `triupmid${cert.id}`);
-        setTimeDifferenceOnElements(selectedCertificate.tripleUpDownHigh - cert.tripleUpDownHigh, `triuphigh${cert.id}`);
-    }
-    document.getElementById(`cert${certificateId}`).classList.add('selection');
-}
-
-function setTimeDifferenceOnElements(diff, elementId) {
-    let minutes = (diff * 60).toFixed(0).toString();
-    let seconds = ((diff * 60 - minutes) * 60).toFixed(0).toString();
-    let element = document.getElementById(elementId);
-
-    element.innerText = `${minutes} min ${seconds}s`;
-    if (diff > 0)
-        element.classList = ['red-text-bold text-nowrap'];
-    else if (diff < 0)
-        element.classList = ['green-text-bold text-nowrap'];
-    else
-        element.classList = ['text-nowrap'];
-}
-
-function deleteCertificate(certId) {
-
-    let idx = certificates.indexOf(certificates.find(c => c.id === certId));
-    if (idx >= 0)
-        certificates.splice(idx, 1);
-
-    $.post(`${baseUrl}/orc/remove/${certId}`);
-
-    let row = document.getElementById(`cert${certId}`);
-    row.parentElement.removeChild(row);
-}
-
-function deleteRace(button) {
-    button.hidden = true;
-    button.parentNode.parentNode.classList.add("red");
-}
-
-function updateRace(index, name, date, group) {
-    let deleteFlag = document.getElementById(`deleteButton${index}`).hasAttribute('hidden');
-    if (deleteFlag) {
-        fetch(`${baseUrl}/race/remove/${name}/${date}/${group}`, {
-            method: 'DELETE'
-        }).then(response => {
-            if (response.status !== 200)
-                alert("Could not delete race (" + response.status + ")");
-            else
-                location.reload();
-        });
-        return;
-    }
-
-    let dto = {
-        name: `${document.getElementById('raceName' + index).value}`,
-        raceGroup: `${document.getElementById('raceGroup' + index).value}`,
-        scoreModifier: `${document.getElementById('raceScore' + index).value}`,
-        orcRace: `${document.getElementById('raceOrc' + index).checked}`,
-        bufferRace: `${document.getElementById('raceBuffer' + index).checked}`
-    };
-    fetch(`${baseUrl}/race/update/${name}/${date}/${group}`, {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(dto)
-    }).then(response => {
-        if (!response.ok)
-            alert("Could not update race-information (" + response.status + ")");
-        else
-            location.reload();
-    })
-}
-
-function reloadRace(name, date, group, url, button) {
-    button.style.display = 'none';
-
-    fetch(`${baseUrl}/race/remove/${name}/${date}/${group}`, {
-        method: 'DELETE'
-    }).then(response => {
-        if (response.status !== 200) {
-            alert("Could not clear database before reloading (" + response.status + ")");
-            throw response;
-        }
-
-        $.post(`${baseUrl}/race/add`, url, function () {
-            location.reload();
-        });
-    }).catch(() => {
-        console.log("Error when reloading race");
-        button.style.display = '';
-    });
-}
-
-function deleteResult(raceName, date, group, skipper, shipName, button) {
+function deleteResult(raceName, date, group, skipper, shipName, button, deleteRow = false) {
     button.style.display = 'none';
 
     fetch(`${baseUrl}/race/remove/${raceName}/${date}/${group}?skipper=${skipper}`, {
@@ -215,49 +84,22 @@ function deleteResult(raceName, date, group, skipper, shipName, button) {
             alert("Could not delete result (" + response.status + ")");
             button.style.display = '';
         } else {
-            let combinedId = shipName.replace(/\s/g, '') + skipper.replace(/\s/g, '');
-            let raceId = raceName.replace(/\s/g, '') + group.replace(/\s/g, '');
-            document.getElementById(`${combinedId}position${raceId}`).innerText = '';
-            document.getElementById(`${combinedId}points${raceId}`).innerText = '';
+            if (deleteRow) {
+                button.parentElement.parentElement.remove();
+            } else {
+                let combinedId = shipName.replace(/\s/g, '') + skipper.replace(/\s/g, '');
+                let raceId = raceName.replace(/\s/g, '') + group.replace(/\s/g, '');
+                document.getElementById(`${combinedId}position${raceId}`).innerText = '';
+                document.getElementById(`${combinedId}points${raceId}`).innerText = '';
+            }
         }
     });
 }
 
-function updateFilterState() {
-    let allOptions = document.getElementsByClassName("filter-option");
-    let validFilters = [];
-    for (let option of allOptions) {
-        let checkbox = option.getElementsByTagName('input')[0];
-        if (checkbox.checked) {
-            validFilters.push(option.innerText);
-        }
-    }
-
-    let rows = document.getElementsByTagName("tr");
-    for (let rowIdx = 0; rowIdx < rows.length; rowIdx++) {
-        if (validFilters.length < 1) {
-            rows[rowIdx].style.display = "";
-        } else {
-            let tds = rows[rowIdx].getElementsByClassName("filterable");
-            let valid = true;
-
-            for (let filter of validFilters) {
-                let innerValid = false;
-                for (let td of tds) {
-                    let txtValue = td.innerText;
-                    if (txtValue.indexOf(filter.trim()) > -1) {
-                        innerValid = true;
-                        break;
-                    }
-                }
-                if (!innerValid)
-                    valid = false;
-            }
-
-            if (valid)
-                rows[rowIdx].style.display = "";
-            else
-                rows[rowIdx].style.display = "none";
-        }
+function toggleOrcRaces(checkbox) {
+    let state = checkbox.checked ? 'none' : '';
+    let orcCells = document.getElementsByClassName("orcfalse");
+    for (let cell of orcCells) {
+        cell.style.display = state;
     }
 }

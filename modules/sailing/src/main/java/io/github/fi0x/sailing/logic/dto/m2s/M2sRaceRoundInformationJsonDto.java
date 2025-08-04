@@ -1,4 +1,4 @@
-package io.github.fi0x.sailing.logic.dto;
+package io.github.fi0x.sailing.logic.dto.m2s;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -10,8 +10,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrcOverviewXmlDataDto
+public class M2sRaceRoundInformationJsonDto
 {
-	@JsonProperty("ROW")
-	private OrcOverviewXmlRowDto ROW;
+	@JsonProperty("Id")
+	private String id;
+	@JsonProperty("RaceName")
+	private String roundName;
 }

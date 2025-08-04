@@ -16,6 +16,7 @@ public class RaceInfoDto
 	private String name;
 	private Date startDate;
 	private Long longDate;
+	private Long endDate;
 	private String raceGroup;
 	private Double scoreModifier;
 	private Boolean orcRace;

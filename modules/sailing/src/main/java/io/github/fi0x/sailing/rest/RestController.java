@@ -2,16 +2,15 @@ package io.github.fi0x.sailing.rest;
 
 
 import io.github.fi0x.sailing.db.entities.CertificateEntity;
-import io.github.fi0x.sailing.db.entities.RaceResultEntity;
 import io.github.fi0x.sailing.logic.dto.RaceInfoDto;
+import io.github.fi0x.sailing.logic.dto.RaceResultDto;
+import io.github.fi0x.sailing.logic.dto.m2s.M2sClass;
 import io.github.fi0x.sailing.service.OrcService;
 import io.github.fi0x.sailing.service.RaceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Slf4j
@@ -39,13 +38,28 @@ public class RestController
 		orcService.removeCertificate(certificateId);
 	}
 
-	@PostMapping("/race/add")
-	public List<RaceResultEntity> addRace(@RequestBody String raceUrl)
+	@PostMapping("/race/load")
+	public List<RaceResultDto> getRaceResultsForClass(@RequestBody M2sClass raceClass)
 	{
-		log.debug("Adding results for race " + raceUrl);
+		log.debug("getRaceResultsForClass() called with class={}", raceClass);
 
-		String decodedUrl = URLDecoder.decode(raceUrl, StandardCharsets.UTF_8);
-		return raceService.saveRace(decodedUrl);
+		return raceService.loadSpecificRaceClassResults(raceClass);
+	}
+
+	@PostMapping("/race/save/info")
+	public void saveRaceInfo(@RequestBody RaceInfoDto raceDto)
+	{
+		log.debug("saveRaceInfo() called with dto {}", raceDto);
+
+		raceService.saveRaceInformation(raceDto);
+	}
+
+	@PostMapping("/race/save")
+	public void saveRaceResults(@RequestBody List<RaceResultDto> raceResultDtos)
+	{
+		log.debug("saveRaceResults() called with {} dtos", raceResultDtos.size());
+
+		raceService.saveRaceResults(raceResultDtos);
 	}
 
 	@DeleteMapping("/race/remove/{raceName}/{startDate}/{raceGroup}")

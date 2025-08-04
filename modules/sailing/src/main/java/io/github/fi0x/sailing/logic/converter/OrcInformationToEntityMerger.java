@@ -1,8 +1,8 @@
 package io.github.fi0x.sailing.logic.converter;
 
 import io.github.fi0x.sailing.db.entities.CertificateEntity;
-import io.github.fi0x.sailing.logic.dto.CertificateType;
-import io.github.fi0x.sailing.logic.dto.OrcOverviewXmlRowDto;
+import io.github.fi0x.sailing.logic.dto.orc.CertificateType;
+import io.github.fi0x.sailing.logic.dto.orc.OrcOverviewXmlRowDto;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -23,7 +23,7 @@ public class OrcInformationToEntityMerger
 			Element body = detailsPage.getElementsByTag("html").first().getElementsByTag("body").first();
 			Element scores = body.getElementsByClass("page").get(1).getElementById("country" + entity.getCountry());
 			Element tripleNumbers = scores.getElementsByClass("countryScoring").first().getElementsByClass("p3group")
-										  .first().getElementsByTag("table").first().getElementsByTag("tbody").first();
+					.first().getElementsByTag("table").first().getElementsByTag("tbody").first();
 
 			addTripleNumbers(entity, tripleNumbers);
 		} catch (NullPointerException e)
@@ -43,10 +43,10 @@ public class OrcInformationToEntityMerger
 
 	private CertificateEntity toEntity(OrcOverviewXmlRowDto rowDto)
 	{
-		return CertificateEntity.builder().id(rowDto.getRefNo()).shipName(rowDto.getYachtName()).certificateType(
-										CertificateType.valueOf(rowDto.getCertName().toUpperCase().replace(" ", "_")))
-								.country(rowDto.getCountryId()).shipClass(rowDto.getShipClass())
-								.url(URL_BASE + rowDto.getDxtID()).build();
+		return CertificateEntity.builder().id(rowDto.getRefNo()).shipName(rowDto.getYachtName())
+				.certificateType(CertificateType.valueOf(rowDto.getCertName().toUpperCase().replace(" ", "_")))
+				.country(rowDto.getCountryId()).shipClass(rowDto.getShipClass()).url(URL_BASE + rowDto.getDxtID())
+				.build();
 	}
 
 	private void addTripleNumbers(CertificateEntity entity, Element tripleNumbers)
@@ -65,7 +65,7 @@ public class OrcInformationToEntityMerger
 		if (dataElement == null)
 			return 1.0;
 
-		String text = dataElement.getElementsByTag("td").first().text();
+		String text = dataElement.getElementsByTag("td").last().text();
 		return Double.parseDouble(text);
 	}
 }

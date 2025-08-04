@@ -42,7 +42,10 @@ public class NotificationService
 				if(emitter.sensorName != null && !emitter.sensorName.equals(dataDto.getSensorName()))
 					continue;
 				//				TODO: Find out why this IOException gets printed in console
-				emitter.emitter.send(SseEmitter.event().data(dataDto));
+				SseEmitter.SseEventBuilder builder = SseEmitter.event();
+				builder = builder.data(dataDto);
+				SseEmitter emitter1 = emitter.emitter;
+				emitter1.send(builder);
 			} catch(IOException e)
 			{
 				deadEmitters.add(emitter);

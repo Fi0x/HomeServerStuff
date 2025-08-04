@@ -6,7 +6,7 @@
 
     <groupId>io.github.fi0x</groupId>
     <artifactId>HomeServerSailing</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.1</version>
     <packaging>war</packaging>
 
     <parent>
@@ -164,7 +164,7 @@
         </dependency>
 
         <dependency>
-            <groupId>io.github.Fi0x</groupId>
+            <groupId>io.github.fi0x</groupId>
             <artifactId>HomeServerUtil</artifactId>
             <version>0.2.0</version>
         </dependency>

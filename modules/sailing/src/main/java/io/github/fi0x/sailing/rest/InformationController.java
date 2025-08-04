@@ -8,8 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Slf4j
@@ -76,5 +79,36 @@ public class InformationController
 		model.put("races", raceService.getAllRaces());
 
 		return "race-list";
+	}
+
+	@GetMapping("/race/new")
+	public String getClassListForRace(ModelMap map, @RequestParam String raceOverviewUrl)
+	{
+		log.info("getClassListForRace() called for URL={}", raceOverviewUrl);
+
+		String decodedUrl = URLDecoder.decode(raceOverviewUrl, StandardCharsets.UTF_8);
+		map.put("raceClasses", raceService.getRaceClasses(decodedUrl));
+
+		return "new-race-class-list";
+	}
+
+	@GetMapping("/race/manual")
+	public String addNewRaceManually()
+	{
+		log.info("addNewRaceManually() called");
+
+		return "add-race-manually";
+	}
+
+	@GetMapping("/race/{raceName}/{startDate}/{raceGroup}/edit")
+	public String editRaceResultsManually(ModelMap map, @PathVariable String raceName, @PathVariable Long startDate,
+										  @PathVariable String raceGroup)
+	{
+		log.info("editRaceResultsManually() called");
+
+		map.put("raceInfo", raceService.getRace(raceName, startDate, raceGroup));
+		map.put("raceResults", raceService.getAllResults(raceName, startDate, raceGroup));
+
+		return "modify-race-results";
 	}
 }

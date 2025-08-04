@@ -1,5 +1,8 @@
 package io.github.fi0x.sailing.config;
 
+import io.github.fi0x.sailing.components.RaceCleanup;
+import io.github.fi0x.sailing.db.RaceRepo;
+import io.github.fi0x.sailing.db.RaceResultRepo;
 import io.github.fi0x.util.config.HomeServerUtilSecurityConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
@@ -18,7 +21,7 @@ public class SpringSecurityConfig
 {
 	private static final String[] PUBLIC_URLS = new String[]{"/", "/orc", "/race"};
 	private static final String[] ANONYMOUS_URLS = new String[]{};
-	private static final String[] PRIVATE_URLS = new String[]{};
+	private static final String[] PRIVATE_URLS = new String[]{"/race/manual"};
 
 	@Bean
 	@Order(SecurityProperties.BASIC_AUTH_ORDER)
@@ -32,5 +35,11 @@ public class SpringSecurityConfig
 																					   HomeServerUtilSecurityConfig.ANONYMOUS_URLS),
 																	 ArrayUtils.addAll(PRIVATE_URLS,
 																					   HomeServerUtilSecurityConfig.PRIVATE_URLS));
+	}
+
+	@Bean
+	public RaceCleanup raceCleanup(RaceRepo raceRepo, RaceResultRepo resultRepo)
+	{
+		return new RaceCleanup(raceRepo, resultRepo);
 	}
 }

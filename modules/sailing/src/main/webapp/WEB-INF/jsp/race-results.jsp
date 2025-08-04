@@ -6,8 +6,15 @@
 <%@include file="../common/head.jspf" %>
 <body>
 <%@include file="../common/navigation.jspf" %>
-<div class="container">
+<div class="container full-width">
     <h1>Race results</h1>
+    <div class="section">
+        <label class="filter-option" title="Will only show ORC races">
+            <span class="align-content-center">ORC only</span>
+            <input class="filter-checkbox" type="checkbox"
+                   onclick="toggleOrcRaces(this)">
+        </label>
+    </div>
     <table id="searchableTable" class="table sortable">
         <thead>
         <tr class="underlined-row">
@@ -16,7 +23,7 @@
             <th class="clickable" colspan="1">Skipper</th>
             <th class="clickable" colspan="1">Class</th>
             <c:forEach items="${races}" var="race">
-                <th class="clickable left-line race-name" colspan="3"><span>${race.name}</span><span
+                <th class="clickable left-line race-name orc${race.orcRace}" colspan="3"><span>${race.name}</span><span
                         class="thin-text">${race.raceGroup}</span></th>
             </c:forEach>
             <th class="clickable left-line" colspan="1">Gesamt</th>
@@ -32,11 +39,11 @@
                 <c:forEach items="${races}" var="race">
                     <td onclick="window.location='${race.url}'"
                         id="${result.shipName.replace(' ', '')}${result.skipper.replace(' ', '')}position${race.name.replace(' ', '')}${race.raceGroup.replace(' ', '')}"
-                        class="left-line clickable"></td>
+                        class="left-line clickable orc${race.orcRace}"></td>
                     <td onclick="window.location='${race.url}'"
                         id="${result.shipName.replace(' ', '')}${result.skipper.replace(' ', '')}points${race.name.replace(' ', '')}${race.raceGroup.replace(' ', '')}"
-                        class="clickable"></td>
-                    <td style="padding: 0 0.5rem 0 0"><a
+                        class="clickable orc${race.orcRace}"></td>
+                    <td style="padding: 0 0.5rem 0 0" class="orc${race.orcRace}"><a
                             id="${result.shipName.replace(' ', '')}${result.skipper.replace(' ', '')}button${race.name.replace(' ', '')}${race.raceGroup.replace(' ', '')}"
                             style="display: none" class="btn-danger round-button"
                             onclick="deleteResult(`${race.name}`, `${race.startDate}`, `${race.raceGroup}`, `${result.skipper}`, `${result.shipName}`, this)">X</a>

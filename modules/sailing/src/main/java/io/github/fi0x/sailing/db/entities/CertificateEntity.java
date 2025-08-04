@@ -1,6 +1,6 @@
 package io.github.fi0x.sailing.db.entities;
 
-import io.github.fi0x.sailing.logic.dto.CertificateType;
+import io.github.fi0x.sailing.logic.dto.orc.CertificateType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;

@@ -372,3 +372,19 @@ input[type="number"] {
 .no-padding {
     padding: 0;
 }
+
+.min-width {
+    width: auto;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.table-section {
+    background-color: var(--dark-accent2);
+}
+
+.centered {
+    align-self: center;
+    margin-right: auto;
+    margin-left: auto;
+}

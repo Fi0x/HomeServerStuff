@@ -48,4 +48,14 @@ public class RaceEntity implements RaceInformation
 		c.setTime(new Date(startDate));
 		return raceGroup + " - " + c.get(Calendar.YEAR);
 	}
+
+	public Integer getBooleans()
+	{
+		int result = 0;
+		if (orcRace)
+			result |= 1;
+		if (bufferRace)
+			result |= 2;
+		return result;
+	}
 }
