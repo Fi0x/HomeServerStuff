@@ -309,7 +309,7 @@ public class RaceService
 
 	private String getM2sClassId(String url)
 	{
-		return url.split("/?classId=")[1];
+		return url.split("forcedScheduleClassId=")[1];
 	}
 
 

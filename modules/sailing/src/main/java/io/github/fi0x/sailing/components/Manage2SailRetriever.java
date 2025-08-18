@@ -151,7 +151,7 @@ public class Manage2SailRetriever
 	private M2sClass getClass(Element row, String eventId, String eventName, Long startDate, Long endDate,
 							  String eventUrl)
 	{
-		Element resultUrlCell = row.child(2);
+		Element resultUrlCell = row.child(3);
 		if (resultUrlCell.children().isEmpty())
 			return null;
 
