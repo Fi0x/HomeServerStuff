@@ -57,7 +57,7 @@ public class Manage2SailRetriever
 		long endDate;
 		try
 		{
-			startDate = dateFormatter.parse(dateStrings[0]).getTime();
+			startDate = dateFormatter.parse(dateStrings[0].replace("/", ".")).getTime();
 			if (dateStrings.length > 1)
 				endDate = dateFormatter.parse(dateStrings[1]).getTime();
 			else

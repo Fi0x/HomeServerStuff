@@ -36,6 +36,9 @@ public class M2sEntryResultJsonDto
 
 	public String getSkipperName()
 	{
+		if(skipperDto == null)
+			return "";
+
 		return skipperDto.firstName + " " + skipperDto.lastName.toUpperCase(Locale.ROOT);
 	}
 
