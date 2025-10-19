@@ -103,7 +103,7 @@ public class DataService
 		if(valueAdjustment != null)
 			entities.forEach(entity -> entity.setValue(entity.getValue() + valueAdjustment));
 
-		return new TreeMap<>(entities.stream().collect(
+		return new TreeMap<>(entities.stream().distinct().collect(
 				Collectors.toMap(entity -> new Date(entity.getTimestamp()), DataEntity::getValue)));
 
 	}
