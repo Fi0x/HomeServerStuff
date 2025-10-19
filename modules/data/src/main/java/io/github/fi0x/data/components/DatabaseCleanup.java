@@ -47,15 +47,18 @@ public class DatabaseCleanup
 
 	private void cleanSensor(String address, String name, long oldestAllowedTime)
 	{
+		log.trace("Cleaning sensor with address: {} and name: {}", address, name);
 		Optional<DataEntity> oldestDataEntity = dataRepo.findFirstByAddressAndSensorOrderByTimestampAsc(address, name);
 		oldestDataEntity.ifPresent(entity -> {
 			List<DataEntity> possibleEntities = dataRepo.findFromSensorOlderThan(address, name, oldestAllowedTime);
 			averageDays(possibleEntities);
 		});
+		log.trace("Sensor cleaned");
 	}
 
 	private void averageDays(List<DataEntity> entities)
 	{
+		log.trace("Averaging values for {} entries", entities.size());
 		if (entities.isEmpty())
 			return;
 
@@ -80,6 +83,8 @@ public class DatabaseCleanup
 																											entity.getTimestamp())))
 															  .toList();
 
+			log.trace("Averaging another day with {} entries. Remaining total entries: {}", currentEntities.size(),
+					  workingEntities.size());
 			if (!currentEntities.isEmpty())
 			{
 				StatDataEntity statDataEntity = getAverage(currentEntities, youngestEntryDate);
@@ -88,16 +93,22 @@ public class DatabaseCleanup
 				{
 					addMinAndMaxValues(statDataEntity, currentEntities);
 					statRepo.save(statDataEntity);
+					dataRepo.deleteAll(entities);
 				}
-				dataRepo.deleteAll(entities);
+				else
+				{
+					log.warn("Could not create an averaging entity and therefore not delete the original entries");
+				}
 			}
 
 			workingEntities.removeAll(currentEntities);
+			log.trace("Completed another day with {} entries", currentEntities.size());
 		}
 	}
 
 	private StatDataEntity getAverage(List<DataEntity> entities, Date desiredDate)
 	{
+		log.trace("Calculating average for {} entries", entities.size());
 		if (entities.isEmpty())
 			return null;
 
@@ -112,6 +123,7 @@ public class DatabaseCleanup
 		DataEntity averageEntity = new DataEntity(entities.get(0).getAddress(), entities.get(0).getSensor(),
 												  desiredDate.getTime(), total / count);
 
+		log.trace("Average calculated");
 		return StatDataEntity.builder().address(averageEntity.getAddress()).sensor(averageEntity.getSensor())
 							 .timestamp(averageEntity.getTimestamp()).average(averageEntity.getValue()).build();
 	}
@@ -134,6 +146,7 @@ public class DatabaseCleanup
 
 	private void addMinAndMaxValues(StatDataEntity statEntity, List<DataEntity> entities)
 	{
+		log.trace("Adding min and max values from {} entities to {}", entities.size(), statEntity);
 		if (entities.isEmpty())
 			return;
 
