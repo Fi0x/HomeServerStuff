@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 @Controller
 @AllArgsConstructor
 @SessionAttributes({"username"})
-public class ErrorController implements org.springframework.boot.web.servlet.error.ErrorController
+public class ErrorController implements org.springframework.boot.webmvc.error.ErrorController
 {
 	/**
 	 * Endpoint for error handling. Accepts a {@link ModelMap}, where it puts an {@code errorCode} and {@code

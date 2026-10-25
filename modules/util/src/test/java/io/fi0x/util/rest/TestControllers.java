@@ -18,14 +18,12 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -33,7 +31,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class TestControllers
 {
 	private static final ServiceDataDto SERVICE_DATA_DTO_RESULT = new ServiceDataDto("Name", "Protocol", "IP", 42);
@@ -74,11 +72,6 @@ public class TestControllers
 	@InjectMocks
 	private UserController user;
 
-	@BeforeEach
-	void setup()
-	{
-		MockitoAnnotations.openMocks(this);
-	}
 
 	@Test
 	void test_api_getRegisteredServices()

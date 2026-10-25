@@ -6,7 +6,7 @@
 
     <groupId>io.github.fi0x</groupId>
     <artifactId>HomeServerUtil</artifactId>
-    <version>0.2.0</version>
+    <version>0.3.0</version>
     <name>HomeServerUtil</name>
     <description>This is a Library for utility-functions for home-server modules</description>
     <url>http://github.com/Fi0x/HomeServerStuff</url>
@@ -15,7 +15,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.3</version>
+        <version>4.2.0-RC1</version>
         <relativePath/>
     </parent>
 
@@ -246,6 +246,12 @@
             <groupId>org.webjars</groupId>
             <artifactId>jquery</artifactId>
             <version>3.7.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot</artifactId>
+            <version>4.2.0-RC1</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

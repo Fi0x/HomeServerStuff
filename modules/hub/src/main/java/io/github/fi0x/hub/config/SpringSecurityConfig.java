@@ -3,7 +3,6 @@ package io.github.fi0x.hub.config;
 import io.github.fi0x.util.config.HomeServerUtilSecurityConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -21,7 +20,7 @@ public class SpringSecurityConfig
 	private static final String[] PRIVATE_URLS = new String[]{};
 
 	@Bean
-	@Order(SecurityProperties.BASIC_AUTH_ORDER)
+	@Order
 	public SecurityFilterChain hubSecurityFilterChain(HttpSecurity http) throws Exception
 	{
 		log.info("hubSecurityFilterChain() bean called");

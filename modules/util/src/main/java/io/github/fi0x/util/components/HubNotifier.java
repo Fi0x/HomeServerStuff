@@ -4,13 +4,10 @@ import io.github.fi0x.util.dto.ServiceDataDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
 import java.net.InetAddress;
 import java.net.InterfaceAddress;
@@ -24,7 +21,6 @@ import java.util.List;
  * This component is used to notify the hub about the existence of a new service.
  */
 @Slf4j
-@Component
 @RequiredArgsConstructor
 public class HubNotifier
 {
@@ -35,8 +31,7 @@ public class HubNotifier
 	private Integer currentPort;
 
 	private final ServiceInformation serviceInformation;
-
-	private final RestTemplate restTemplate = new RestTemplate();
+	private final RestClient restClient;
 
 	/**
 	 * This scheduled method runs every minute to let the hub know, that this service exists.
@@ -50,22 +45,18 @@ public class HubNotifier
 	{
 		log.debug("Sending service-info to hub");
 
-		//		String urlEnding = ":" + serviceInformation.getHubPort() + HUB_REGISTER_ENDPOINT;
-		String urlEnding = HUB_REGISTER_ENDPOINT;
-
-		ServiceDataDto requestDto = ServiceDataDto.builder().name(serviceInformation.getServiceName()).port(currentPort)
+		ServiceDataDto requestDto =
+				ServiceDataDto.builder().name(serviceInformation.getServiceName()).port(currentPort)
 				.build();
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
-		HttpEntity<ServiceDataDto> request = new HttpEntity<>(requestDto, headers);
 
 		for (String ip : getBroadcastIps())
 		{
 			try
 			{
-				log.trace("Sending service-info to " + ip);
-				String url = URL_PREFIX + ip + urlEnding;
-				restTemplate.postForObject(url, request, Void.class);
+				log.trace("Sending service-info to {}", ip);
+				String url = URL_PREFIX + ip + HUB_REGISTER_ENDPOINT;
+				restClient.post().uri(url).contentType(MediaType.APPLICATION_JSON).body(requestDto).retrieve()
+						.toBodilessEntity();
 			} catch (RestClientException e)
 			{
 				log.warn("Could not reach hub because of exception: {}", e.getLocalizedMessage());
@@ -74,7 +65,12 @@ public class HubNotifier
 		}
 	}
 
-	private static List<String> getBroadcastIps()
+	/**
+	 * Provides a list of all broadcast addresses of the local network.
+	 *
+	 * @return A list of all broadcast addresses of the local network.
+	 */
+	public List<String> getBroadcastIps()
 	{
 		HashSet<String> broadcastAddresses = new HashSet<>();
 		try

@@ -7,11 +7,10 @@ import io.github.fi0x.data.db.entities.SensorEntity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
@@ -20,7 +19,8 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringRunner.class)
+
+@ExtendWith(MockitoExtension.class)
 public class TestDatabaseCleanup
 {
 	private final String SENSOR_ADDRESS1 = "123.123.234.564";
@@ -39,7 +39,6 @@ public class TestDatabaseCleanup
 	@BeforeEach
 	void setup()
 	{
-		MockitoAnnotations.openMocks(this);
 		ReflectionTestUtils.setField(component, "maxValueTime", 604800L);
 
 		when(sensorRepo.findAll()).thenReturn(findAllSensorEntities());

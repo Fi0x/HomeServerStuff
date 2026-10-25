@@ -4,6 +4,7 @@ import io.github.fi0x.util.components.HubNotifier;
 import io.github.fi0x.util.components.ServiceInformation;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestClient;
 
 /**
  * This configuration can be imported by other modules to enable the scheduled task, that notifies a hub-module about
@@ -17,11 +18,23 @@ public class HubRegisterConfig
 	 * {@link org.springframework.scheduling.annotation.EnableScheduling} is active.
 	 *
 	 * @param serviceInformation The serviceInformation-bean of this service
+	 * @param restClient         The {@link RestClient} to send the notification to the hub-module.
 	 * @return The {@link HubNotifier}
 	 */
 	@Bean
-	public HubNotifier notifier(ServiceInformation serviceInformation)
+	public HubNotifier notifier(ServiceInformation serviceInformation, RestClient restClient)
 	{
-		return new HubNotifier(serviceInformation);
+		return new HubNotifier(serviceInformation, restClient);
+	}
+
+	/**
+	 * This method creates a {@link RestClient} bean, that can be used to send requests to the hub-module.
+	 *
+	 * @return The {@link RestClient}
+	 */
+	@Bean
+	public RestClient restClient()
+	{
+		return RestClient.create();
 	}
 }

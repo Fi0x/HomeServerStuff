@@ -5,12 +5,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
-import org.mockito.MockitoAnnotations;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.net.InetAddress;
@@ -22,7 +21,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class TestServiceInformation
 {
 	private static final String LOCALHOST = "localhost";
@@ -50,20 +49,22 @@ public class TestServiceInformation
 	@BeforeEach
 	void setup()
 	{
-		MockitoAnnotations.openMocks(this);
-
 		staticMock = mockStatic(NetworkInterface.class);
+
+		ReflectionTestUtils.setField(component, "hubIp", LOCALHOST);
+		ReflectionTestUtils.setField(component, "hubPort", HUB_PORT);
+		ReflectionTestUtils.setField(component, "serviceName", SERVICE_NAME);
+		ReflectionTestUtils.setField(component, "isHub", IS_HUB);
+	}
+
+	private void mockLocalNetworkInterfaces()
+	{
 		staticMock.when(NetworkInterface::getNetworkInterfaces).thenReturn(interfaces);
 		when(interfaces.hasMoreElements()).thenReturn(true, false, true, false);
 		when(interfaces.nextElement()).thenReturn(networkInterface);
 		when(networkInterface.getInterfaceAddresses()).thenReturn(List.of(interfaceAddress));
 		when(interfaceAddress.getAddress()).thenReturn(address);
 		when(address.getHostAddress()).thenReturn(LOCAL_IP);
-
-		ReflectionTestUtils.setField(component, "hubIp", LOCALHOST);
-		ReflectionTestUtils.setField(component, "hubPort", HUB_PORT);
-		ReflectionTestUtils.setField(component, "serviceName", SERVICE_NAME);
-		ReflectionTestUtils.setField(component, "isHub", IS_HUB);
 	}
 
 	@AfterEach
@@ -72,13 +73,15 @@ public class TestServiceInformation
 		staticMock.close();
 
 		Object ipObject = ReflectionTestUtils.getField(component, "LOCAL_IPS");
-		if(ipObject instanceof List<?> ipList)
+		if (ipObject instanceof List<?> ipList)
 			ipList.clear();
 	}
 
 	@Test
 	void test_getHubIp_success()
 	{
+		mockLocalNetworkInterfaces();
+
 		Assertions.assertEquals(LOCAL_IP, component.getHubIp());
 		Assertions.assertEquals(LOCAL_IP, component.getHubIp());
 
@@ -99,6 +102,7 @@ public class TestServiceInformation
 	@Test
 	void test_getHubIp_fallback()
 	{
+		mockLocalNetworkInterfaces();
 		when(address.getHostAddress()).thenReturn(EXTERNAL_IP);
 
 		Assertions.assertEquals(LOCALHOST, component.getHubIp());

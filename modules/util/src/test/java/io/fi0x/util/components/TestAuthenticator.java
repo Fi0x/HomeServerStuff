@@ -6,17 +6,16 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -24,7 +23,7 @@ import java.util.List;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mockStatic;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class TestAuthenticator
 {
 	private static final String USERNAME = "Authenticated Username";
@@ -41,7 +40,6 @@ public class TestAuthenticator
 	@BeforeEach
 	void setup()
 	{
-		MockitoAnnotations.openMocks(this);
 
 		staticMock = mockStatic(SecurityContextHolder.class);
 		staticMock.when(SecurityContextHolder::getContext).thenReturn(securityContext);

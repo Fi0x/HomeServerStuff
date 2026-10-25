@@ -3,7 +3,6 @@ package io.github.fi0x.util.config;
 import io.github.fi0x.util.components.Authenticator;
 import io.github.fi0x.util.rest.ErrorController;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -82,7 +81,7 @@ public class HomeServerUtilSecurityConfig
 	 * @throws Exception If anything goes wrong in the creation process of the security settings.
 	 */
 	@Bean
-	@Order(SecurityProperties.BASIC_AUTH_ORDER)
+	@Order()
 	public SecurityFilterChain utilitySecurityFilterChain(HttpSecurity http) throws Exception
 	{
 		log.info("utilitySecurityFilterChain() bean called");
