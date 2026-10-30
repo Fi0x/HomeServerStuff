@@ -46,7 +46,7 @@
                         <input class="chart-view-checkbox" type="checkbox"/>
                     </label>
                 </td>
-                <td>${sensor.name}</td>
+                <td>${sensor.displayName}</td>
                 <td>${sensor.address}</td>
                 <td>${sensor.value}${sensor.unit}</td>
                 <td>
@@ -80,6 +80,7 @@
         {
             address: "${sensor.address}",
             name: "${sensor.name}",
+            displayName: "${sensor.displayName}",
             tags: "${sensor.tags}",
             id: "${sensor.address} ${sensor.name}",
             unit: "${sensor.unit}"

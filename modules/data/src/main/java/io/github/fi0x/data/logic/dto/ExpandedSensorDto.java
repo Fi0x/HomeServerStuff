@@ -16,6 +16,7 @@ public class ExpandedSensorDto
 {
 	private String address;
 	private String name;
+	private String displayName;
 	private String description;
 	private String unit;
 	private String type;

@@ -53,13 +53,16 @@ public class SensorService
 		return timestamp;
 	}
 
-	public void saveSensorValueAdjustment(String address, String name, Double valueAdjustment, Double minValue,
+	public void saveSensorValueAdjustment(String address, String name, String displayName, Double valueAdjustment,
+										  Double minValue,
 										  Double maxValue)
 	{
 		SensorEntity entity = sensorRepo.findByAddressAndName(address, name).orElseThrow(
 				() -> new ResponseStatusException(HttpStatusCode.valueOf(404),
 												  "Requested sensor to update does not exist in the database"));
 
+		if (displayName != null)
+			entity.setDisplayName(displayName);
 		if (valueAdjustment != null)
 			entity.setValueAdjustment(valueAdjustment);
 		if (minValue != null)

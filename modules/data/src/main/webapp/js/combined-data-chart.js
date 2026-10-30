@@ -176,7 +176,7 @@ function loadChartData(sensorList) {
 
                 let dataset = {
                     id: sensorElement.id,
-                    label: sensorElement.name,
+                    label: sensorElement.displayName,
                     data: sensorData,
                     backgroundColor: datasetColor,
                     borderColor: datasetColor,

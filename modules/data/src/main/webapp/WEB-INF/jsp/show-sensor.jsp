@@ -7,7 +7,7 @@
 <body>
 <%@include file="../common/navigation.jspf" %>
 <div class="container">
-    <h1>${sensor.name} (${sensor.address})</h1>
+    <h1>${sensor.displayName} (${sensor.address})</h1>
     <p>${sensor.description}</p>
     <canvas id="dataChart"></canvas>
     <canvas id="statChart"></canvas>

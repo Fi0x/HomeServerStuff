@@ -63,6 +63,7 @@ public class InformationController
 
 	@GetMapping("/sensor/{address}/{name}/update")
 	public String updateSensor(ModelMap model, @PathVariable String address, @PathVariable String name,
+							   @RequestParam(value = "displayName", required = false) String displayName,
 							   @RequestParam(value = "valueAdjustment", required = false) Double valueAdjustment,
 							   @RequestParam(value = "min", required = false) Double minValue,
 							   @RequestParam(value = "max", required = false) Double maxValue,
@@ -70,7 +71,7 @@ public class InformationController
 	{
 		log.info("updateSensor() called");
 
-		sensorService.saveSensorValueAdjustment(address, name, valueAdjustment, minValue, maxValue);
+		sensorService.saveSensorValueAdjustment(address, name, displayName, valueAdjustment, minValue, maxValue);
 
 		if (valueDeletion != null)
 		{
