@@ -28,6 +28,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SensorService
 {
+	private static final String HUMIDITY = "Humidity";
+
 	private final SensorRepo sensorRepo;
 	private final TagRepo tagRepo;
 	private final DataRepo dataRepo;
@@ -42,15 +44,23 @@ public class SensorService
 			return -1;
 		}
 
-		long timestamp = saveSensorEntity(address, sensorWithData.getName(), sensorWithData.getDescription(),
+		SensorEntity sensorEntity = saveSensorEntity(address, sensorWithData.getName(),
+				sensorWithData.getDescription(),
 										  sensorWithData.getUnit(), sensorWithData.getType(),
 										  sensorWithData.getDataDelay(), sensorWithData.getValueAdjustment(),
 										  sensorWithData.getMinValue(), sensorWithData.getMaxValue());
 		saveTags(sensorWithData.getName(), sensorWithData.getTags());
 
-		saveData(address, sensorWithData.getName(), sensorWithData.getValue(), timestamp);
+		saveData(address, sensorWithData.getName(), sensorWithData.getValue(), sensorEntity.getLastUpdate());
 
-		return timestamp;
+		if (sensorEntity.getVDPSensorName() != null && HUMIDITY.equals(sensorEntity.getType()))
+		{
+			//TODO: Get last temperature-data from same address sensor
+			// Calculate VDP from temp and humidity
+			// Save VDP to database under same address and referenced VDPSensorName
+		}
+
+		return sensorEntity.getLastUpdate();
 	}
 
 	public void saveSensorValueAdjustment(String address, String name, String displayName, Double valueAdjustment,
@@ -148,7 +158,7 @@ public class SensorService
 		return sensorRepo.findById(id).orElse(SensorEntity.builder().address(address).name(name).build());
 	}
 
-	private long saveSensorEntity(String address, String name, String description, String unit, String type,
+	private SensorEntity saveSensorEntity(String address, String name, String description, String unit, String type,
 								  Long dataDelay, Double valueAdjustment, Double minValue, Double maxValue)
 	{
 		SensorEntity sensorEntity = getSensorEntity(address, name);
@@ -172,7 +182,7 @@ public class SensorService
 			sensorEntity.setMaxValue(maxValue);
 		sensorRepo.save(sensorEntity);
 
-		return timestamp;
+		return sensorEntity;
 	}
 
 	private void saveTags(String sensorName, List<String> tags)

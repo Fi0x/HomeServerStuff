@@ -34,4 +34,5 @@ public class SensorEntity
 	private Double valueAdjustment;
 	private Double minValue;
 	private Double maxValue;
+	private String VDPSensorName;
 }
