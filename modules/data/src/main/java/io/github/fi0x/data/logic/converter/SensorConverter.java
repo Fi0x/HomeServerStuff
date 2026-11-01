@@ -10,19 +10,21 @@ public class SensorConverter
 {
 	public static ExpandedSensorDto toExpandedDto(SensorEntity source)
 	{
-		boolean isOffline = source.getDataDelay() == null || source.getLastUpdate() == null || System.currentTimeMillis() - source.getLastUpdate() > source.getDataDelay() * 2;
+		boolean isOffline =
+				source.getDataDelay() == null || source.getLastUpdate() == null || System.currentTimeMillis() - source.getLastUpdate() > source.getDataDelay() * 2;
 		Date lastUpdated = source.getLastUpdate() == null ? new Date(0) : new Date(source.getLastUpdate());
 
 		return ExpandedSensorDto.builder().address(source.getAddress()).name(source.getName())
-								.description(source.getDescription()).unit(source.getUnit()).type(source.getType())
-								.dataDelay(source.getDataDelay()).offline(isOffline).lastUpdate(lastUpdated)
-								.valueAdjustment(source.getValueAdjustment()).minValue(source.getMinValue())
-								.maxValue(source.getMaxValue()).build();
+				.displayName(source.getDisplayName()).description(source.getDescription()).unit(source.getUnit())
+				.type(source.getType()).dataDelay(source.getDataDelay()).offline(isOffline).lastUpdate(lastUpdated)
+				.valueAdjustment(source.getValueAdjustment()).minValue(source.getMinValue())
+				.maxValue(source.getMaxValue()).build();
 	}
 
 	public static SensorDto toDto(SensorEntity source)
 	{
-		return SensorDto.builder().name(source.getName()).description(source.getDescription()).unit(source.getUnit())
-						.type(source.getType()).dataDelay(source.getDataDelay()).build();
+		return SensorDto.builder().name(source.getName()).displayName(source.getDisplayName())
+				.description(source.getDescription()).unit(source.getUnit()).type(source.getType())
+				.dataDelay(source.getDataDelay()).build();
 	}
 }

@@ -16,6 +16,7 @@ public class SensorDto
 {
 	@NotBlank
 	private String name;
+	private String displayName;
 	private String description;
 	private String unit;
 	private String type;

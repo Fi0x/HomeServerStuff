@@ -6,7 +6,8 @@
 <body>
 <%@include file="../common/navigation.jspf" %>
 <div class="container">
-    <h1>${sensor.name} (${sensor.address})</h1>
+    <h1>${sensor.displayName} (${sensor.address})</h1>
+    <%--        TODO: Add an option to change displayName--%>
     <p>${sensor.description}</p>
     <div class="section">
         <h3>

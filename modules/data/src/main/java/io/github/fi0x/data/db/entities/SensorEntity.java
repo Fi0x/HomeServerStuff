@@ -23,6 +23,8 @@ public class SensorEntity
 	@Id
 	private String name;
 
+	private String displayName;
+
 	private Long lastUpdate;
 
 	private String description;
