@@ -42,10 +42,9 @@ public class SensorService
 			return -1;
 		}
 
-		SensorEntity sensorEntity = saveSensorEntity(address, sensorWithData.getName(),
-				sensorWithData.getDescription(), sensorWithData.getUnit(), sensorWithData.getType(),
-				sensorWithData.getDataDelay(), sensorWithData.getValueAdjustment(), sensorWithData.getMinValue(),
-				sensorWithData.getMaxValue());
+		SensorEntity sensorEntity = saveSensorEntity(address, sensorWithData.getName(), sensorWithData.getDescription(),
+				sensorWithData.getUnit(), sensorWithData.getType(), sensorWithData.getDataDelay(),
+				sensorWithData.getValueAdjustment(), sensorWithData.getMinValue(), sensorWithData.getMaxValue());
 		saveTags(sensorWithData.getName(), sensorWithData.getTags());
 
 		if (sensorEntity.getVPDSensorName() != null)
@@ -53,6 +52,9 @@ public class SensorService
 			DataEntity otherData = getSavedVPDData(address, sensorEntity.getDataDelay());
 			if (otherData != null)
 			{
+				SensorEntity vpdSensor = saveSensorEntity(address, sensorEntity.getVPDSensorName(), null, null, null,
+						null, null, null, null);
+
 				double temp = otherData.getValue();
 
 				double humidity = sensorWithData.getValue();
@@ -60,7 +62,7 @@ public class SensorService
 					humidity += sensorEntity.getValueAdjustment();
 
 				double vpd = calculateVPD(humidity, temp);
-				saveData(address, sensorEntity.getVPDSensorName(), vpd, sensorEntity.getLastUpdate());
+				saveData(address, sensorEntity.getVPDSensorName(), vpd, vpdSensor.getLastUpdate());
 			}
 		}
 
@@ -225,10 +227,17 @@ public class SensorService
 		return data;
 	}
 
+	// eBlatt = 0,6112 kPa × Math.pow(e,(17,62 × TBlatt ÷ (243,12 + TBlatt)))
+	// eTemp = 0,6112 kPa × Math.pow(e, (17,62 × TLuft ÷ (243,12 + TLuft)))
+	// VPD = eBlatt − eTemp * (rF ÷ 100)
 	private double calculateVPD(double humidity, double temperature)
 	{
+		double leafTemp = temperature - 2;
+		double eLeaf = 0.6108 * Math.pow(Math.E, (17.27 * leafTemp / (leafTemp + 237.3)));
 		double svp = 0.6108 * Math.pow(Math.E, (17.27 * temperature / (temperature + 237.3)));
 		double avp = svp * (humidity / 100);
-		return svp - avp;
+		double vpd = eLeaf - avp;
+
+		return (double) Math.round(vpd * 100) / 100;
 	}
 }
