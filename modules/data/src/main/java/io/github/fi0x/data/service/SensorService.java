@@ -28,8 +28,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SensorService
 {
-	private static final String HUMIDITY = "Humidity";
-
 	private final SensorRepo sensorRepo;
 	private final TagRepo tagRepo;
 	private final DataRepo dataRepo;
