@@ -18,6 +18,7 @@
                    class="btn-edit">Edit
                     Sensor details</a>
             </div>
+            <!--- TODO: Add button to create a VPD sensor--->
         </c:when>
     </c:choose>
     <table id="searchableTable" class="table sortable">
