@@ -12,6 +12,8 @@ public interface DataRepo extends JpaRepository<DataEntity, DataId>
 {
 	Optional<DataEntity> findFirstByAddressAndSensorOrderByTimestampDesc(String address, String sensor);
 
+	Optional<DataEntity> findFirstByAddressOrderByTimestampDesc(String address);
+
 	Optional<DataEntity> findFirstByAddressAndSensorOrderByTimestampAsc(String address, String sensor);
 
 	List<DataEntity> findAllByAddressAndSensorOrderByTimestampAsc(String address, String sensor);
@@ -22,7 +24,8 @@ public interface DataRepo extends JpaRepository<DataEntity, DataId>
 	@Query(value = "SELECT * FROM dtdata WHERE ADDRESS = ?1 AND SENSOR = ?2 AND TIMESTAMP >= ?3", nativeQuery = true)
 	List<DataEntity> findFromSensorYoungerThan(String address, String sensor, Long timestamp);
 
-	@Query(value = "SELECT * FROM dtdata WHERE ADDRESS = ?1 AND SENSOR = ?2 ORDER BY TIMESTAMP DESC LIMIT ?3", nativeQuery = true)
+	@Query(value = "SELECT * FROM dtdata WHERE ADDRESS = ?1 AND SENSOR = ?2 ORDER BY TIMESTAMP DESC LIMIT ?3",
+			nativeQuery = true)
 	List<DataEntity> findLastXFromSensor(String address, String sensor, Integer amount);
 
 	void deleteAllByAddressAndSensor(String address, String sensor);

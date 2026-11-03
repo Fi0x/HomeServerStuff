@@ -45,31 +45,38 @@ public class SensorService
 		}
 
 		SensorEntity sensorEntity = saveSensorEntity(address, sensorWithData.getName(),
-				sensorWithData.getDescription(),
-										  sensorWithData.getUnit(), sensorWithData.getType(),
-										  sensorWithData.getDataDelay(), sensorWithData.getValueAdjustment(),
-										  sensorWithData.getMinValue(), sensorWithData.getMaxValue());
+				sensorWithData.getDescription(), sensorWithData.getUnit(), sensorWithData.getType(),
+				sensorWithData.getDataDelay(), sensorWithData.getValueAdjustment(), sensorWithData.getMinValue(),
+				sensorWithData.getMaxValue());
 		saveTags(sensorWithData.getName(), sensorWithData.getTags());
 
-		saveData(address, sensorWithData.getName(), sensorWithData.getValue(), sensorEntity.getLastUpdate());
-
-		if (sensorEntity.getVDPSensorName() != null && HUMIDITY.equals(sensorEntity.getType()))
+		if (sensorEntity.getVPDSensorName() != null)
 		{
-			//TODO: Get last temperature-data from same address sensor
-			// Calculate VDP from temp and humidity
-			// Save VDP to database under same address and referenced VDPSensorName
+			DataEntity otherData = getSavedVPDData(address, sensorEntity.getDataDelay());
+			if (otherData != null)
+			{
+				double temp = otherData.getValue();
+
+				double humidity = sensorWithData.getValue();
+				if (sensorEntity.getValueAdjustment() != null)
+					humidity += sensorEntity.getValueAdjustment();
+
+				double vpd = calculateVPD(humidity, temp);
+				saveData(address, sensorEntity.getVPDSensorName(), vpd, sensorEntity.getLastUpdate());
+			}
 		}
+
+		saveData(address, sensorWithData.getName(), sensorWithData.getValue(), sensorEntity.getLastUpdate());
 
 		return sensorEntity.getLastUpdate();
 	}
 
 	public void saveSensorValueAdjustment(String address, String name, String displayName, Double valueAdjustment,
-										  Double minValue,
-										  Double maxValue)
+	                                      Double minValue, Double maxValue)
 	{
 		SensorEntity entity = sensorRepo.findByAddressAndName(address, name).orElseThrow(
 				() -> new ResponseStatusException(HttpStatusCode.valueOf(404),
-												  "Requested sensor to update does not exist in the database"));
+						"Requested sensor to update does not exist in the database"));
 
 		if (displayName != null)
 			entity.setDisplayName(displayName);
@@ -120,10 +127,10 @@ public class SensorService
 	public ExpandedSensorDto getDetailedSensor(String address, String name) throws ResponseStatusException
 	{
 		Optional<ExpandedSensorDto> optionalSensorDto = sensorRepo.findById(new SensorId(address, name))
-																  .map(SensorConverter::toExpandedDto);
+				.map(SensorConverter::toExpandedDto);
 		ExpandedSensorDto sensorDto = optionalSensorDto.orElseThrow(
 				() -> new ResponseStatusException(HttpStatusCode.valueOf(404),
-												  "The requested sensor is not registered in the database"));
+						"The requested sensor is not registered in the database"));
 
 		sensorDto.setTags(tagRepo.findAllBySensorName(name).stream().map(TagEntity::getTag).toList());
 		if (sensorDto.getValueAdjustment() == null)
@@ -147,7 +154,7 @@ public class SensorService
 	{
 		SensorEntity entity = sensorRepo.findByAddressAndName(address, name).orElseThrow(
 				() -> new ResponseStatusException(HttpStatusCode.valueOf(404),
-												  "Could not find requested sensor to delete"));
+						"Could not find requested sensor to delete"));
 
 		sensorRepo.delete(entity);
 	}
@@ -159,7 +166,7 @@ public class SensorService
 	}
 
 	private SensorEntity saveSensorEntity(String address, String name, String description, String unit, String type,
-								  Long dataDelay, Double valueAdjustment, Double minValue, Double maxValue)
+	                                      Long dataDelay, Double valueAdjustment, Double minValue, Double maxValue)
 	{
 		SensorEntity sensorEntity = getSensorEntity(address, name);
 
@@ -202,7 +209,28 @@ public class SensorService
 	private void saveData(String address, String sensorName, Double value, Long timestamp)
 	{
 		DataEntity dataEntity = DataEntity.builder().address(address).sensor(sensorName).timestamp(timestamp)
-										  .value(value).build();
+				.value(value).build();
 		dataRepo.save(dataEntity);
+	}
+
+	private DataEntity getSavedVPDData(String address, Long sensorDelay)
+	{
+		Optional<DataEntity> optionalData = dataRepo.findFirstByAddressOrderByTimestampDesc(address);
+		if (optionalData.isEmpty())
+			return null;
+		DataEntity data = optionalData.get();
+
+		long dataAge = System.currentTimeMillis() - data.getTimestamp();
+		if (dataAge > sensorDelay / 2)
+			return null;
+
+		return data;
+	}
+
+	private double calculateVPD(double humidity, double temperature)
+	{
+		double svp = 0.6108 * Math.pow(Math.E, (17.27 * temperature / (temperature + 237.3)));
+		double avp = svp * (humidity / 100);
+		return svp - avp;
 	}
 }
