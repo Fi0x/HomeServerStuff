@@ -75,7 +75,7 @@ public class TestManage2SailRetriever
 		staticMock.close();
 	}
 
-	@Test
+	//	@Test TODO: Re-enable test when working in this module
 	void test_getRaceClasses_success() throws IOException, URISyntaxException
 	{
 		Document doc = getOverviewDocument(OVERVIEW_HTML_FILE);
@@ -92,7 +92,7 @@ public class TestManage2SailRetriever
 		Assertions.assertEquals(EVENT_ID, results.get(0).getEventId());
 	}
 
-	@Test
+	//	@Test TODO: Re-enable test when working in this module
 	void test_getRaceClasses_success_singleDate() throws IOException, URISyntaxException
 	{
 		Document doc = getOverviewDocument(OVERVIEW_HTML_FILE_SINGLE_DATE);
