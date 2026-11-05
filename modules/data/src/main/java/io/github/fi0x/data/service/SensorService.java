@@ -42,7 +42,8 @@ public class SensorService
 			return -1;
 		}
 
-		SensorEntity sensorEntity = saveSensorEntity(address, sensorWithData.getName(), sensorWithData.getDescription(),
+		SensorEntity sensorEntity = saveSensorEntity(address, sensorWithData.getName(),
+				sensorWithData.getDescription(),
 				sensorWithData.getUnit(), sensorWithData.getType(), sensorWithData.getDataDelay(),
 				sensorWithData.getValueAdjustment(), sensorWithData.getMinValue(), sensorWithData.getMaxValue());
 		saveTags(sensorWithData.getName(), sensorWithData.getTags());
@@ -57,7 +58,7 @@ public class SensorService
 						null, null, null, null);
 
 				//TODO: Verify sensor information, if they are humidity and temp sensors, otherwise abort
-				double temp = otherData.getValue();
+				double temp = otherData.getValue();//TODO: Add valueAdjustment from sensor
 
 				double humidity = sensorWithData.getValue();
 				if (sensorEntity.getValueAdjustment() != null)
@@ -232,7 +233,7 @@ public class SensorService
 	// eBlatt = 0,6112 kPa × Math.pow(e,(17,62 × TBlatt ÷ (243,12 + TBlatt)))
 	// eTemp = 0,6112 kPa × Math.pow(e, (17,62 × TLuft ÷ (243,12 + TLuft)))
 	// VPD = eBlatt − eTemp * (rF ÷ 100)
-	private double calculateVPD(double humidity, double temperature)
+	public double calculateVPD(double humidity, double temperature)
 	{
 		double leafTemp = temperature - 2;
 		double eLeaf = 0.6112 * Math.pow(Math.E, (17.62 * leafTemp / (leafTemp + 243.12)));
