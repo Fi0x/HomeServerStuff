@@ -18,7 +18,7 @@ public class SensorConverter
 				.displayName(source.getDisplayName()).description(source.getDescription()).unit(source.getUnit())
 				.type(source.getType()).dataDelay(source.getDataDelay()).offline(isOffline).lastUpdate(lastUpdated)
 				.valueAdjustment(source.getValueAdjustment()).minValue(source.getMinValue())
-				.maxValue(source.getMaxValue()).build();
+				.maxValue(source.getMaxValue()).hasVPDSensor(source.getVPDSensorName() != null).build();
 	}
 
 	public static SensorDto toDto(SensorEntity source)

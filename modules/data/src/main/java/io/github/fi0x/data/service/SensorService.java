@@ -52,9 +52,11 @@ public class SensorService
 			DataEntity otherData = getSavedVPDData(address, sensorEntity.getDataDelay());
 			if (otherData != null)
 			{
+				//TODO: Sensor should aready have been created and linked in humid and temp sensors
 				SensorEntity vpdSensor = saveSensorEntity(address, sensorEntity.getVPDSensorName(), null, null, null,
 						null, null, null, null);
 
+				//TODO: Verify sensor information, if they are humidity and temp sensors, otherwise abort
 				double temp = otherData.getValue();
 
 				double humidity = sensorWithData.getValue();

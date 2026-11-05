@@ -28,4 +28,5 @@ public class ExpandedSensorDto
 	private Double valueAdjustment;
 	private Double minValue;
 	private Double maxValue;
+	private Boolean hasVPDSensor;
 }
