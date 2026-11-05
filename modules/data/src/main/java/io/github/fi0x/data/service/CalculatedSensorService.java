@@ -26,6 +26,8 @@ public class CalculatedSensorService
 
 	private void calculateAndSaveVDPSensorData(String address, String vpdSensorName)
 	{
+		log.trace("Calculating VPD value for address {} and sensor {}", address, vpdSensorName);
+
 		// Check, if VPD sensor exists, otherwise ignore calculation and return
 		SensorEntity vpdSensor = persistenceSensorService.findSensorEntity(address, vpdSensorName).orElse(null);
 		if (vpdSensor == null)
@@ -67,6 +69,8 @@ public class CalculatedSensorService
 		// Calculate VPD with the 2 values and save data
 		double vpd = VPDService.calculateVPD(h, t);
 		persistenceDataService.saveData(address, vpdSensorName, vpd, getTime());
+
+		log.trace("Saved VPD {} for address {} and sensor {}", vpd, address, vpdSensorName);
 	}
 
 	private List<SensorEntity> findAllVPDDataInputSensors(String address, String vpdSensorName)
