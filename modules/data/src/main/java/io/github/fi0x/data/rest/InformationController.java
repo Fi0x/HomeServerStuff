@@ -1,6 +1,7 @@
 package io.github.fi0x.data.rest;
 
 import io.github.fi0x.data.logic.dto.ExpandedSensorDto;
+import io.github.fi0x.data.logic.dto.SensorType;
 import io.github.fi0x.data.service.DataService;
 import io.github.fi0x.data.service.SensorService;
 import io.github.fi0x.util.components.Authenticator;
@@ -61,13 +62,24 @@ public class InformationController
 		return "edit-sensor";
 	}
 
+	@GetMapping("/sensor/{address}/{name}/create")
+	public String createSensor(ModelMap model, @PathVariable String address, @PathVariable String name,
+	                           @RequestParam(value = "type") SensorType sensorType)
+	{
+		log.info("createSensor() called");
+
+		model.put("sensor", sensorService.createSensor(address, name, sensorType));
+
+		return "edit-calculated-sensor";
+	}
+
 	@GetMapping("/sensor/{address}/{name}/update")
 	public String updateSensor(ModelMap model, @PathVariable String address, @PathVariable String name,
-							   @RequestParam(value = "displayName", required = false) String displayName,
-							   @RequestParam(value = "valueAdjustment", required = false) Double valueAdjustment,
-							   @RequestParam(value = "min", required = false) Double minValue,
-							   @RequestParam(value = "max", required = false) Double maxValue,
-							   @RequestParam(value = "deleteValues", required = false) String valueDeletion)
+	                           @RequestParam(value = "displayName", required = false) String displayName,
+	                           @RequestParam(value = "valueAdjustment", required = false) Double valueAdjustment,
+	                           @RequestParam(value = "min", required = false) Double minValue,
+	                           @RequestParam(value = "max", required = false) Double maxValue,
+	                           @RequestParam(value = "deleteValues", required = false) String valueDeletion)
 	{
 		log.info("updateSensor() called");
 
@@ -99,7 +111,7 @@ public class InformationController
 
 	@GetMapping("/data/{address}/{name}/{timestamp}/delete")
 	public String deleteData(ModelMap model, @PathVariable String address, @PathVariable String name,
-							 @PathVariable Long timestamp)
+	                         @PathVariable Long timestamp)
 	{
 		log.debug("deleteData() called");
 

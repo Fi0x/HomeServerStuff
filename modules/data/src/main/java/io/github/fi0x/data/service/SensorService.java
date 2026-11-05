@@ -12,6 +12,7 @@ import io.github.fi0x.data.logic.converter.SensorConverter;
 import io.github.fi0x.data.logic.dto.ExpandedSensorDto;
 import io.github.fi0x.data.logic.dto.SensorDataDto;
 import io.github.fi0x.data.logic.dto.SensorDto;
+import io.github.fi0x.data.logic.dto.SensorType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatusCode;
@@ -32,6 +33,10 @@ public class SensorService
 	private final TagRepo tagRepo;
 	private final DataRepo dataRepo;
 
+	private final CalculatedSensorService calculatedSensorService;
+	private final PersistenceSensorService persistenceSensorService;
+	private final PersistenceDataService persistenceDataService;
+
 	private final Sensor sensor;
 
 	public long saveSensorAndData(String address, SensorDataDto sensorWithData)
@@ -42,34 +47,20 @@ public class SensorService
 			return -1;
 		}
 
-		SensorEntity sensorEntity = saveSensorEntity(address, sensorWithData.getName(),
-				sensorWithData.getDescription(),
-				sensorWithData.getUnit(), sensorWithData.getType(), sensorWithData.getDataDelay(),
-				sensorWithData.getValueAdjustment(), sensorWithData.getMinValue(), sensorWithData.getMaxValue());
+		SensorEntity sensorEntity = persistenceSensorService.saveIfNew(address, sensorWithData.getName(),
+				sensorWithData.getDescription(), sensorWithData.getUnit(), sensorWithData.getType(),
+				sensorWithData.getDataDelay(), sensorWithData.getValueAdjustment(), sensorWithData.getMinValue(),
+				sensorWithData.getMaxValue());
 		saveTags(sensorWithData.getName(), sensorWithData.getTags());
+
+		persistenceDataService.saveData(address, sensorWithData.getName(), sensorWithData.getValue(),
+				sensorEntity.getLastUpdate());
 
 		if (sensorEntity.getVPDSensorName() != null)
 		{
-			DataEntity otherData = getSavedVPDData(address, sensorEntity.getDataDelay());
-			if (otherData != null)
-			{
-				//TODO: Sensor should aready have been created and linked in humid and temp sensors
-				SensorEntity vpdSensor = saveSensorEntity(address, sensorEntity.getVPDSensorName(), null, null, null,
-						null, null, null, null);
-
-				//TODO: Verify sensor information, if they are humidity and temp sensors, otherwise abort
-				double temp = otherData.getValue();//TODO: Add valueAdjustment from sensor
-
-				double humidity = sensorWithData.getValue();
-				if (sensorEntity.getValueAdjustment() != null)
-					humidity += sensorEntity.getValueAdjustment();
-
-				double vpd = calculateVPD(humidity, temp);
-				saveData(address, sensorEntity.getVPDSensorName(), vpd, vpdSensor.getLastUpdate());
-			}
+			calculatedSensorService.calculateAndSaveSensorDataFor(sensorEntity.getAddress(),
+					sensorEntity.getVPDSensorName(), SensorType.VPD);
 		}
-
-		saveData(address, sensorWithData.getName(), sensorWithData.getValue(), sensorEntity.getLastUpdate());
 
 		return sensorEntity.getLastUpdate();
 	}
@@ -127,6 +118,33 @@ public class SensorService
 		return sensorDtos;
 	}
 
+	public ExpandedSensorDto createSensor(String address, String name, SensorType type)
+	{
+		if (persistenceSensorService.findSensorEntity(address, name).isPresent())
+			throw new ResponseStatusException(HttpStatusCode.valueOf(400),
+					"The sensor could not be created, because it already exists");
+
+		Long dataDelay = null;
+		if (SensorType.VPD.equals(type))
+		{
+			List<SensorEntity> inputSensors = persistenceSensorService.getAllSensors(address).stream()
+					.filter(e -> SensorType.HUMIDITY.toString().equals(e.getType()) || SensorType.TEMPERATURE.toString()
+							.equals(e.getType())).toList();
+			if (inputSensors.size() != 2)
+				throw new ResponseStatusException(HttpStatusCode.valueOf(404),
+						"Could not find the 2 related humidity and temperature sensors");
+			if (!inputSensors.get(0).getDataDelay().equals(inputSensors.get(1).getDataDelay()))
+				throw new ResponseStatusException(HttpStatusCode.valueOf(400),
+						"Could not create VPD sensor, because the 2 input sensors have different data-delays");
+			dataDelay = inputSensors.get(0).getDataDelay();
+
+			persistenceSensorService.addVPDSensor(address, inputSensors.get(0).getName(), name);
+			persistenceSensorService.addVPDSensor(address, inputSensors.get(1).getName(), name);
+		}
+		return SensorConverter.toExpandedDto(
+				persistenceSensorService.saveNewSensor(address, name, type.toString(), dataDelay));
+	}
+
 	public ExpandedSensorDto getDetailedSensor(String address, String name) throws ResponseStatusException
 	{
 		Optional<ExpandedSensorDto> optionalSensorDto = sensorRepo.findById(new SensorId(address, name))
@@ -162,39 +180,6 @@ public class SensorService
 		sensorRepo.delete(entity);
 	}
 
-	private SensorEntity getSensorEntity(String address, String name)
-	{
-		SensorId id = new SensorId(address, name);
-		return sensorRepo.findById(id).orElse(SensorEntity.builder().address(address).name(name).build());
-	}
-
-	private SensorEntity saveSensorEntity(String address, String name, String description, String unit, String type,
-	                                      Long dataDelay, Double valueAdjustment, Double minValue, Double maxValue)
-	{
-		SensorEntity sensorEntity = getSensorEntity(address, name);
-
-		long timestamp = System.currentTimeMillis();
-		sensorEntity.setLastUpdate(timestamp);
-
-		if (description != null)
-			sensorEntity.setDescription(description);
-		if (unit != null)
-			sensorEntity.setUnit(unit);
-		if (type != null)
-			sensorEntity.setType(type);
-		if (dataDelay != null)
-			sensorEntity.setDataDelay(dataDelay);
-		if (valueAdjustment != null)
-			sensorEntity.setValueAdjustment(valueAdjustment);
-		if (minValue != null)
-			sensorEntity.setMinValue(minValue);
-		if (maxValue != null)
-			sensorEntity.setMaxValue(maxValue);
-		sensorRepo.save(sensorEntity);
-
-		return sensorEntity;
-	}
-
 	private void saveTags(String sensorName, List<String> tags)
 	{
 		List<TagEntity> existingTags = tagRepo.findAllBySensorName(sensorName);
@@ -207,40 +192,5 @@ public class SensorService
 			if (!existingTags.contains(tagEntity))
 				tagRepo.save(tagEntity);
 		});
-	}
-
-	private void saveData(String address, String sensorName, Double value, Long timestamp)
-	{
-		DataEntity dataEntity = DataEntity.builder().address(address).sensor(sensorName).timestamp(timestamp)
-				.value(value).build();
-		dataRepo.save(dataEntity);
-	}
-
-	private DataEntity getSavedVPDData(String address, Long sensorDelay)
-	{
-		Optional<DataEntity> optionalData = dataRepo.findFirstByAddressOrderByTimestampDesc(address);
-		if (optionalData.isEmpty())
-			return null;
-		DataEntity data = optionalData.get();
-
-		long dataAge = System.currentTimeMillis() - data.getTimestamp();
-		if (dataAge > sensorDelay / 2)
-			return null;
-
-		return data;
-	}
-
-	// eBlatt = 0,6112 kPa × Math.pow(e,(17,62 × TBlatt ÷ (243,12 + TBlatt)))
-	// eTemp = 0,6112 kPa × Math.pow(e, (17,62 × TLuft ÷ (243,12 + TLuft)))
-	// VPD = eBlatt − eTemp * (rF ÷ 100)
-	public double calculateVPD(double humidity, double temperature)
-	{
-		double leafTemp = temperature - 2;
-		double eLeaf = 0.6112 * Math.pow(Math.E, (17.62 * leafTemp / (leafTemp + 243.12)));
-		double svp = 0.6112 * Math.pow(Math.E, (17.62 * temperature / (temperature + 243.12)));
-		double avp = svp * (humidity / 100);
-		double vpd = eLeaf - avp;
-
-		return (double) Math.round(vpd * 100) / 100;
 	}
 }

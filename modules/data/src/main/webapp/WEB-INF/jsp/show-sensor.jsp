@@ -18,8 +18,7 @@
                    class="btn-edit">Edit Sensor details</a>
                 <c:choose>
                     <c:when test="${!sensor.hasVPDSensor}">
-                        <!--TODO Call correct url to create a new sensor and also link the related humidity and temp sensors-->
-                        <a href="${pageContext.request.contextPath}/sensor/${sensor.address}/VPD2/edit"
+                        <a href="${pageContext.request.contextPath}/sensor/${sensor.address}/VPD/create"
                            class="btn-edit">Create VPD Sensor</a>
                     </c:when>
                 </c:choose>
