@@ -21,8 +21,10 @@ public class PersistenceSensorService
 	public SensorEntity saveIfNew(String address, String name, String description, String unit, String type,
 								  Long dataDelay, Double valueAdjustment, Double minValue, Double maxValue)
 	{
-		return findSensorEntity(address, name).orElse(
-				saveNewSensor(address, name, description, unit, type, dataDelay, valueAdjustment, minValue, maxValue));
+		Optional<SensorEntity> optional = findSensorEntity(address, name);
+		return optional.orElseGet(
+				() -> saveNewSensor(address, name, description, unit, type, dataDelay, valueAdjustment, minValue,
+						maxValue));
 	}
 
 	public SensorEntity saveNewSensor(String address, String name, String type, Long dataDelay)

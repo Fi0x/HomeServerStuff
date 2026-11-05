@@ -46,8 +46,8 @@ public class CalculatedSensorService
 		{
 			log.warn(
 					"Could not calculate VPD value, because not exactly 1 humidity and 1 temperature sensors were " +
-							"found for address {}",
-					address);
+							"found for address {} Found instead: {}",
+					address, vpdInputSensors);
 			return;
 		}
 
