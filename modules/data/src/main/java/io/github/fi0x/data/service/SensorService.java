@@ -235,8 +235,8 @@ public class SensorService
 	private double calculateVPD(double humidity, double temperature)
 	{
 		double leafTemp = temperature - 2;
-		double eLeaf = 0.6108 * Math.pow(Math.E, (17.27 * leafTemp / (leafTemp + 237.3)));
-		double svp = 0.6108 * Math.pow(Math.E, (17.27 * temperature / (temperature + 237.3)));
+		double eLeaf = 0.6112 * Math.pow(Math.E, (17.62 * leafTemp / (leafTemp + 243.12)));
+		double svp = 0.6112 * Math.pow(Math.E, (17.62 * temperature / (temperature + 243.12)));
 		double avp = svp * (humidity / 100);
 		double vpd = eLeaf - avp;
 
