@@ -66,7 +66,7 @@ public class SensorService
 	}
 
 	public void saveSensorValueAdjustment(String address, String name, String displayName, Double valueAdjustment,
-	                                      Double minValue, Double maxValue)
+										  Double minValue, Double maxValue)
 	{
 		SensorEntity entity = sensorRepo.findByAddressAndName(address, name).orElseThrow(
 				() -> new ResponseStatusException(HttpStatusCode.valueOf(404),
@@ -128,8 +128,8 @@ public class SensorService
 		if (SensorType.VPD.equals(type))
 		{
 			List<SensorEntity> inputSensors = persistenceSensorService.getAllSensors(address).stream()
-					.filter(e -> SensorType.HUMIDITY.toString().equals(e.getType()) || SensorType.TEMPERATURE.toString()
-							.equals(e.getType())).toList();
+					.filter(e -> SensorType.HUMIDITY.is(e.getType()) || SensorType.TEMPERATURE.is(e.getType()))
+					.toList();
 			if (inputSensors.size() != 2)
 				throw new ResponseStatusException(HttpStatusCode.valueOf(404),
 						"Could not find the 2 related humidity and temperature sensors");

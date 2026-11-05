@@ -19,7 +19,7 @@ public class PersistenceSensorService
 	private final SensorRepo sensorRepo;
 
 	public SensorEntity saveIfNew(String address, String name, String description, String unit, String type,
-	                              Long dataDelay, Double valueAdjustment, Double minValue, Double maxValue)
+								  Long dataDelay, Double valueAdjustment, Double minValue, Double maxValue)
 	{
 		return findSensorEntity(address, name).orElse(
 				saveNewSensor(address, name, description, unit, type, dataDelay, valueAdjustment, minValue, maxValue));
@@ -27,7 +27,7 @@ public class PersistenceSensorService
 
 	public SensorEntity saveNewSensor(String address, String name, String type, Long dataDelay)
 	{
-		String unit = SensorType.VPD.toString().equals(type) ? "kPa" : "";
+		String unit = SensorType.VPD.is(type) ? "kPa" : "";
 		return saveNewSensor(address, name, name, unit, type, dataDelay, 0.0, null, null);
 	}
 
@@ -59,7 +59,7 @@ public class PersistenceSensorService
 	}
 
 	private SensorEntity saveNewSensor(String address, String name, String displayName, String unit, String type,
-	                                   Long dataDelay, Double valueAdjustment, Double minValue, Double maxValue)
+									   Long dataDelay, Double valueAdjustment, Double minValue, Double maxValue)
 	{
 		long timestamp = System.currentTimeMillis();
 

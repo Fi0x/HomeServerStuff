@@ -37,9 +37,9 @@ public class CalculatedSensorService
 		// Check, if exactly 1 humidity and 1 temperature sensor are linked to this vpd sensor
 		List<SensorEntity> vpdInputSensors = findAllVPDDataInputSensors(address, vpdSensorName);
 		Optional<SensorEntity> optionalTemperatureSensor = vpdInputSensors.stream()
-				.filter(e -> SensorType.TEMPERATURE.toString().equals(e.getType())).findFirst();
+				.filter(e -> SensorType.TEMPERATURE.is(e.getType())).findFirst();
 		Optional<SensorEntity> optionalHumiditySensor = vpdInputSensors.stream()
-				.filter(e -> SensorType.HUMIDITY.toString().equals(e.getType())).findFirst();
+				.filter(e -> SensorType.HUMIDITY.is(e.getType())).findFirst();
 		if (vpdInputSensors.size() != 2 || optionalTemperatureSensor.isEmpty() || optionalHumiditySensor.isEmpty())
 		{
 			log.warn(
