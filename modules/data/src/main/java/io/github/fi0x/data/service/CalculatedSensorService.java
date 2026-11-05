@@ -40,7 +40,7 @@ public class CalculatedSensorService
 				.filter(e -> SensorType.TEMPERATURE.is(e.getType())).findFirst();
 		Optional<SensorEntity> optionalHumiditySensor = vpdInputSensors.stream()
 				.filter(e -> SensorType.HUMIDITY.is(e.getType())).findFirst();
-		if (vpdInputSensors.size() != 2 || optionalTemperatureSensor.isEmpty() || optionalHumiditySensor.isEmpty())
+		if (optionalTemperatureSensor.isEmpty() || optionalHumiditySensor.isEmpty())
 		{
 			log.warn(
 					"Could not calculate VPD value, because not exactly 1 humidity and 1 temperature sensors were " +
