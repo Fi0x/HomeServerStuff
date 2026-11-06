@@ -7,7 +7,7 @@
 <%@include file="../common/navigation.jspf" %>
 <div class="container">
     <h1>${sensor.displayName} (${sensor.address})</h1>
-    <%--        TODO: Add an option to change displayName--%>
+    <input type="text" id="displayNameInput" value="${sensor.displayName}">
     <p>${sensor.description}</p>
     <div class="section">
         <h3>
@@ -75,7 +75,8 @@
         let adjustment = document.getElementById('valueAdjustment').innerText;
         let min = document.getElementById('valueMin').innerText;
         let max = document.getElementById('valueMax').innerText;
-        window.location = '${pageContext.request.contextPath}/sensor/${sensor.address}/${sensor.name}/update?valueAdjustment=' + adjustment + '&min=' + min + '&max=' + max;
+        let displayName = document.getElementById('displayNameInput').value;
+        window.location = '${pageContext.request.contextPath}/sensor/${sensor.address}/${sensor.name}/update?valueAdjustment=' + adjustment + '&min=' + min + '&max=' + max + '&displayName=' + displayName;
     }
 
     function changeValue(adjustment, element) {
