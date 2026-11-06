@@ -17,7 +17,7 @@
                 <a href="${pageContext.request.contextPath}/sensor/${sensor.address}/${sensor.name}/edit"
                    class="btn-edit">Edit Sensor details</a>
                 <c:choose>
-                    <c:when test="${!sensor.hasVPDSensor}">
+                    <c:when test="${!sensor.hasVPDSensor && sensor.type != 'VPD'}">
                         <a href="${pageContext.request.contextPath}/sensor/${sensor.address}/VPD/create?type=VPD"
                            class="btn-edit">Create VPD Sensor</a>
                     </c:when>

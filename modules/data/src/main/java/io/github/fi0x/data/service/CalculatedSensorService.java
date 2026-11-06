@@ -54,7 +54,7 @@ public class CalculatedSensorService
 		// Get the most recent data entries of the input sensors and verify them
 		DataEntity temperature = persistenceDataService.getMostRecentEntry(optionalTemperatureSensor.get());
 		DataEntity humidity = persistenceDataService.getMostRecentEntry(optionalHumiditySensor.get());
-		if (!areValidVPDInputs(temperature, humidity, vpdSensor.getDataDelay()))
+		if (!VPDService.areValidVPDInputs(temperature, humidity, vpdSensor.getDataDelay()))
 		{
 			log.debug(
 					"Most recent data from the 2 sensors does not match or is invalid for VPD calculation in address " + "{}",
@@ -79,16 +79,6 @@ public class CalculatedSensorService
 		// Filter for the ones, that have a matching vdpSensorName
 		return persistenceSensorService.getAllSensors(address).stream()
 				.filter(e -> vpdSensorName.equals(e.getVPDSensorName())).toList();
-	}
-
-	private boolean areValidVPDInputs(DataEntity temperature, DataEntity humidity, long dataDelay)
-	{
-		if (temperature == null || humidity == null)
-			return false;
-
-		// Check, if the time difference between this data is less than half their data-delay
-		long diff = Math.abs(temperature.getTimestamp() - humidity.getTimestamp());
-		return diff < dataDelay / 2;
 	}
 
 	private double getCorrectedValue(DataEntity data, SensorEntity sensor)
