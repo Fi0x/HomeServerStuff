@@ -66,9 +66,10 @@ public class CalculatedSensorService
 		double t = getCorrectedValue(temperature, optionalTemperatureSensor.get());
 		double h = getCorrectedValue(humidity, optionalHumiditySensor.get());
 
-		// Calculate VPD with the 2 values and save data
+		// Calculate VPD with the 2 values, save data and update sensor timestamp
 		double vpd = VPDService.calculateVPD(h, t);
-		persistenceDataService.saveData(address, vpdSensorName, vpd, getTime());
+		vpdSensor = persistenceSensorService.updateTimestamp(vpdSensor);
+		persistenceDataService.saveData(address, vpdSensorName, vpd, vpdSensor.getLastUpdate());
 
 		log.trace("Saved VPD {} for address {} and sensor {}", vpd, address, vpdSensorName);
 	}
@@ -85,10 +86,5 @@ public class CalculatedSensorService
 	{
 		double correction = sensor.getValueAdjustment() == null ? 0 : sensor.getValueAdjustment();
 		return data.getValue() + correction;
-	}
-
-	private long getTime()
-	{
-		return System.currentTimeMillis();
 	}
 }

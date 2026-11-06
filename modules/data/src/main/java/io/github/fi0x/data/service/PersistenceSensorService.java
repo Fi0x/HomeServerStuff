@@ -23,11 +23,15 @@ public class PersistenceSensorService
 	{
 		Optional<SensorEntity> optional = findSensorEntity(address, name);
 		if (optional.isPresent())
-		{
-			optional.get().setLastUpdate(System.currentTimeMillis());
-			return sensorRepo.save(optional.get());
-		}
+			return updateTimestamp(optional.get());
+
 		return saveNewSensor(address, name, description, unit, type, dataDelay, valueAdjustment, minValue, maxValue);
+	}
+
+	public SensorEntity updateTimestamp(SensorEntity sensorEntity)
+	{
+		sensorEntity.setLastUpdate(System.currentTimeMillis());
+		return sensorRepo.save(sensorEntity);
 	}
 
 	public SensorEntity saveNewSensor(String address, String name, String type, Long dataDelay)
