@@ -21,7 +21,7 @@ public class NotificationService
 	{
 		AddressedEmitter newEmitter = new AddressedEmitter(emitter, sensorAddress, sensorName);
 
-		if(!emitters.contains(newEmitter))
+		if (!emitters.contains(newEmitter))
 			emitters.add(newEmitter);
 	}
 
@@ -33,23 +33,27 @@ public class NotificationService
 	public void notifyDataUpdate(ExpandedDataDto dataDto)
 	{
 		List<AddressedEmitter> deadEmitters = new ArrayList<>();
-		for(AddressedEmitter emitter : emitters)
+		for (AddressedEmitter emitter : emitters)
 		{
 			try
 			{
-				if(emitter.sensorAddress != null && !emitter.sensorAddress.equals(dataDto.getAddress()))
+				if (emitter.sensorAddress != null && !emitter.sensorAddress.equals(dataDto.getAddress()))
 					continue;
-				if(emitter.sensorName != null && !emitter.sensorName.equals(dataDto.getSensorName()))
+				if (emitter.sensorName != null && !emitter.sensorName.equals(dataDto.getSensorName()))
 					continue;
-				//				TODO: Find out why this IOException gets printed in console
+				// TODO: Check if the IOException is still printed in log here, then find out why
 				SseEmitter.SseEventBuilder builder = SseEmitter.event();
 				builder = builder.data(dataDto);
 				SseEmitter emitter1 = emitter.emitter;
 				emitter1.send(builder);
-			} catch(IOException e)
+			} catch (IOException e)
 			{
 				deadEmitters.add(emitter);
 				log.info("lost connection to emitter");
+			} catch (IllegalStateException e)
+			{
+				deadEmitters.add(emitter);
+				log.info(e.getMessage());
 			}
 		}
 		emitters.removeAll(deadEmitters);
@@ -65,14 +69,13 @@ public class NotificationService
 		@Override
 		public boolean equals(Object o)
 		{
-			if(this == o)
+			if (this == o)
 				return true;
-			if(o == null || getClass() != o.getClass())
+			if (o == null || getClass() != o.getClass())
 				return false;
 			AddressedEmitter other = (AddressedEmitter) o;
 			return Objects.equals(emitter, other.emitter) && Objects.equals(sensorAddress,
-																			other.sensorAddress) && Objects.equals(
-					sensorName, other.sensorName);
+					other.sensorAddress) && Objects.equals(sensorName, other.sensorName);
 		}
 
 		@Override
