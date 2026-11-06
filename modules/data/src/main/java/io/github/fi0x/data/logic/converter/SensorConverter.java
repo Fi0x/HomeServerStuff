@@ -13,12 +13,13 @@ public class SensorConverter
 		boolean isOffline =
 				source.getDataDelay() == null || source.getLastUpdate() == null || System.currentTimeMillis() - source.getLastUpdate() > source.getDataDelay() * 2;
 		Date lastUpdated = source.getLastUpdate() == null ? new Date(0) : new Date(source.getLastUpdate());
+		String sensorName = source.getDisplayName() == null ? source.getName() : source.getDisplayName();
 
-		return ExpandedSensorDto.builder().address(source.getAddress()).name(source.getName())
-				.displayName(source.getDisplayName()).description(source.getDescription()).unit(source.getUnit())
-				.type(source.getType()).dataDelay(source.getDataDelay()).offline(isOffline).lastUpdate(lastUpdated)
+		return ExpandedSensorDto.builder().address(source.getAddress()).name(source.getName()).displayName(sensorName)
+				.description(source.getDescription()).unit(source.getUnit()).type(source.getType())
+				.dataDelay(source.getDataDelay()).offline(isOffline).lastUpdate(lastUpdated)
 				.valueAdjustment(source.getValueAdjustment()).minValue(source.getMinValue())
-				.maxValue(source.getMaxValue()).build();
+				.maxValue(source.getMaxValue()).hasVPDSensor(source.getVPDSensorName() != null).build();
 	}
 
 	public static SensorDto toDto(SensorEntity source)
