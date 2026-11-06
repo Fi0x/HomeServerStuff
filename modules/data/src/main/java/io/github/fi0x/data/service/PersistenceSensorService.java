@@ -22,9 +22,12 @@ public class PersistenceSensorService
 								  Long dataDelay, Double valueAdjustment, Double minValue, Double maxValue)
 	{
 		Optional<SensorEntity> optional = findSensorEntity(address, name);
-		return optional.orElseGet(
-				() -> saveNewSensor(address, name, description, unit, type, dataDelay, valueAdjustment, minValue,
-						maxValue));
+		if (optional.isPresent())
+		{
+			optional.get().setLastUpdate(System.currentTimeMillis());
+			return sensorRepo.save(optional.get());
+		}
+		return saveNewSensor(address, name, description, unit, type, dataDelay, valueAdjustment, minValue, maxValue);
 	}
 
 	public SensorEntity saveNewSensor(String address, String name, String type, Long dataDelay)
